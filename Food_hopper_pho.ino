@@ -33,6 +33,11 @@ int moveOperationCounter = 0; // This variable keeps track of the total number o
 // Was 3000
  //#define NumberOfStepperCoilsActivated SINGLE // The number of coils in the stepper motor to activate. DOUBLE provides higher torque.
  #define NumberOfStepperCoilsActivated DOUBLE // The number of coils in the stepper motor to activate. DOUBLE provides higher torque.
+
+ // The StepperSpeed is not in RPM (contrary to what the previous implementor thought).
+ // It's a value The setSpeed() function controls the power level delivered to the motor. The speed parameter is a value between 0 and 255.
+ #define StepperSpeed 127 // The speed of the stepper in rpm (default 25).
+
  
 void setup() {
   // initialize the LED pin as an output:
@@ -44,26 +49,29 @@ void setup() {
   // initialize the sensor pin as an input:
   pinMode(SENSORPIN, INPUT);     
   digitalWrite(SENSORPIN, HIGH); // turn on the pullup
-  Serial.begin(9600);           // set up Serial library at 9600 bps
-  Serial.println("Stepper test!");
+  Serial.begin(9600);           // set up Serial library at 9600 bps (for debugging)
+  Serial.println("Food Hopper:");
   AFMS.begin();  // create with the default frequency 1.6KHz
   //AFMS.begin(1000);  // OR with a different frequency, say 1KHz
-  myMotor->setSpeed(25);  // 25 rpm  
+  // The setSpeed() function controls the power level delivered to the motor. 
+  myMotor->setSpeed(StepperSpeed); //The speed parameter is a value between 0 and 255.
 }
 void loop(){
-  // read the state of the pushbutton value:
+  // read the state of the IR break beam sensor:
   sensorState = digitalRead(SENSORPIN);
-  // check if the sensor beam is broken
-  // if it is, the sensorState is LOW:
+  /* Check sensor beam state:
+   * LOW: Sensor Beam is broken
+   * HIGH: Sensor Beam has continuity
+   */
   if (sensorState == LOW) {
     digitalWrite(TTLPIN2, HIGH);
     delay(40);
-    digitalWrite(TTLPIN2, LOW);    
-    digitalWrite(LEDPIN, HIGH);
+    digitalWrite(TTLPIN2, LOW);
+    digitalWrite(LEDPIN, HIGH); // Turn status LED on
     digitalWrite(TTLPIN, HIGH);    // make motor turn
     if(digitalRead(TTLPIN)==HIGH){
       // The "%" operation is "modulus". The statement checks whether the moveOperationCounter is evenly divisible by ConsecutiveSameDirectionMovements. If it is, it performs the first case, otherwise the second.
-      if (((moveOperationCounter % ConsecutiveSameDirectionMovements) == 0)) { 
+      if (((moveOperationCounter % ConsecutiveSameDirectionMovements) == 0)) {
         //Every "ConsecutiveSameDirectionMovements + 1" steps we move counter-clockwise.
         Serial.println("Moving: Counter-Clockwise");
         myMotor->step(25, BACKWARD, NumberOfStepperCoilsActivated); // Changed from SINGLE to DOUBLE for extra torque
@@ -78,8 +86,8 @@ void loop(){
     delay(PostDispenseTimeout);
   }
   else {
-    // turn LED off:
-    digitalWrite(LEDPIN, LOW); 
+    // turn status LED off:
+    digitalWrite(LEDPIN, LOW);  
   }
 }
   
