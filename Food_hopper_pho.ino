@@ -73,12 +73,12 @@ void loop(){
       // The "%" operation is "modulus". The statement checks whether the moveOperationCounter is evenly divisible by ConsecutiveSameDirectionMovements. If it is, it performs the first case, otherwise the second.
       if (((moveOperationCounter % ConsecutiveSameDirectionMovements) == 0)) {
         //Every "ConsecutiveSameDirectionMovements + 1" steps we move counter-clockwise.
-        Serial.println("Moving: Counter-Clockwise");
+        Serial.println("Moving: Counter-Clockwise " + String(moveOperationCounter));
         myMotor->step(25, BACKWARD, NumberOfStepperCoilsActivated); // Changed from SINGLE to DOUBLE for extra torque
       }
       else {
         // Otherwise we move in the traditional (clockwise) direction
-        Serial.println("Moving: Clockwise");
+        Serial.println("Moving: Clockwise " + String(moveOperationCounter));
         myMotor->step(25, FORWARD, NumberOfStepperCoilsActivated);
       }
       moveOperationCounter++; // Increment the counter
