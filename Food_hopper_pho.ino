@@ -66,14 +66,13 @@ void loop(){
     digitalWrite(LEDPIN, HIGH); // Turn status LED on
     // The "%" operation is "modulus". The statement checks whether the moveOperationCounter is evenly divisible by ConsecutiveSameDirectionMovements. If it is, it performs the first case, otherwise the second.
     if (((moveOperationCounter % ConsecutiveSameDirectionMovements) == 0)) {
-      //Every "ConsecutiveSameDirectionMovements + 1" steps we move counter-clockwise.
-      Serial.println("Moving: Counter-Clockwise " + String(moveOperationCounter));
-      myMotor->step(25, BACKWARD, NumberOfStepperCoilsActivated); // Changed from SINGLE to DOUBLE for extra torque
+      //Every "ConsecutiveSameDirectionMovements + 1" steps we attempt to unjam
+      //unjamDispenseByTickTock();
+      unjamDispenseBySimpleReverse();
     }
     else {
-      // Otherwise we move in the traditional (clockwise) direction
-      Serial.println("Moving: Clockwise " + String(moveOperationCounter));
-      myMotor->step(25, FORWARD, NumberOfStepperCoilsActivated);
+      // Otherwise we perform a normal dispense operation
+      clockwiseDispense();
     }
     moveOperationCounter++; // Increment the counter
     delay(PostDispenseTimeout);
@@ -82,5 +81,25 @@ void loop(){
     // turn status LED off:
     digitalWrite(LEDPIN, LOW);  
   }
+}
+
+// The traditional (clockwise) movement that dispenses a pellet
+void clockwiseDispense() {
+  // Otherwise we move in the traditional (clockwise) direction
+  Serial.println("Moving: Clockwise " + String(moveOperationCounter));
+  myMotor->step(25, FORWARD, NumberOfStepperCoilsActivated);
+}
+
+// Attempts to unjam by just moving backwards for this iteration.
+void unjamDispenseBySimpleReverse() {
+  Serial.println("Moving: Counter-Clockwise " + String(moveOperationCounter));
+  myMotor->step(25, BACKWARD, NumberOfStepperCoilsActivated); // Changed from SINGLE to DOUBLE for extra torque
+}
+
+// Attempts to unjam by quickly moving backwards, and then forward again for this iteration. This runs the risk of double-dispensing
+void unjamDispenseByTickTock() {
+  Serial.println("Moving: UNJAM " + String(moveOperationCounter));
+  myMotor->step(25, BACKWARD, NumberOfStepperCoilsActivated); // Changed from SINGLE to DOUBLE for extra torque
+  myMotor->step(25, FORWARD, NumberOfStepperCoilsActivated); // Changed from SINGLE to DOUBLE for extra torque
 }
  
