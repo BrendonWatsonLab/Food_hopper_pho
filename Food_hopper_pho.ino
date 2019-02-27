@@ -21,9 +21,6 @@ Adafruit_StepperMotor *myMotor = AFMS.getStepper(200, 2);
 #define SENSORPIN 4 // SENSORPIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
 #define TTLPIN 13
 
-//#define TTLPIN2 2    //define the ttl pulse output signal to record beam break. //PHO: I don't know what this is. This refers to the disconnected red wire on the Arduino Uno.
-
-
 // variables will change:
 int sensorState = 0, lastState=0;         // variable for reading the pushbutton status
 int moveOperationCounter = 0; // This variable keeps track of the total number of "move" operations performed.
@@ -46,14 +43,12 @@ int moveOperationCounter = 0; // This variable keeps track of the total number o
 void setup() {
   // initialize the LED pin as an output:
   pinMode(LEDPIN, OUTPUT);  
-  pinMode(TTLPIN, OUTPUT);  
-  //pinMode(TTLPIN2, OUTPUT);  
+  pinMode(TTLPIN, OUTPUT);
   digitalWrite(TTLPIN, LOW);
-  //digitalWrite(TTLPIN2, LOW);
   // initialize the sensor pin as an input:
   pinMode(SENSORPIN, INPUT);     
   digitalWrite(SENSORPIN, HIGH); // turn on the pullup
-  Serial.begin(9600);           // set up Serial library at 9600 bps (for debugging)
+  Serial.begin(9600); // set up Serial library at 9600 bps (for debugging)
   Serial.println("Food Hopper:");
   if (IS_DIAGNOSTIC_MODE) { //If the system is in diagnostic mode, output a line to the serial terminal indicating this to prevent diagnostic builds being deployed to production hardware.
     Serial.println("----- DIAGNOSTIC MODE -----");
@@ -71,9 +66,7 @@ void loop(){
    * HIGH: Sensor Beam has continuity
    */
   if ((sensorState == LOW) || IS_DIAGNOSTIC_MODE) {
-    //digitalWrite(TTLPIN2, HIGH);
     //delay(40);
-    //digitalWrite(TTLPIN2, LOW);
     digitalWrite(LEDPIN, HIGH); // Turn status LED on
     digitalWrite(TTLPIN, HIGH);    // make motor turn
     if(digitalRead(TTLPIN)==HIGH){
