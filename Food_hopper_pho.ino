@@ -34,7 +34,7 @@ int moveOperationCounter = 0; // This variable keeps track of the total number o
 
  // The StepperSpeed is not in RPM (contrary to what the previous implementor thought).
  // It's a value The setSpeed() function controls the power level delivered to the motor. The speed parameter is a value between 0 and 255.
- #define StepperSpeed 127 // The speed of the stepper in rpm (default 25).
+ #define StepperSpeed 88 // The speed of the stepper in rpm (default 25, previous 127).
 
  
 void setup() {
