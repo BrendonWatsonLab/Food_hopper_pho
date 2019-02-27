@@ -13,15 +13,19 @@ Adafruit_MotorShield AFMS = Adafruit_MotorShield();
  * Step Angle: 1.8 degrees
  * The getStepper(#steps, portNumber) command uses portNumber=2 for M3 or M4.
  */
+#define IS_DIAGNOSTIC_MODE true //IS_DIAGNOSTIC_MODE: if this value is true the system will operate continuously, ignoring the beam break sensor. This serves to allow testing. This value should be false outside of testing.
+
+ 
 Adafruit_StepperMotor *myMotor = AFMS.getStepper(200, 2);
-#define LEDPIN 13
-  // Pin 13: Arduino has an LED connected on pin 1
-#define SENSORPIN 4
+#define LEDPIN 13 // Pin 13: Arduino has an LED connected on pin 1
+#define SENSORPIN 4 // SENSORPIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
 #define TTLPIN 13
-#define TTLPIN2 2    //define the ttl pulse output signal to record beam break
+
+//#define TTLPIN2 2    //define the ttl pulse output signal to record beam break. //PHO: I don't know what this is. This refers to the disconnected red wire on the Arduino Uno.
+
+
 // variables will change:
 int sensorState = 0, lastState=0;         // variable for reading the pushbutton status
-int TTLpin = 13;
 int moveOperationCounter = 0; // This variable keeps track of the total number of "move" operations performed.
 /*
  * There are two types of "move" operations: move-clockwise, move-counterclockwise
@@ -30,7 +34,7 @@ int moveOperationCounter = 0; // This variable keeps track of the total number o
  */
  #define ConsecutiveSameDirectionMovements 5 //Defines the number of times it moves in a single direction before alternating the direction of moment.
  #define PostDispenseTimeout 3000 //The number of milliseconds (1/1000 of a second) after dispensing that the system will wait before allowing input.
-// Was 3000
+// Was 5000
  //#define NumberOfStepperCoilsActivated SINGLE // The number of coils in the stepper motor to activate. DOUBLE provides higher torque.
  #define NumberOfStepperCoilsActivated DOUBLE // The number of coils in the stepper motor to activate. DOUBLE provides higher torque.
 
@@ -43,14 +47,17 @@ void setup() {
   // initialize the LED pin as an output:
   pinMode(LEDPIN, OUTPUT);  
   pinMode(TTLPIN, OUTPUT);  
-  pinMode(TTLPIN2, OUTPUT);  
+  //pinMode(TTLPIN2, OUTPUT);  
   digitalWrite(TTLPIN, LOW);
-  digitalWrite(TTLPIN2, LOW);
+  //digitalWrite(TTLPIN2, LOW);
   // initialize the sensor pin as an input:
   pinMode(SENSORPIN, INPUT);     
   digitalWrite(SENSORPIN, HIGH); // turn on the pullup
   Serial.begin(9600);           // set up Serial library at 9600 bps (for debugging)
   Serial.println("Food Hopper:");
+  if (IS_DIAGNOSTIC_MODE) { //If the system is in diagnostic mode, output a line to the serial terminal indicating this to prevent diagnostic builds being deployed to production hardware.
+    Serial.println("----- DIAGNOSTIC MODE -----");
+  }
   AFMS.begin();  // create with the default frequency 1.6KHz
   //AFMS.begin(1000);  // OR with a different frequency, say 1KHz
   // The setSpeed() function controls the power level delivered to the motor. 
@@ -63,10 +70,10 @@ void loop(){
    * LOW: Sensor Beam is broken
    * HIGH: Sensor Beam has continuity
    */
-  if (sensorState == LOW) {
-    digitalWrite(TTLPIN2, HIGH);
-    delay(40);
-    digitalWrite(TTLPIN2, LOW);
+  if ((sensorState == LOW) || IS_DIAGNOSTIC_MODE) {
+    //digitalWrite(TTLPIN2, HIGH);
+    //delay(40);
+    //digitalWrite(TTLPIN2, LOW);
     digitalWrite(LEDPIN, HIGH); // Turn status LED on
     digitalWrite(TTLPIN, HIGH);    // make motor turn
     if(digitalRead(TTLPIN)==HIGH){
@@ -90,4 +97,4 @@ void loop(){
     digitalWrite(LEDPIN, LOW);  
   }
 }
-  
+ 
