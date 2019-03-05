@@ -14,6 +14,9 @@ Adafruit_MotorShield AFMS = Adafruit_MotorShield();
  * The getStepper(#steps, portNumber) command uses portNumber=2 for M3 or M4.
  */
 #define IS_DIAGNOSTIC_MODE true //IS_DIAGNOSTIC_MODE: if this value is true the system will operate continuously, ignoring the beam break sensor. This serves to allow testing. This value should be false outside of testing.
+char diagnostic_val; // Data received from the serial port
+
+
 Adafruit_StepperMotor *myMotor = AFMS.getStepper(200, 2);
 #define LEDPIN 13 // Pin 13: Arduino has an LED connected on pin 1
 #define SENSORPIN 4 // SENSORPIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
@@ -34,7 +37,7 @@ int moveOperationCounter = 0; // This variable keeps track of the total number o
 
  // The StepperSpeed is not in RPM (contrary to what the previous implementor thought).
  // It's a value The setSpeed() function controls the power level delivered to the motor. The speed parameter is a value between 0 and 255.
- #define StepperSpeed 88 // The speed of the stepper in rpm (default 25, previous 127).
+ #define StepperSpeed 127 // The speed of the stepper in rpm (default 25, previous 127).
 
  
 void setup() {
@@ -101,5 +104,20 @@ void unjamDispenseByTickTock() {
   Serial.println("Moving: UNJAM " + String(moveOperationCounter));
   myMotor->step(25, BACKWARD, NumberOfStepperCoilsActivated); // Changed from SINGLE to DOUBLE for extra torque
   myMotor->step(25, FORWARD, NumberOfStepperCoilsActivated); // Changed from SINGLE to DOUBLE for extra torque
+}
+
+
+void diagnostic_read_command() {
+  if (Serial.available()) 
+   { // If data is available to read,
+     diagnostic_val = Serial.read(); // read it and store it in val
+   }
+   if (diagnostic_val == '1') 
+   { // If 1 was received
+     digitalWrite(LEDPIN, HIGH); // turn the LED on
+   } else {
+      digitalWrite(LEDPIN, LOW); // otherwise turn it off
+   }
+   delay(10); // Wait 10 milliseconds for next reading
 }
  
