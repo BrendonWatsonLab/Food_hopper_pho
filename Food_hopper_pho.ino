@@ -15,8 +15,10 @@ Adafruit_MotorShield AFMS = Adafruit_MotorShield();
  * The getStepper(#steps, portNumber) command uses portNumber=2 for M3 or M4.
  */
 #define IS_DIAGNOSTIC_MODE true //IS_DIAGNOSTIC_MODE: if this value is true the system will operate continuously, ignoring the beam break sensor. This serves to allow testing. This value should be false outside of testing.
+#define SHOULD_USE_INTERACTIVE_DIAGNOSTIC false //SHOULD_USE_INTERACTIVE_DIAGNOSTIC: enables extended diagnostics and testing via the helper Processing software.
 char diagnostic_val; // Data received from the serial port
 #define LEDPIN 13 // Pin 13: Arduino has an LED connected on pin 1
+unsigned long lastDispenseTimer = 0; // This variable keeps track of the last time dispense was performed
 
 /* Feeder 1 config:
  *  A "Feeder" consists of a food hopper containing pellets, a stepper motor to rotate the dispenser, a shoot, and a port. The port contains a beam-break sensor (SENSOR) that when broken dispenses food.
@@ -82,23 +84,38 @@ void loop(){
   if (IS_DUAL_MOTOR_MODE) {
     sensor2State = digitalRead(SENSOR2PIN);
   }
-  /* Check sensor beam state:
-   * LOW: Sensor Beam is broken
-   * HIGH: Sensor Beam has continuity
-   */
-  // Currently DIAGNOSTIC_MODE Only dispenses feeder1
-  if ((sensor1State == LOW) || IS_DIAGNOSTIC_MODE) {
-    //delay(40);
-    dispenseFeeder1();
-  }
-  else if (IS_DUAL_MOTOR_MODE && ((sensor2State == LOW) || IS_DIAGNOSTIC_MODE)) {
-    dispenseFeeder2();
-  }
-  else {
-    // turn status LED off:
-    digitalWrite(LEDPIN, LOW);  
-  }
 
+  // Performs the interfacing with the processing software (running on the computer) while in interactive diagnostic mode
+  if (IS_DIAGNOSTIC_MODE && SHOULD_USE_INTERACTIVE_DIAGNOSTIC) {
+      diagnostic_read_command();
+  }
+  
+
+  // Get the current time in milliseconds
+  unsigned long currentMillis = millis();
+
+  // Check to see if it's possibly time to dispense
+  if (currentMillis - lastDispenseTimer >= PostDispenseTimeout) {
+      /* Check sensor beam state:
+       * LOW: Sensor Beam is broken
+       * HIGH: Sensor Beam has continuity
+       */
+      // Currently DIAGNOSTIC_MODE Only dispenses feeder1
+      if ((sensor1State == LOW) || IS_DIAGNOSTIC_MODE) {
+        //delay(40);
+        dispenseFeeder1();
+      }
+      else if (IS_DUAL_MOTOR_MODE && ((sensor2State == LOW) || IS_DIAGNOSTIC_MODE)) {
+        dispenseFeeder2();
+      }
+      else {
+        // turn status LED off:
+        digitalWrite(LEDPIN, LOW);  
+      }
+
+  }
+  // The status LED is left lit until it's possible to dispense again.
+  
   
 } // end loop
 
@@ -117,6 +134,8 @@ void dispenseFeeder2() {
  * Keeps track of each feeders' moveOperationCounter to perform unjam operations.
  */
 void dispense(int feederNumber) {
+    // save the last time you dispensed a pellet:
+    lastDispenseTimer = millis();
     digitalWrite(LEDPIN, HIGH); // Turn status LED on
     int moveOperationCounter = 0; // This temporary counter is set to the correct counter in the if/else if/statements
     Adafruit_StepperMotor *activeMotor;
@@ -156,7 +175,7 @@ void dispense(int feederNumber) {
       // Should never happen. Would be nice to assert.
       Serial.println("----- FeederNumber Error B! -----");
     }
-    delay(PostDispenseTimeout);
+    //delay(PostDispenseTimeout);
 }
 
 
