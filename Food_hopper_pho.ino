@@ -15,8 +15,11 @@ Adafruit_MotorShield AFMS = Adafruit_MotorShield();
  * The getStepper(#steps, portNumber) command uses portNumber=2 for M3 or M4.
  */
 #define IS_DIAGNOSTIC_MODE true //IS_DIAGNOSTIC_MODE: if this value is true the system will operate continuously, ignoring the beam break sensor. This serves to allow testing. This value should be false outside of testing.
-#define SHOULD_USE_INTERACTIVE_DIAGNOSTIC false //SHOULD_USE_INTERACTIVE_DIAGNOSTIC: enables extended diagnostics and testing via the helper Processing software.
+#define SHOULD_USE_INTERACTIVE_DIAGNOSTIC true //SHOULD_USE_INTERACTIVE_DIAGNOSTIC: enables extended diagnostics and testing via the helper Processing software.
 char diagnostic_val; // Data received from the serial port
+unsigned long lastDiagnosticSerialReadTimer = 0; // This variable keeps track of the last time diagnostic serial read was performed
+#define INTERACTIVE_DIAGNOSTIC_SERIAL_READ_TIMEOUT 10 //INTERACTIVE_DIAGNOSTIC_SERIAL_READ_TIMEOUT: the minimum time between serial reads for interactive diagnostics
+
 #define LEDPIN 13 // Pin 13: Arduino has an LED connected on pin 1
 unsigned long lastDispenseTimer = 0; // This variable keeps track of the last time dispense was performed
 
@@ -32,11 +35,12 @@ int moveOperationCounter1 = 0; // This variable keeps track of the total number 
 /* Feeder 2 config:
  *  
  */
-#define IS_DUAL_MOTOR_MODE true // IS_DUAL_MOTOR_MODE: if true, we use both motors. Otherwise we only use the motor connected to M3 & M4
+#define IS_DUAL_MOTOR_MODE false // IS_DUAL_MOTOR_MODE: if true, we use both motors. Otherwise we only use the motor connected to M3 & M4
 Adafruit_StepperMotor *motor2 = AFMS.getStepper(200, 1); // The motor connected to M1 & M2
 #define SENSOR2PIN 6 // SENSOR2PIN: This pin is connected by a green wire to the second beam-break sensor's "SIG" pin.
 int sensor2State = 0;         // variable for reading the beam-break sensor2 status
 int moveOperationCounter2 = 0; // This variable keeps track of the total number of "move" operations performed.
+
 
 /*
  * There are two types of "move" operations: move-clockwise, move-counterclockwise
@@ -84,37 +88,44 @@ void loop(){
   if (IS_DUAL_MOTOR_MODE) {
     sensor2State = digitalRead(SENSOR2PIN);
   }
-
-  // Performs the interfacing with the processing software (running on the computer) while in interactive diagnostic mode
-  if (IS_DIAGNOSTIC_MODE && SHOULD_USE_INTERACTIVE_DIAGNOSTIC) {
-      diagnostic_read_command();
-  }
   
-
   // Get the current time in milliseconds
   unsigned long currentMillis = millis();
 
-  // Check to see if it's possibly time to dispense
-  if (currentMillis - lastDispenseTimer >= PostDispenseTimeout) {
-      /* Check sensor beam state:
-       * LOW: Sensor Beam is broken
-       * HIGH: Sensor Beam has continuity
-       */
-      // Currently DIAGNOSTIC_MODE Only dispenses feeder1
-      if ((sensor1State == LOW) || IS_DIAGNOSTIC_MODE) {
-        //delay(40);
-        dispenseFeeder1();
-      }
-      else if (IS_DUAL_MOTOR_MODE && ((sensor2State == LOW) || IS_DIAGNOSTIC_MODE)) {
-        dispenseFeeder2();
-      }
-      else {
-        // turn status LED off:
-        digitalWrite(LEDPIN, LOW);  
-      }
-
+  // Performs the interfacing with the processing software (running on the computer) while in interactive diagnostic mode
+  if (IS_DIAGNOSTIC_MODE && SHOULD_USE_INTERACTIVE_DIAGNOSTIC) {
+    if (currentMillis - lastDiagnosticSerialReadTimer >= INTERACTIVE_DIAGNOSTIC_SERIAL_READ_TIMEOUT) {
+      diagnostic_read_command();
+      lastDiagnosticSerialReadTimer = currentMillis;
+    }
   }
-  // The status LED is left lit until it's possible to dispense again.
+  else {
+    // We don't dispense unless not in interactive diagnostic mode 
+    // Check to see if it's possibly time to dispense
+    if (currentMillis - lastDispenseTimer >= PostDispenseTimeout) {
+        /* Check sensor beam state:
+         * LOW: Sensor Beam is broken
+         * HIGH: Sensor Beam has continuity
+         */
+        // Currently DIAGNOSTIC_MODE Only dispenses feeder1
+        if ((sensor1State == LOW) || IS_DIAGNOSTIC_MODE) {
+          //delay(40);
+          dispenseFeeder1();
+        }
+        else if (IS_DUAL_MOTOR_MODE && ((sensor2State == LOW) || IS_DIAGNOSTIC_MODE)) {
+          dispenseFeeder2();
+        }
+        else {
+          // turn status LED off:
+          digitalWrite(LEDPIN, LOW);  
+        }
+  
+    }
+    // The status LED is left lit until it's possible to dispense again.
+    
+  } // end interactive diagnostic if
+
+  
   
   
 } // end loop
@@ -203,16 +214,58 @@ void unjamDispenseByTickTock(Adafruit_StepperMotor *activeMotor) {
 
 
 void diagnostic_read_command() {
-  if (Serial.available()) 
-   { // If data is available to read,
-     diagnostic_val = Serial.read(); // read it and store it in val
-   }
-   if (diagnostic_val == '1') 
-   { // If 1 was received
-     digitalWrite(LEDPIN, HIGH); // turn the LED on
-   } else {
-      digitalWrite(LEDPIN, LOW); // otherwise turn it off
-   }
-   delay(10); // Wait 10 milliseconds for next reading
+    if (Serial.available()) { // If data is available to read,
+       diagnostic_val = Serial.read(); // read it and store it in val
+      // Check the character recieved
+      if (diagnostic_val == '0') {
+        Serial.println("diagnostic_val: 0");
+      }
+      else if (diagnostic_val == '1') {
+        Serial.println("diagnostic_val: 1");
+        clockwiseDispense(motor1);
+      }
+      else if (diagnostic_val == '2') {
+        Serial.println("diagnostic_val: 2");
+        unjamDispenseBySimpleReverse(motor1);
+      }
+      else if (diagnostic_val == '3') {
+        Serial.println("diagnostic_val: 3");
+        unjamDispenseByTickTock(motor1);
+      }
+      else if (diagnostic_val == '4') {
+        Serial.println("diagnostic_val: 4");
+      }
+      else if (diagnostic_val == '5') {
+        Serial.println("diagnostic_val: 5");
+      }
+      else if (diagnostic_val == '6') {
+        Serial.println("diagnostic_val: 6");
+      }
+      else if (diagnostic_val == 'A') {
+        Serial.println("diagnostic_val: A");
+        clockwiseDispense(motor2);
+      }
+      else if (diagnostic_val == 'B') {
+        Serial.println("diagnostic_val: B");
+        unjamDispenseBySimpleReverse(motor2);
+      }
+      else if (diagnostic_val == 'C') {
+        Serial.println("diagnostic_val: C");
+        unjamDispenseByTickTock(motor2);
+      }
+      else if (diagnostic_val == 'D') {
+        Serial.println("diagnostic_val: D");
+      }
+      else if (diagnostic_val == 'E') {
+        Serial.println("diagnostic_val: E");
+      }
+      else if (diagnostic_val == 'F') {
+        Serial.println("diagnostic_val: F");
+      }
+      else {
+        Serial.println("Unknown diagnostic_val");
+      } // end cases
+    }
+    //delay(10); // Wait 10 milliseconds for next reading
 }
  
