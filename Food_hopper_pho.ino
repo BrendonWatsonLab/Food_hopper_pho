@@ -65,7 +65,7 @@ void setup() {
   pinMode(SENSOR1PIN, INPUT);     
   digitalWrite(SENSOR1PIN, HIGH); // turn on the pullup
   
-  Serial.begin(9600); // set up Serial library at 9600 bps (for debugging)
+  Serial.begin(19200); // set up Serial library at 9600 bps (for debugging)
   Serial.println("Food Hopper:");
   if (IS_DIAGNOSTIC_MODE) { //If the system is in diagnostic mode, output a line to the serial terminal indicating this to prevent diagnostic builds being deployed to production hardware.
     Serial.println("----- DIAGNOSTIC MODE -----");
@@ -186,7 +186,6 @@ void dispense(int feederNumber) {
       // Should never happen. Would be nice to assert.
       Serial.println("----- FeederNumber Error B! -----");
     }
-    //delay(PostDispenseTimeout);
 }
 
 
@@ -234,6 +233,7 @@ void diagnostic_read_command() {
       }
       else if (diagnostic_val == '4') {
         Serial.println("diagnostic_val: 4");
+        dispenseFeeder1();
       }
       else if (diagnostic_val == '5') {
         Serial.println("diagnostic_val: 5");
@@ -255,6 +255,7 @@ void diagnostic_read_command() {
       }
       else if (diagnostic_val == 'D') {
         Serial.println("diagnostic_val: D");
+        dispenseFeeder2();
       }
       else if (diagnostic_val == 'E') {
         Serial.println("diagnostic_val: E");
