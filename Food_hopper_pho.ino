@@ -98,6 +98,7 @@ void loop(){
       diagnostic_read_command();
       lastDiagnosticSerialReadTimer = currentMillis;
     }
+    diagnostic_send_info();
   }
   else {
     // We don't dispense unless not in interactive diagnostic mode 
@@ -268,5 +269,23 @@ void diagnostic_read_command() {
       } // end cases
     }
     //delay(10); // Wait 10 milliseconds for next reading
+}
+
+void diagnostic_send_info() {
+  Serial.print("INFO://");
+  Serial.print("sensor1State//");
+  Serial.println(sensor1State);
+
+  Serial.print("INFO://");
+  Serial.print("moveOperationCounter1//");
+  Serial.println(moveOperationCounter1);
+
+  Serial.print("INFO://");
+  Serial.print("sensor2State//");
+  Serial.println(sensor2State);
+
+  Serial.print("INFO://");
+  Serial.print("moveOperationCounter2//");
+  Serial.println(moveOperationCounter2);
 }
  
