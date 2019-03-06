@@ -1,6 +1,7 @@
 /* 
 Burgess Lab IR beam (photointerrupter) motor food dispense
 Written by Robert Zhang July 31st 2018
+Modifed by Pho Hale 3/6/2019
 */
 #include <Wire.h>
 #include <Adafruit_MotorShield.h>
@@ -64,7 +65,6 @@ void setup() {
     Serial.println("----- DIAGNOSTIC MODE -----");
   }
   AFMS.begin();  // create with the default frequency 1.6KHz
-  //AFMS.begin(1000);  // OR with a different frequency, say 1KHz
   // The setSpeed() function controls the power level delivered to the motor. 
   motor1->setSpeed(StepperSpeed); //The speed parameter is a value between 0 and 255.
   // Set up the second feeder if needed
@@ -118,7 +118,7 @@ void dispenseFeeder2() {
  */
 void dispense(int feederNumber) {
     digitalWrite(LEDPIN, HIGH); // Turn status LED on
-    int moveOperationCounter = 0;
+    int moveOperationCounter = 0; // This temporary counter is set to the correct counter in the if/else if/statements
     Adafruit_StepperMotor *activeMotor;
     // Gets the correct moveOperationCounter value and motor pointer for the specified feederNumber
     if (feederNumber == 1) {
@@ -131,6 +131,7 @@ void dispense(int feederNumber) {
     }
     else {
       // Should never happen. Would be nice to assert.
+      Serial.println("----- FeederNumber Error A! -----");
     }
     
     // The "%" operation is "modulus". The statement checks whether the moveOperationCounter is evenly divisible by ConsecutiveSameDirectionMovements. If it is, it performs the first case, otherwise the second.
@@ -153,6 +154,7 @@ void dispense(int feederNumber) {
     }
     else {
       // Should never happen. Would be nice to assert.
+      Serial.println("----- FeederNumber Error B! -----");
     }
     delay(PostDispenseTimeout);
 }
