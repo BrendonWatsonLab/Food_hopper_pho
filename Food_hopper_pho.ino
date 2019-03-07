@@ -29,16 +29,16 @@ unsigned long lastDispenseTimer = 0; // This variable keeps track of the last ti
  */
 Adafruit_StepperMotor *motor1 = AFMS.getStepper(200, 2); // The motor connected to M3 & M4
 #define SENSOR1PIN 4 // SENSOR1PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
-int sensor1State = 0;         // variable for reading the beam-break sensor1 status
+int sensor1State = HIGH;         // variable for reading the beam-break sensor1 status
 int moveOperationCounter1 = 0; // This variable keeps track of the total number of "move" operations performed.
 
 /* Feeder 2 config:
  *  
  */
-#define IS_DUAL_MOTOR_MODE false // IS_DUAL_MOTOR_MODE: if true, we use both motors. Otherwise we only use the motor connected to M3 & M4
+#define IS_DUAL_MOTOR_MODE true // IS_DUAL_MOTOR_MODE: if true, we use both motors. Otherwise we only use the motor connected to M3 & M4
 Adafruit_StepperMotor *motor2 = AFMS.getStepper(200, 1); // The motor connected to M1 & M2
-#define SENSOR2PIN 6 // SENSOR2PIN: This pin is connected by a green wire to the second beam-break sensor's "SIG" pin.
-int sensor2State = 0;         // variable for reading the beam-break sensor2 status
+#define SENSOR2PIN 7 // SENSOR2PIN: This pin is connected by a green wire to the second beam-break sensor's "SIG" pin.
+int sensor2State = HIGH;         // variable for reading the beam-break sensor2 status
 int moveOperationCounter2 = 0; // This variable keeps track of the total number of "move" operations performed.
 
 
@@ -65,7 +65,7 @@ void setup() {
   pinMode(SENSOR1PIN, INPUT);     
   digitalWrite(SENSOR1PIN, HIGH); // turn on the pullup
   
-  Serial.begin(19200); // set up Serial library at 9600 bps (for debugging)
+  Serial.begin(9600); // set up Serial library at 9600 bps (for debugging)
   Serial.println("Food Hopper:");
   if (IS_DIAGNOSTIC_MODE) { //If the system is in diagnostic mode, output a line to the serial terminal indicating this to prevent diagnostic builds being deployed to production hardware.
     Serial.println("----- DIAGNOSTIC MODE -----");
