@@ -5,6 +5,7 @@ Modifed by Pho Hale 3/6/2019
 */
 #include <Wire.h>
 #include <Adafruit_MotorShield.h>
+#include "Water_Dispenser.h";
 Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 /*
  * The stepper motor is a SY35ST28-0504A
@@ -40,6 +41,10 @@ Adafruit_StepperMotor *motor2 = AFMS.getStepper(200, 1); // The motor connected 
 #define SENSOR2PIN 7 // SENSOR2PIN: This pin is connected by a green wire to the second beam-break sensor's "SIG" pin.
 int sensor2State = HIGH;         // variable for reading the beam-break sensor2 status
 int moveOperationCounter2 = 0; // This variable keeps track of the total number of "move" operations performed.
+
+
+
+
 
 
 /*
@@ -80,6 +85,8 @@ void setup() {
      digitalWrite(SENSOR2PIN, HIGH); // turn on the pullup
      motor2->setSpeed(StepperSpeed); //The speed parameter is a value between 0 and 255.
   }
+
+  setupWaterDispensers();
 }
 
 void loop(){
@@ -88,6 +95,9 @@ void loop(){
   if (IS_DUAL_MOTOR_MODE) {
     sensor2State = digitalRead(SENSOR2PIN);
   }
+  // Read the water sensors
+  sensor3State = digitalRead(SENSOR3PIN);
+  sensor4State = digitalRead(SENSOR4PIN);
   
   // Get the current time in milliseconds
   unsigned long currentMillis = millis();
@@ -272,6 +282,7 @@ void diagnostic_read_command() {
 }
 
 void diagnostic_send_info() {
+  // Food Sensors
   Serial.print("INFO://");
   Serial.print("sensor1State//");
   Serial.println(sensor1State);
@@ -287,5 +298,22 @@ void diagnostic_send_info() {
   Serial.print("INFO://");
   Serial.print("moveOperationCounter2//");
   Serial.println(moveOperationCounter2);
+  
+  // Water Sensors:
+  Serial.print("INFO://");
+  Serial.print("sensor3State//");
+  Serial.println(sensor3State);
+
+  Serial.print("INFO://");
+  Serial.print("moveOperationCounter3//");
+  Serial.println(moveOperationCounter3);
+
+  Serial.print("INFO://");
+  Serial.print("sensor4State//");
+  Serial.println(sensor4State);
+
+  Serial.print("INFO://");
+  Serial.print("moveOperationCounter4//");
+  Serial.println(moveOperationCounter4);
 }
  
