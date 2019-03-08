@@ -4,7 +4,7 @@
 #define SENSOR3PIN 3 // SENSOR1PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
 int sensor3State = HIGH;         // variable for reading the beam-break sensor3 status
 int moveOperationCounter3 = 0; // This variable keeps track of the total number of "move" operations performed.
-
+#define SOLENOID1PIN 11
 
 /* Water 2 config:
  *  
@@ -12,9 +12,10 @@ int moveOperationCounter3 = 0; // This variable keeps track of the total number 
 #define SENSOR4PIN 6 // SENSOR1PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
 int sensor4State = HIGH;         // variable for reading the beam-break sensor4 status
 int moveOperationCounter4 = 0; // This variable keeps track of the total number of "move" operations performed.
+#define SOLENOID2PIN 12
 
 
-
+// Called from setup()
 void setupWaterDispensers() {
   // initialize the sensor pins as an input:
   pinMode(SENSOR3PIN, INPUT);     
