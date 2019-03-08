@@ -4,6 +4,13 @@ enum SolenoidState {
   CLOSED
 };
 
+#if DEPLOY_ARDUINO_IS_UNO
+  // Arduino is Arduino UNO:
+  #define numSolenoidPins 1
+#else
+  // Arduino is "Adafruit pro trinket SV p2000"
+  #define numSolenoidPins 3
+#endif
 
 /* Water 1 config:
     A "Water" consists of a solenoid that controls the flow of water from the resevour to the port. The port contains a beam-break sensor (SENSOR) that when broken dispenses a drop of water.
@@ -16,6 +23,8 @@ enum SolenoidState {
   // Arduino is "Adafruit pro trinket SV p2000"
   #define SENSOR3PIN 4 // SENSOR1PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
   #define SOLENOID1PIN 10
+  #define SOLENOID1PIN1 11
+  #define SOLENOID1PIN2 12
   // Will use 3 pins, (10, 11, 12)
 #endif
 int sensor3State = HIGH;         // variable for reading the beam-break sensor3 status
@@ -34,6 +43,8 @@ SolenoidState solenoid1State = CLOSED;         // reflects the open/closed state
   // Arduino is "Adafruit pro trinket SV p2000"
   #define SENSOR4PIN 4 // SENSOR1PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
   #define SOLENOID2PIN 6
+  #define SOLENOID2PIN1 7
+  #define SOLENOID2PIN2 8
   // Will use 3 pins, (6, 7, 8)
 #endif
 int sensor4State = HIGH;         // variable for reading the beam-break sensor4 status
@@ -112,19 +123,45 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
 }
 
 void closeSolenoid(int waterPortNumber) {
-  int activeSolenoidPin = 0; // This temporary port variable is set to the correct SOLENOIDPIN in the if/else if/statements
+  #if DEPLOY_ARDUINO_IS_UNO
+    // Arduino is Arduino UNO:
+    int activeSolenoidPins[numSolenoidPins] = {0}; // This temporary port variable is set to the correct SOLENOIDPIN in the if/else if/statements
+  #else
+    // Arduino is "Adafruit pro trinket SV p2000"
+    int activeSolenoidPins[numSolenoidPins] = {0, 0, 0}; // This temporary port variable is set to the correct SOLENOIDPIN in the if/else if/statements
+  #endif
+
   if (waterPortNumber == 1) {
-    activeSolenoidPin = SOLENOID1PIN;
+    #if DEPLOY_ARDUINO_IS_UNO
+      // Arduino is Arduino UNO:
+      activeSolenoidPins[0] = SOLENOID1PIN;
+    #else
+      // Arduino is "Adafruit pro trinket SV p2000"
+      activeSolenoidPins[0] = SOLENOID1PIN;
+      activeSolenoidPins[1] = SOLENOID1PIN1;
+      activeSolenoidPins[2] = SOLENOID1PIN2;
+    #endif
   }
   else if (waterPortNumber == 2) {
-    activeSolenoidPin = SOLENOID2PIN;
+    #if DEPLOY_ARDUINO_IS_UNO
+      // Arduino is Arduino UNO:
+      activeSolenoidPins[0] = SOLENOID2PIN;
+    #else
+      // Arduino is "Adafruit pro trinket SV p2000"
+      activeSolenoidPins[0] = SOLENOID2PIN;
+      activeSolenoidPins[1] = SOLENOID2PIN1;
+      activeSolenoidPins[2] = SOLENOID2PIN2;
+    #endif
   }
   else {
     // Should never happen. Would be nice to assert.
     Serial.println("----- waterPortNumber Error A! -----");
   }
   // Actually close the solenoid and save the time it was closed
-  digitalWrite(activeSolenoidPin, LOW);
+  // Loop through the activeSolenoidPins and close them all
+  for (int i = 0; i < numSolenoidPins; i = i + 1) {
+    digitalWrite(activeSolenoidPins[i], LOW);
+  }
   lastSolenoidCloseTimer = millis();
   
   if (waterPortNumber == 1) {
@@ -145,20 +182,47 @@ void closeSolenoid(int waterPortNumber) {
   }
 }
 
+
 void openSolenoid(int waterPortNumber) {
-  int activeSolenoidPin = 0; // This temporary port variable is set to the correct SOLENOIDPIN in the if/else if/statements
+  #if DEPLOY_ARDUINO_IS_UNO
+    // Arduino is Arduino UNO:
+    int activeSolenoidPins[numSolenoidPins] = {0}; // This temporary port variable is set to the correct SOLENOIDPIN in the if/else if/statements
+  #else
+    // Arduino is "Adafruit pro trinket SV p2000"
+    int activeSolenoidPins[numSolenoidPins] = {0, 0, 0}; // This temporary port variable is set to the correct SOLENOIDPIN in the if/else if/statements
+  #endif
   if (waterPortNumber == 1) {
-    activeSolenoidPin = SOLENOID1PIN;
+    #if DEPLOY_ARDUINO_IS_UNO
+      // Arduino is Arduino UNO:
+      activeSolenoidPins[0] = SOLENOID1PIN;
+    #else
+      // Arduino is "Adafruit pro trinket SV p2000"
+      activeSolenoidPins[0] = SOLENOID1PIN;
+      activeSolenoidPins[1] = SOLENOID1PIN1;
+      activeSolenoidPins[2] = SOLENOID1PIN2;
+    #endif
     solenoid1State = OPEN; // update the state to closed before actually closing it (just to avoid another if/elseif/else block)
   }
   else if (waterPortNumber == 2) {
-    activeSolenoidPin = SOLENOID2PIN;
+    #if DEPLOY_ARDUINO_IS_UNO
+      // Arduino is Arduino UNO:
+      activeSolenoidPins[0] = SOLENOID2PIN;
+    #else
+      // Arduino is "Adafruit pro trinket SV p2000"
+      activeSolenoidPins[0] = SOLENOID2PIN;
+      activeSolenoidPins[1] = SOLENOID2PIN1;
+      activeSolenoidPins[2] = SOLENOID2PIN2;
+    #endif
     solenoid2State = OPEN; // update the state to closed before actually closing it (just to avoid another if/elseif/else block)
   }
   else {
     // Should never happen. Would be nice to assert.
     Serial.println("----- waterPortNumber Error A! -----");
   }
-  digitalWrite(activeSolenoidPin, HIGH);
+  // Actually close the solenoid and save the time it was closed
+  // Loop through the activeSolenoidPins and close them all
+  for (int i = 0; i < numSolenoidPins; i = i + 1) {
+    digitalWrite(activeSolenoidPins[i], HIGH);
+  }
   lastSolenoidOpenTimer = millis();
 }
