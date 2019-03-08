@@ -37,19 +37,27 @@ void diagnostic_read_command() {
     }
     else if (diagnostic_val == '1') {
       Serial.println("diagnostic_val: 1");
+#if ENABLE_FOOD_DISPENSE
       clockwiseDispense(motor1);
+#endif
     }
     else if (diagnostic_val == '2') {
       Serial.println("diagnostic_val: 2");
+#if ENABLE_FOOD_DISPENSE
       unjamDispenseBySimpleReverse(motor1);
+#endif
     }
     else if (diagnostic_val == '3') {
       Serial.println("diagnostic_val: 3");
+#if ENABLE_FOOD_DISPENSE
       unjamDispenseByTickTock(motor1);
+#endif
     }
     else if (diagnostic_val == '4') {
       Serial.println("diagnostic_val: 4");
+#if ENABLE_FOOD_DISPENSE
       dispenseFeeder1();
+#endif
     }
     else if (diagnostic_val == '5') {
       Serial.println("diagnostic_val: 5");
@@ -59,19 +67,27 @@ void diagnostic_read_command() {
     }
     else if (diagnostic_val == 'A') {
       Serial.println("diagnostic_val: A");
+#if ENABLE_FOOD_DISPENSE
       clockwiseDispense(motor2);
+#endif
     }
     else if (diagnostic_val == 'B') {
       Serial.println("diagnostic_val: B");
+#if ENABLE_FOOD_DISPENSE
       unjamDispenseBySimpleReverse(motor2);
+#endif
     }
     else if (diagnostic_val == 'C') {
       Serial.println("diagnostic_val: C");
+#if ENABLE_FOOD_DISPENSE
       unjamDispenseByTickTock(motor2);
+#endif
     }
     else if (diagnostic_val == 'D') {
       Serial.println("diagnostic_val: D");
+#if ENABLE_FOOD_DISPENSE
       dispenseFeeder2();
+#endif
     }
     else if (diagnostic_val == 'E') {
       Serial.println("diagnostic_val: E");
@@ -90,41 +106,41 @@ void diagnostic_read_command() {
 // Called to send stats/info over serial to the Processing sketch running on a computer connected to the Arduino via USB.
 void diagnostic_send_info() {
   // Food Sensors
-  #if ENABLE_FOOD_DISPENSE
-    Serial.print("INFO://");
-    Serial.print("sensor1State//");
-    Serial.println(sensor1State);
+#if ENABLE_FOOD_DISPENSE
+  Serial.print("INFO://");
+  Serial.print("sensor1State//");
+  Serial.println(sensor1State);
 
-    Serial.print("INFO://");
-    Serial.print("moveOperationCounter1//");
-    Serial.println(moveOperationCounter1);
+  Serial.print("INFO://");
+  Serial.print("moveOperationCounter1//");
+  Serial.println(moveOperationCounter1);
 
-    Serial.print("INFO://");
-    Serial.print("sensor2State//");
-    Serial.println(sensor2State);
+  Serial.print("INFO://");
+  Serial.print("sensor2State//");
+  Serial.println(sensor2State);
 
-    Serial.print("INFO://");
-    Serial.print("moveOperationCounter2//");
-    Serial.println(moveOperationCounter2);
-  #endif
+  Serial.print("INFO://");
+  Serial.print("moveOperationCounter2//");
+  Serial.println(moveOperationCounter2);
+#endif
 
   // Water Sensors:
-  #if ENABLE_WATER_DISPENSE
-    Serial.print("INFO://");
-    Serial.print("sensor3State//");
-    Serial.println(sensor3State);
+#if ENABLE_WATER_DISPENSE
+  Serial.print("INFO://");
+  Serial.print("sensor3State//");
+  Serial.println(sensor3State);
 
-    Serial.print("INFO://");
-    Serial.print("moveOperationCounter3//");
-    Serial.println(moveOperationCounter3);
+  Serial.print("INFO://");
+  Serial.print("moveOperationCounter3//");
+  Serial.println(moveOperationCounter3);
 
-    Serial.print("INFO://");
-    Serial.print("sensor4State//");
-    Serial.println(sensor4State);
+  Serial.print("INFO://");
+  Serial.print("sensor4State//");
+  Serial.println(sensor4State);
 
-    Serial.print("INFO://");
-    Serial.print("moveOperationCounter4//");
-    Serial.println(moveOperationCounter4);
-  #endif
+  Serial.print("INFO://");
+  Serial.print("moveOperationCounter4//");
+  Serial.println(moveOperationCounter4);
+#endif
 
 }

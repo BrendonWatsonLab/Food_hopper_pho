@@ -5,6 +5,8 @@
   Modifed by Pho Hale 3/6/2019
 */
 #include <Wire.h>
+#include <Adafruit_MotorShield.h>
+Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 #include "Common.h";
 #if ENABLE_FOOD_DISPENSE
   #include "Food_Dispenser.h"; //Depends on Common.h

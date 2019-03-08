@@ -54,14 +54,16 @@ SolenoidState solenoid2State = CLOSED;         // reflects the open/closed state
 
 /*
    After a beam-break, the solenoid opens for SolenoidOpenDuration to allow water to be dispensed.
-   Following SolenoidOpenDuration, the solenoid is closed (stopping the flow of water) and event
+   Following SolenoidOpenDuration, the solenoid is closed (stopping the flow of water) for at least SolenoidPostDoseClosedDuration before re-opening
 */
 
 #define SolenoidDoseOpenDuration 100
-// The
+#define SolenoidPostDoseClosedDuration 100
 unsigned long lastSolenoidOpenTimer = 0; // This variable keeps track of the last time the Solenoid "open" operation was performed
 unsigned long lastSolenoidCloseTimer = 0; // This variable keeps track of the last time the Solenoid "close" operation was performed
 
+
+#define DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER true //DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER: if this value is true the system will operate continuously, ignoring the beam break sensor. This serves to allow testing. This value should be false outside of testing.
 // Function Prototypes:
 void setupWaterDispensers();
 void loopWaterDispensers(unsigned long currentLoopMillis);
