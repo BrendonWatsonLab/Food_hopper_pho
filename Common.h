@@ -1,10 +1,22 @@
 // Common.h: contains resources/definitions/functions shared by multiple components
 
-// ensure this file description is only included once
+// ensures this file description is only included once
 #ifndef Common_h
 #define Common_h
 
-#define LEDPIN 13 // Pin 13: Arduino has an LED connected on pin 1
+#define DEPLOY_ARDUINO_IS_UNO true //DEPLOY_ARDUINO_IS_UNO: true if sketch will be running on Arduino Uno. Else assumed to be "Adafruit pro trinket SV p2000"
+
+#if DEPLOY_ARDUINO_IS_UNO
+  // Arduino is Arduino UNO:
+  #define LEDPIN 13 // Pin 13: Arduino has an LED connected on pin 1
+
+#else
+ // Arduino is "Adafruit pro trinket SV p2000"
+  #define LEDPIN 13 // Pin 13: Arduino has an LED connected on pin 1 
+  
+#endif
+
+
 
 #define IS_DIAGNOSTIC_MODE true //IS_DIAGNOSTIC_MODE: if this value is false, all diagnostic settings will be ignored. This value should be false outside of testing.
 
