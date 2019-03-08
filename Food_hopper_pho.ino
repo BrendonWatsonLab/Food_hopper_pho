@@ -6,8 +6,13 @@
 */
 #include <Wire.h>
 #include "Common.h";
-#include "Food_Dispenser.h"; //Depends on Common.h
-#include "Water_Dispenser.h";
+#if ENABLE_FOOD_DISPENSE
+  #include "Food_Dispenser.h"; //Depends on Common.h
+#endif
+#if ENABLE_WATER_DISPENSE
+  #include "Water_Dispenser.h";
+#endif
+
 #include "Diagnostics.h";
 
 
@@ -21,30 +26,29 @@ void setup() {
     Serial.println("----- DIAGNOSTIC MODE -----");
   }
 
-  if (ENABLE_FOOD_DISPENSE) {
+  #if ENABLE_FOOD_DISPENSE
     setupFoodDispensers();
-  }
-  if (ENABLE_WATER_DISPENSE) {
+  #endif
+  #if ENABLE_WATER_DISPENSE
     setupWaterDispensers();
-  }
+  #endif
 
 
 }
 
 void loop() {
   // read the state of the IR break beam sensors:
-  if (ENABLE_FOOD_DISPENSE) {
+  #if ENABLE_FOOD_DISPENSE
     sensor1State = digitalRead(SENSOR1PIN);
     if (IS_DUAL_MOTOR_MODE) {
       sensor2State = digitalRead(SENSOR2PIN);
     }
-  }
-  if (ENABLE_WATER_DISPENSE) {
+  #endif
+  #if ENABLE_WATER_DISPENSE
     // Read the water sensors
     sensor3State = digitalRead(SENSOR3PIN);
     sensor4State = digitalRead(SENSOR4PIN);
-
-  }
+  #endif
 
   // Get the current time in milliseconds
   unsigned long currentLoopMillis = millis();
@@ -55,12 +59,12 @@ void loop() {
   }
   else {
     // We don't dispense unless not in interactive diagnostic mode
-    if (ENABLE_FOOD_DISPENSE) {
+    #if ENABLE_FOOD_DISPENSE
       loopFoodDispensers(currentLoopMillis);
-    }
-    if (ENABLE_WATER_DISPENSE) {
+    #endif
+    #if ENABLE_WATER_DISPENSE
       loopWaterDispensers(currentLoopMillis);
-    }
+    #endif
 
   } // end interactive diagnostic if
 

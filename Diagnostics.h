@@ -90,7 +90,7 @@ void diagnostic_read_command() {
 // Called to send stats/info over serial to the Processing sketch running on a computer connected to the Arduino via USB.
 void diagnostic_send_info() {
   // Food Sensors
-  if (ENABLE_FOOD_DISPENSE) {
+  #if ENABLE_FOOD_DISPENSE
     Serial.print("INFO://");
     Serial.print("sensor1State//");
     Serial.println(sensor1State);
@@ -106,10 +106,10 @@ void diagnostic_send_info() {
     Serial.print("INFO://");
     Serial.print("moveOperationCounter2//");
     Serial.println(moveOperationCounter2);
-  }
+  #endif
 
   // Water Sensors:
-  if (ENABLE_WATER_DISPENSE) {
+  #if ENABLE_WATER_DISPENSE
     Serial.print("INFO://");
     Serial.print("sensor3State//");
     Serial.println(sensor3State);
@@ -125,6 +125,6 @@ void diagnostic_send_info() {
     Serial.print("INFO://");
     Serial.print("moveOperationCounter4//");
     Serial.println(moveOperationCounter4);
-  }
+  #endif
 
 }
