@@ -1,8 +1,8 @@
-/* 
-Behavior Box: the sketch name (Food_hopper_pho) results from the fact that it has been generalized from a food-only dispenser.
-Currently allows two food and two water ports.
-Written by Robert Zhang July 31st 2018
-Modifed by Pho Hale 3/6/2019
+/*
+  Behavior Box: the sketch name (Food_hopper_pho) results from the fact that it has been generalized from a food-only dispenser.
+  Currently allows two food and two water ports.
+  Written by Robert Zhang July 31st 2018
+  Modifed by Pho Hale 3/6/2019
 */
 #include <Wire.h>
 #include "Common.h";
@@ -21,20 +21,31 @@ void setup() {
     Serial.println("----- DIAGNOSTIC MODE -----");
   }
 
-  setupFoodDispensers();
-  setupWaterDispensers();
+  if (ENABLE_FOOD_DISPENSE) {
+    setupFoodDispensers();
+  }
+  if (ENABLE_WATER_DISPENSE) {
+    setupWaterDispensers();
+  }
+
+
 }
 
-void loop(){
-  // read the state of the IR break beam sensor:
-  sensor1State = digitalRead(SENSOR1PIN);
-  if (IS_DUAL_MOTOR_MODE) {
-    sensor2State = digitalRead(SENSOR2PIN);
+void loop() {
+  // read the state of the IR break beam sensors:
+  if (ENABLE_FOOD_DISPENSE) {
+    sensor1State = digitalRead(SENSOR1PIN);
+    if (IS_DUAL_MOTOR_MODE) {
+      sensor2State = digitalRead(SENSOR2PIN);
+    }
   }
-  // Read the water sensors
-  sensor3State = digitalRead(SENSOR3PIN);
-  sensor4State = digitalRead(SENSOR4PIN);
-  
+  if (ENABLE_WATER_DISPENSE) {
+    // Read the water sensors
+    sensor3State = digitalRead(SENSOR3PIN);
+    sensor4State = digitalRead(SENSOR4PIN);
+
+  }
+
   // Get the current time in milliseconds
   unsigned long currentLoopMillis = millis();
 
@@ -43,9 +54,14 @@ void loop(){
     loopDiagnostics(currentLoopMillis);
   }
   else {
-    // We don't dispense unless not in interactive diagnostic mode 
-    loopFoodDispensers(currentLoopMillis);
-    
+    // We don't dispense unless not in interactive diagnostic mode
+    if (ENABLE_FOOD_DISPENSE) {
+      loopFoodDispensers(currentLoopMillis);
+    }
+    if (ENABLE_WATER_DISPENSE) {
+      loopWaterDispensers(currentLoopMillis);
+    }
+
   } // end interactive diagnostic if
 
 } // end loop

@@ -8,19 +8,37 @@ enum SolenoidState {
 /* Water 1 config:
     A "Water" consists of a solenoid that controls the flow of water from the resevour to the port. The port contains a beam-break sensor (SENSOR) that when broken dispenses a drop of water.
 */
-#define SENSOR3PIN 3 // SENSOR1PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
+#if DEPLOY_ARDUINO_IS_UNO
+  // Arduino is Arduino UNO:
+  #define SENSOR3PIN 3 // SENSOR1PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
+  #define SOLENOID1PIN 11
+#else
+  // Arduino is "Adafruit pro trinket SV p2000"
+  #define SENSOR3PIN 4 // SENSOR1PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
+  #define SOLENOID1PIN 10
+  // Will use 3 pins, (10, 11, 12)
+#endif
 int sensor3State = HIGH;         // variable for reading the beam-break sensor3 status
 int moveOperationCounter3 = 0; // This variable keeps track of the total number of "move" operations performed.
-#define SOLENOID1PIN 11
+
 SolenoidState solenoid1State = CLOSED;         // reflects the open/closed state of the solenoid
 
 /* Water 2 config:
 
 */
-#define SENSOR4PIN 6 // SENSOR1PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
+#if DEPLOY_ARDUINO_IS_UNO
+  // Arduino is Arduino UNO:
+  #define SENSOR4PIN 6 // SENSOR1PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
+  #define SOLENOID2PIN 12
+#else
+  // Arduino is "Adafruit pro trinket SV p2000"
+  #define SENSOR4PIN 4 // SENSOR1PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
+  #define SOLENOID2PIN 6
+  // Will use 3 pins, (6, 7, 8)
+#endif
 int sensor4State = HIGH;         // variable for reading the beam-break sensor4 status
 int moveOperationCounter4 = 0; // This variable keeps track of the total number of "move" operations performed.
-#define SOLENOID2PIN 12
+
 SolenoidState solenoid2State = CLOSED;         // reflects the open/closed state of the solenoid
 
 /*
