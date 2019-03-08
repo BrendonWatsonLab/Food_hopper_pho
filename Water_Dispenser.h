@@ -64,6 +64,7 @@ unsigned long lastSolenoidCloseTimer = 0; // This variable keeps track of the la
 
 
 #define DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER true //DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER: if this value is true the system will operate continuously, ignoring the beam break sensor. This serves to allow testing. This value should be false outside of testing.
+
 // Function Prototypes:
 void setupWaterDispensers();
 void loopWaterDispensers(unsigned long currentLoopMillis);
@@ -96,13 +97,17 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
     }
   }
   else { // else the solenoid is CLOSED
-    /* Check sensor beam state:
-        LOW: Sensor Beam is broken
-        HIGH: Sensor Beam has continuity
-      */
-    if ((sensor3State == LOW)) {
-        openSolenoid(1);
+    // Check if at least SolenoidPostDoseClosedDuration msec have passed since the last solenoid close event (to prevent immediate re-opening).
+    if (currentLoopMillis - lastSolenoidCloseTimer >= SolenoidPostDoseClosedDuration) {
+      /* Check sensor beam state:
+          LOW: Sensor Beam is broken
+          HIGH: Sensor Beam has continuity
+        */
+      if ((sensor3State == LOW) || (IS_DIAGNOSTIC_MODE && DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER)) {
+          openSolenoid(1);
+      }
     }
+
   }
 
   // Check Water Port 2:
@@ -113,12 +118,15 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
     }
   }
   else { // else the solenoid is CLOSED
-    /* Check sensor beam state:
-        LOW: Sensor Beam is broken
-        HIGH: Sensor Beam has continuity
-      */
-    if ((sensor4State == LOW)) {
-        openSolenoid(2);
+     // Check if at least SolenoidPostDoseClosedDuration msec have passed since the last solenoid close event (to prevent immediate re-opening).
+    if (currentLoopMillis - lastSolenoidCloseTimer >= SolenoidPostDoseClosedDuration) {
+      /* Check sensor beam state:
+          LOW: Sensor Beam is broken
+          HIGH: Sensor Beam has continuity
+        */
+      if ((sensor4State == LOW)) {
+          openSolenoid(2);
+      }
     }
   }
 
