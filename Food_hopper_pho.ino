@@ -5,15 +5,12 @@ Written by Robert Zhang July 31st 2018
 Modifed by Pho Hale 3/6/2019
 */
 #include <Wire.h>
-#include <Adafruit_MotorShield.h>
 #include "Common.h";
 #include "Food_Dispenser.h"; //Depends on Common.h
 #include "Water_Dispenser.h";
 #include "Diagnostics.h";
 
 
- 
- 
 void setup() {
   // initialize the LED pin as an output:
   pinMode(LEDPIN, OUTPUT);
@@ -51,7 +48,4 @@ void loop(){
     
   } // end interactive diagnostic if
 
-  
-  
-  
 } // end loop

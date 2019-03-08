@@ -1,13 +1,5 @@
 
-// Function Prototypes:
-void setupFoodDispensers();
-void loopFoodDispensers(unsigned long currentLoopMillis);
-void dispenseFeeder1();
-void dispenseFeeder2();
-void dispenseFood(int feederNumber);
-void clockwiseDispense(Adafruit_StepperMotor *activeMotor);
-void unjamDispenseBySimpleReverse(Adafruit_StepperMotor *activeMotor);
-void unjamDispenseByTickTock(Adafruit_StepperMotor *activeMotor);
+#include <Adafruit_MotorShield.h>
 
 Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 /*
@@ -54,6 +46,17 @@ int moveOperationCounter2 = 0; // This variable keeps track of the total number 
 unsigned long lastDispenseTimer = 0; // This variable keeps track of the last time dispense was performed
 
 #define DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_FOOD false //DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_FOOD: if this value is true the system will operate continuously, ignoring the beam break sensor. This serves to allow testing. This value should be false outside of testing.
+
+
+// Function Prototypes:
+void setupFoodDispensers();
+void loopFoodDispensers(unsigned long currentLoopMillis);
+void dispenseFeeder1();
+void dispenseFeeder2();
+void dispenseFood(int feederNumber);
+void clockwiseDispense(Adafruit_StepperMotor *activeMotor);
+void unjamDispenseBySimpleReverse(Adafruit_StepperMotor *activeMotor);
+void unjamDispenseByTickTock(Adafruit_StepperMotor *activeMotor);
 
 
 
