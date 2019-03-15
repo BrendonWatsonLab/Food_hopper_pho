@@ -1,5 +1,6 @@
 
-
+#include <Adafruit_MotorShield.h>
+Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 /*
    The stepper motor is a SY35ST28-0504A
    Steps per Revolution: 200
