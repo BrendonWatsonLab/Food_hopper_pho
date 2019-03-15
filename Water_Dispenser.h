@@ -6,7 +6,7 @@ enum SolenoidState {
 
 #if DEPLOY_ARDUINO_IS_UNO
   // Arduino is Arduino UNO:
-  #define numSolenoidPins 1
+  #define numSolenoidPins 3
 #else
   // Arduino is "Adafruit pro trinket SV p2000"
   #define numSolenoidPins 3
@@ -18,7 +18,10 @@ enum SolenoidState {
 #if DEPLOY_ARDUINO_IS_UNO
   // Arduino is Arduino UNO:
   #define SENSOR3PIN 3 // SENSOR1PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
-  #define SOLENOID1PIN 11
+  #define SOLENOID1PIN 8
+  #define SOLENOID1PIN1 9
+  #define SOLENOID1PIN2 10
+  // Will use 3 pins, (8, 9, 10)
 #else
   // Arduino is "Adafruit pro trinket SV p2000"
   #define SENSOR3PIN 4 // SENSOR1PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
@@ -38,7 +41,10 @@ SolenoidState solenoid1State = CLOSED;         // reflects the open/closed state
 #if DEPLOY_ARDUINO_IS_UNO
   // Arduino is Arduino UNO:
   #define SENSOR4PIN 6 // SENSOR1PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
-  #define SOLENOID2PIN 12
+  #define SOLENOID2PIN 11
+  #define SOLENOID2PIN1 12
+  #define SOLENOID2PIN2 13
+  // Will use 3 pins, (11, 12, 13)
 #else
   // Arduino is "Adafruit pro trinket SV p2000"
   #define SENSOR4PIN 4 // SENSOR1PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
@@ -63,7 +69,8 @@ unsigned long lastSolenoidOpenTimer = 0; // This variable keeps track of the las
 unsigned long lastSolenoidCloseTimer = 0; // This variable keeps track of the last time the Solenoid "close" operation was performed
 
 
-#define DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER true //DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER: if this value is true the system will operate continuously, ignoring the beam break sensor. This serves to allow testing. This value should be false outside of testing.
+#define DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER false //DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER: if this value is true the system will operate continuously, ignoring the beam break sensor. This serves to allow testing. This value should be false outside of testing.
+
 // Function Prototypes:
 void setupWaterDispensers();
 void loopWaterDispensers(unsigned long currentLoopMillis);
@@ -79,7 +86,22 @@ void setupWaterDispensers() {
   pinMode(SENSOR4PIN, INPUT);
   digitalWrite(SENSOR4PIN, HIGH); // turn on the pullup
 
+  // Setup Solenoids
+  pinMode(SOLENOID1PIN, OUTPUT);
+  pinMode(SOLENOID1PIN1, OUTPUT);
+  pinMode(SOLENOID1PIN2, OUTPUT);
+  digitalWrite(SOLENOID1PIN, LOW);
+  digitalWrite(SOLENOID1PIN1, LOW);
+  digitalWrite(SOLENOID1PIN2, LOW);
+
+  pinMode(SOLENOID2PIN, OUTPUT);
+  pinMode(SOLENOID2PIN1, OUTPUT);
+  pinMode(SOLENOID2PIN2, OUTPUT);
+  digitalWrite(SOLENOID2PIN, LOW);
+  digitalWrite(SOLENOID2PIN1, LOW);
+  digitalWrite(SOLENOID2PIN2, LOW);
 }
+
 
 //TODO: allows independent solenoid operation (simultaneous) but they're coupled by using a single timer variable (lastSolenoidOpenTimer)
 void loopWaterDispensers(unsigned long currentLoopMillis) {
@@ -96,13 +118,17 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
     }
   }
   else { // else the solenoid is CLOSED
-    /* Check sensor beam state:
-        LOW: Sensor Beam is broken
-        HIGH: Sensor Beam has continuity
-      */
-    if ((sensor3State == LOW)) {
-        openSolenoid(1);
+    // Check if at least SolenoidPostDoseClosedDuration msec have passed since the last solenoid close event (to prevent immediate re-opening).
+    if (currentLoopMillis - lastSolenoidCloseTimer >= SolenoidPostDoseClosedDuration) {
+      /* Check sensor beam state:
+          LOW: Sensor Beam is broken
+          HIGH: Sensor Beam has continuity
+        */
+      if ((sensor3State == LOW) || (IS_DIAGNOSTIC_MODE && DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER)) {
+          openSolenoid(1);
+      }
     }
+
   }
 
   // Check Water Port 2:
@@ -113,12 +139,15 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
     }
   }
   else { // else the solenoid is CLOSED
-    /* Check sensor beam state:
-        LOW: Sensor Beam is broken
-        HIGH: Sensor Beam has continuity
-      */
-    if ((sensor4State == LOW)) {
-        openSolenoid(2);
+     // Check if at least SolenoidPostDoseClosedDuration msec have passed since the last solenoid close event (to prevent immediate re-opening).
+    if (currentLoopMillis - lastSolenoidCloseTimer >= SolenoidPostDoseClosedDuration) {
+      /* Check sensor beam state:
+          LOW: Sensor Beam is broken
+          HIGH: Sensor Beam has continuity
+        */
+      if ((sensor4State == LOW)) {
+          openSolenoid(2);
+      }
     }
   }
 
@@ -127,7 +156,7 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
 void closeSolenoid(int waterPortNumber) {
   #if DEPLOY_ARDUINO_IS_UNO
     // Arduino is Arduino UNO:
-    int activeSolenoidPins[numSolenoidPins] = {0}; // This temporary port variable is set to the correct SOLENOIDPIN in the if/else if/statements
+    int activeSolenoidPins[numSolenoidPins] = {0, 0, 0}; // This temporary port variable is set to the correct SOLENOIDPIN in the if/else if/statements
   #else
     // Arduino is "Adafruit pro trinket SV p2000"
     int activeSolenoidPins[numSolenoidPins] = {0, 0, 0}; // This temporary port variable is set to the correct SOLENOIDPIN in the if/else if/statements
@@ -137,6 +166,8 @@ void closeSolenoid(int waterPortNumber) {
     #if DEPLOY_ARDUINO_IS_UNO
       // Arduino is Arduino UNO:
       activeSolenoidPins[0] = SOLENOID1PIN;
+      activeSolenoidPins[1] = SOLENOID1PIN1;
+      activeSolenoidPins[2] = SOLENOID1PIN2;
     #else
       // Arduino is "Adafruit pro trinket SV p2000"
       activeSolenoidPins[0] = SOLENOID1PIN;
@@ -148,6 +179,8 @@ void closeSolenoid(int waterPortNumber) {
     #if DEPLOY_ARDUINO_IS_UNO
       // Arduino is Arduino UNO:
       activeSolenoidPins[0] = SOLENOID2PIN;
+      activeSolenoidPins[1] = SOLENOID2PIN1;
+      activeSolenoidPins[2] = SOLENOID2PIN2;
     #else
       // Arduino is "Adafruit pro trinket SV p2000"
       activeSolenoidPins[0] = SOLENOID2PIN;
@@ -188,7 +221,7 @@ void closeSolenoid(int waterPortNumber) {
 void openSolenoid(int waterPortNumber) {
   #if DEPLOY_ARDUINO_IS_UNO
     // Arduino is Arduino UNO:
-    int activeSolenoidPins[numSolenoidPins] = {0}; // This temporary port variable is set to the correct SOLENOIDPIN in the if/else if/statements
+    int activeSolenoidPins[numSolenoidPins] = {0, 0, 0}; // This temporary port variable is set to the correct SOLENOIDPIN in the if/else if/statements
   #else
     // Arduino is "Adafruit pro trinket SV p2000"
     int activeSolenoidPins[numSolenoidPins] = {0, 0, 0}; // This temporary port variable is set to the correct SOLENOIDPIN in the if/else if/statements
@@ -197,6 +230,8 @@ void openSolenoid(int waterPortNumber) {
     #if DEPLOY_ARDUINO_IS_UNO
       // Arduino is Arduino UNO:
       activeSolenoidPins[0] = SOLENOID1PIN;
+      activeSolenoidPins[1] = SOLENOID1PIN1;
+      activeSolenoidPins[2] = SOLENOID1PIN2;
     #else
       // Arduino is "Adafruit pro trinket SV p2000"
       activeSolenoidPins[0] = SOLENOID1PIN;
@@ -209,6 +244,8 @@ void openSolenoid(int waterPortNumber) {
     #if DEPLOY_ARDUINO_IS_UNO
       // Arduino is Arduino UNO:
       activeSolenoidPins[0] = SOLENOID2PIN;
+      activeSolenoidPins[1] = SOLENOID2PIN1;
+      activeSolenoidPins[2] = SOLENOID2PIN2;
     #else
       // Arduino is "Adafruit pro trinket SV p2000"
       activeSolenoidPins[0] = SOLENOID2PIN;

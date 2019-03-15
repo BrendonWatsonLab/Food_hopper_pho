@@ -104,7 +104,7 @@ void loopFoodDispensers(unsigned long currentLoopMillis) {
       }
       else {
         // turn status LED off:
-        digitalWrite(LEDPIN, LOW);
+        //digitalWrite(LEDPIN, LOW);
       }
     }
 
@@ -129,7 +129,7 @@ void dispenseFeeder2() {
 void dispenseFood(int feederNumber) {
   // save the last time you dispensed a pellet:
   lastDispenseTimer = millis();
-  digitalWrite(LEDPIN, HIGH); // Turn status LED on
+  //digitalWrite(LEDPIN, HIGH); // Turn status LED on
   int moveOperationCounter = 0; // This temporary counter is set to the correct counter in the if/else if/statements
   Adafruit_StepperMotor *activeMotor;
   // Gets the correct moveOperationCounter value and motor pointer for the specified feederNumber
