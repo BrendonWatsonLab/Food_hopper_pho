@@ -64,7 +64,7 @@ SolenoidState solenoid2State = CLOSED;         // reflects the open/closed state
 */
 
 #define SolenoidDoseOpenDuration 100
-#define SolenoidPostDoseClosedDuration 100
+#define SolenoidPostDoseClosedDuration 5000
 unsigned long lastSolenoidOpenTimer = 0; // This variable keeps track of the last time the Solenoid "open" operation was performed
 unsigned long lastSolenoidCloseTimer = 0; // This variable keeps track of the last time the Solenoid "close" operation was performed
 
@@ -90,16 +90,16 @@ void setupWaterDispensers() {
   pinMode(SOLENOID1PIN, OUTPUT);
   pinMode(SOLENOID1PIN1, OUTPUT);
   pinMode(SOLENOID1PIN2, OUTPUT);
-  digitalWrite(SOLENOID1PIN, LOW);
-  digitalWrite(SOLENOID1PIN1, LOW);
-  digitalWrite(SOLENOID1PIN2, LOW);
+  //digitalWrite(SOLENOID1PIN, LOW);
+  //digitalWrite(SOLENOID1PIN1, LOW);
+  //digitalWrite(SOLENOID1PIN2, LOW);
 
   pinMode(SOLENOID2PIN, OUTPUT);
   pinMode(SOLENOID2PIN1, OUTPUT);
   pinMode(SOLENOID2PIN2, OUTPUT);
-  digitalWrite(SOLENOID2PIN, LOW);
-  digitalWrite(SOLENOID2PIN1, LOW);
-  digitalWrite(SOLENOID2PIN2, LOW);
+  //digitalWrite(SOLENOID2PIN, LOW);
+  //digitalWrite(SOLENOID2PIN1, LOW);
+  //digitalWrite(SOLENOID2PIN2, LOW);
 }
 
 
