@@ -13,6 +13,9 @@
 #if ENABLE_WATER_DISPENSE
   #include "Water_Dispenser.h";
 #endif
+#if ENABLE_RUNNING_WHEEL
+  #include "RunningWheel.h";
+#endif
 
 #include "Diagnostics.h";
 
@@ -33,8 +36,10 @@ void setup() {
   #if ENABLE_WATER_DISPENSE
     setupWaterDispensers();
   #endif
-
-
+  #if ENABLE_RUNNING_WHEEL
+    setupRunningWheel();
+  #endif
+  
 }
 
 void loop() {
@@ -49,6 +54,10 @@ void loop() {
     // Read the water sensors
     sensor3State = digitalRead(SENSOR3PIN);
     sensor4State = digitalRead(SENSOR4PIN);
+  #endif
+  #if ENABLE_RUNNING_WHEEL
+    // read the state of the sensor pin:
+    runningWheelSensorState = digitalRead(RUNNINGWHEEL_SENSOR_PIN);
   #endif
 
   // Get the current time in milliseconds
@@ -65,6 +74,9 @@ void loop() {
     #endif
     #if ENABLE_WATER_DISPENSE
       loopWaterDispensers(currentLoopMillis);
+    #endif
+    #if ENABLE_RUNNING_WHEEL
+      loopRunningWheel(currentLoopMillis);
     #endif
 
   } // end interactive diagnostic if
