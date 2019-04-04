@@ -11,7 +11,7 @@
 #define ENABLE_FOOD_DISPENSE true
 #define ENABLE_WATER_DISPENSE false
 #define ENABLE_RUNNING_WHEEL true
-
+#define ENABLE_RHD2000_INTERFACE true
 
 #define IS_DIAGNOSTIC_MODE true //IS_DIAGNOSTIC_MODE: if this value is false, all diagnostic settings will be ignored. This value should be false outside of testing.
 

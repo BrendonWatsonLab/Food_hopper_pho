@@ -16,6 +16,10 @@
 #if ENABLE_RUNNING_WHEEL
   #include "RunningWheel.h";
 #endif
+#if ENABLE_RHD2000_INTERFACE
+  #include "RHD2000_Interface.h";
+#endif
+
 
 #include "Diagnostics.h";
 
@@ -38,6 +42,9 @@ void setup() {
   #endif
   #if ENABLE_RUNNING_WHEEL
     setupRunningWheel();
+  #endif
+  #if ENABLE_RHD2000_INTERFACE
+    setupRHD2000Interface();
   #endif
   
 }
@@ -63,6 +70,11 @@ void loop() {
   // Get the current time in milliseconds
   unsigned long currentLoopMillis = millis();
 
+  // Do full loopRHD2000Interface even in INTERACTIVE DIAGNOSTIC MODE
+  #if ENABLE_RHD2000_INTERFACE
+    loopRHD2000Interface(currentLoopMillis);
+  #endif
+  
   // Performs the interfacing with the processing software (running on the computer) while in interactive diagnostic mode
   if (IS_DIAGNOSTIC_MODE && SHOULD_USE_INTERACTIVE_DIAGNOSTIC) {
     loopDiagnostics(currentLoopMillis);
@@ -80,5 +92,6 @@ void loop() {
     #endif
 
   } // end interactive diagnostic if
+
 
 } // end loop
