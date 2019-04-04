@@ -61,9 +61,21 @@ void diagnostic_read_command() {
     }
     else if (diagnostic_val == '5') {
       Serial.println("diagnostic_val: 5");
+      #if ENABLE_WATER_DISPENSE
+        //normal dispense
+      #endif
     }
     else if (diagnostic_val == '6') {
       Serial.println("diagnostic_val: 6");
+      #if ENABLE_WATER_DISPENSE
+        openSolenoid(1);
+      #endif
+    }
+    else if (diagnostic_val == '7') {
+      Serial.println("diagnostic_val: 7");
+      #if ENABLE_WATER_DISPENSE
+        closeSolenoid(1);
+      #endif
     }
     else if (diagnostic_val == 'A') {
       Serial.println("diagnostic_val: A");
@@ -91,9 +103,21 @@ void diagnostic_read_command() {
     }
     else if (diagnostic_val == 'E') {
       Serial.println("diagnostic_val: E");
+      #if ENABLE_WATER_DISPENSE
+        //normal dispense
+      #endif
     }
     else if (diagnostic_val == 'F') {
       Serial.println("diagnostic_val: F");
+      #if ENABLE_WATER_DISPENSE
+        openSolenoid(2);
+      #endif
+    }
+    else if (diagnostic_val == 'G') {
+      Serial.println("diagnostic_val: G");
+      #if ENABLE_WATER_DISPENSE
+        closeSolenoid(2);
+      #endif
     }
     else {
       Serial.println("Unknown diagnostic_val");

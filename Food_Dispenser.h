@@ -15,7 +15,7 @@ Adafruit_MotorShield AFMS = Adafruit_MotorShield();
    CONCERN: they're going to figure out that you don't have to wait as long if you alternate between the two types of food.
 */
 Adafruit_StepperMotor *motor1 = AFMS.getStepper(200, 2); // The motor connected to M3 & M4
-#define SENSOR1PIN 4 // SENSOR1PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
+#define SENSOR1PIN 5 // SENSOR1PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
 int sensor1State = HIGH;         // variable for reading the beam-break sensor1 status
 int moveOperationCounter1 = 0; // This variable keeps track of the total number of "move" operations performed.
 
@@ -104,7 +104,7 @@ void loopFoodDispensers(unsigned long currentLoopMillis) {
       }
       else {
         // turn status LED off:
-        digitalWrite(LEDPIN, LOW);
+        //digitalWrite(LEDPIN, LOW);
       }
     }
 
@@ -129,7 +129,7 @@ void dispenseFeeder2() {
 void dispenseFood(int feederNumber) {
   // save the last time you dispensed a pellet:
   lastDispenseTimer = millis();
-  digitalWrite(LEDPIN, HIGH); // Turn status LED on
+  //digitalWrite(LEDPIN, HIGH); // Turn status LED on
   int moveOperationCounter = 0; // This temporary counter is set to the correct counter in the if/else if/statements
   Adafruit_StepperMotor *activeMotor;
   // Gets the correct moveOperationCounter value and motor pointer for the specified feederNumber

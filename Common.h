@@ -5,7 +5,7 @@
 #define Common_h
 
 #define DEPLOY_ARDUINO_IS_UNO true //DEPLOY_ARDUINO_IS_UNO: true if sketch will be running on Arduino Uno. Else assumed to be "Adafruit pro trinket SV p2000"
-#define LEDPIN 13 // Pin 13: Arduino has an LED connected on pin 1
+//#define LEDPIN 13 // Pin 13: Arduino has an LED connected on pin 1
 
 #if DEPLOY_ARDUINO_IS_UNO
   // Arduino is Arduino UNO:

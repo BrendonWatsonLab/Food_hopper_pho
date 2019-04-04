@@ -19,7 +19,7 @@
 
 void setup() {
   // initialize the LED pin as an output:
-  pinMode(LEDPIN, OUTPUT);
+  //pinMode(LEDPIN, OUTPUT);
 
   Serial.begin(9600); // set up Serial library at 9600 bps (for debugging)
   Serial.println("Behavior Box:");
