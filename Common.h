@@ -20,4 +20,24 @@
 // Was 5000
 
 
+// reflects the open/closed state of the beambreak sensor
+enum BeamBreakState {
+  CLEAR,
+  BROKEN
+};
+
+
+// Values
+enum SystemAddress { Water1 = 0b000, Water2 = 0b001, Food1 = 0b010, Food2 = 0b011, RunningWheel = 0b100};
+enum EventType { SensorChange = 0b0, ActionDispense = 0b1};
+// create a union to hold the data
+union TimestampBuffer
+{
+    unsigned long longNumber;
+    byte longBytes[4];
+};
+TimestampBuffer timestampBuffer;
+
+
+
 #endif // end of the "#ifndef" at the start of the file that ensures this file is only included once. THIS MUST BE AT THE END OF THE FILE.

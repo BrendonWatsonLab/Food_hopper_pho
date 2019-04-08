@@ -11,9 +11,12 @@ int rhd2000InterfaceOutput2State = LOW;
 
 #define RHD2000_INTERFACE_HIGH_Duration 40
 
+
+
 // Function Prototypes:
 void setupRHD2000Interface();
 void loopRHD2000Interface(unsigned long currentLoopMillis);
+void sendRHD2000Signal(SystemAddress addr, EventType event);
 void outputSignals();
 
 // Called from setup()
@@ -61,6 +64,21 @@ void loopRHD2000Interface(unsigned long currentLoopMillis) {
 }
 
 
+void sendRHD2000Signal(SystemAddress addr, EventType event) {
+  // Get the current time in milliseconds
+  unsigned long currentLoopMillis = millis();
+  // unsigned long: 32 bits (4 bytes)
+  timestampBuffer.longNumber = currentLoopMillis;
+  
+  //byte binary1 = addr;
+  //byte binary1 = event;
+  byte output = byte((addr<<3) + event);
+
+  Serial.write(255);
+  Serial.write(timestampBuffer.longBytes, 4); // send requested bytes
+  Serial.write(output); // send requested bytes
+  Serial.write(0);  
+}
 
 void outputSignals() {
   //digitalWrite(RHD2000_INTERFACE_OUTPUT0_PIN, rhd2000InterfaceOutput0State);

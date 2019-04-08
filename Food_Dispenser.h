@@ -115,10 +115,12 @@ void loopFoodDispensers(unsigned long currentLoopMillis) {
 
 
 void dispenseFeeder1() {
+  sendRHD2000Signal(Food1, ActionDispense);
   dispenseFood(1);
 }
 
 void dispenseFeeder2() {
+  sendRHD2000Signal(Food2, ActionDispense);
   dispenseFood(2);
 }
 
