@@ -75,8 +75,8 @@ void sendRHD2000Signal(SystemAddress addr, EventType event) {
   byte output = byte((addr<<3) + event);
 
   Serial.write(255);
-  Serial.write(timestampBuffer.longBytes, 4); // send requested bytes
-  Serial.write(output); // send requested bytes
+  Serial.write(timestampBuffer.longBytes, 4); // send four timestamp bytes
+  Serial.write(output); // send byte
   Serial.write(0);  
 }
 

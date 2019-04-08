@@ -178,19 +178,25 @@ void dispenseFood(int feederNumber) {
 // The traditional (clockwise) movement that dispenses a pellet
 void clockwiseDispense(Adafruit_StepperMotor *activeMotor) {
   // Otherwise we move in the traditional (clockwise) direction
-  Serial.println("Moving: Clockwise " + String(moveOperationCounter1));
+  if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
+    Serial.println("Moving: Clockwise " + String(moveOperationCounter1));
+  }
   activeMotor->step(25, FORWARD, NumberOfStepperCoilsActivated);
 }
 
 // Attempts to unjam by just moving backwards for this iteration.
 void unjamDispenseBySimpleReverse(Adafruit_StepperMotor *activeMotor) {
-  Serial.println("Moving: Counter-Clockwise " + String(moveOperationCounter1));
+  if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
+    Serial.println("Moving: Counter-Clockwise " + String(moveOperationCounter1));
+  }
   activeMotor->step(25, BACKWARD, NumberOfStepperCoilsActivated); // Changed from SINGLE to DOUBLE for extra torque
 }
 
 // Attempts to unjam by quickly moving backwards, and then forward again for this iteration. This runs the risk of double-dispensing
 void unjamDispenseByTickTock(Adafruit_StepperMotor *activeMotor) {
-  Serial.println("Moving: UNJAM " + String(moveOperationCounter1));
+  if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
+      Serial.println("Moving: UNJAM " + String(moveOperationCounter1));    
+  }
   activeMotor->step(25, BACKWARD, NumberOfStepperCoilsActivated); // Changed from SINGLE to DOUBLE for extra torque
   activeMotor->step(25, FORWARD, NumberOfStepperCoilsActivated); // Changed from SINGLE to DOUBLE for extra torque
 }
