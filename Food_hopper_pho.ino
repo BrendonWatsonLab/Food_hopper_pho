@@ -20,10 +20,7 @@
   #include "RunningWheel.h";
 #endif
 
-
-
 #include "Diagnostics.h";
-
 
 void setup() {
   // initialize the LED pin as an output:

@@ -9,7 +9,7 @@
 
 
 #define ENABLE_FOOD_DISPENSE true
-#define ENABLE_WATER_DISPENSE false
+#define ENABLE_WATER_DISPENSE true
 #define ENABLE_RUNNING_WHEEL true
 #define ENABLE_RHD2000_INTERFACE true
 
