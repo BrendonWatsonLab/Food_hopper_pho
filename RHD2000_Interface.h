@@ -53,7 +53,7 @@ void loopRHD2000Interface(unsigned long currentLoopMillis) {
 
   //rhd2000InterfaceOutput0State = !rhd2000InterfaceOutput0State;
   rhd2000InterfaceOutput2State = !rhd2000InterfaceOutput2State;
-  delay(50);
+  //delay(50);
   
   // Check for changes
 //  if (rhd2000InterfaceOutput0State != rhd2000InterfaceOutput0State_preUpdate) {
