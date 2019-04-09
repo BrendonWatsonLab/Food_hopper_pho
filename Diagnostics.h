@@ -24,7 +24,9 @@ void loopDiagnostics(unsigned long currentLoopMillis) {
     diagnostic_read_command();
     lastDiagnosticSerialReadTimer = currentLoopMillis;
   }
-  diagnostic_send_info();
+  #if ENABLE_DIAGNOSTIC_SERIAL
+    diagnostic_send_info();
+  #endif
 }
 
 // Called to read in a "command" that has been sent by the Processing sketch over serial.
@@ -33,94 +35,126 @@ void diagnostic_read_command() {
     diagnostic_val = Serial.read(); // read it and store it in val
     // Check the character recieved
     if (diagnostic_val == '0') {
-      Serial.println("diagnostic_val: 0");
+      if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
+        Serial.println("diagnostic_val: 0");
+      }
     }
     else if (diagnostic_val == '1') {
-      Serial.println("diagnostic_val: 1");
+      if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
+        Serial.println("diagnostic_val: 1");
+      }
 #if ENABLE_FOOD_DISPENSE
       clockwiseDispense(motor1);
 #endif
     }
     else if (diagnostic_val == '2') {
-      Serial.println("diagnostic_val: 2");
+      if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
+        Serial.println("diagnostic_val: 2");
+      }
 #if ENABLE_FOOD_DISPENSE
       unjamDispenseBySimpleReverse(motor1);
 #endif
     }
     else if (diagnostic_val == '3') {
-      Serial.println("diagnostic_val: 3");
+      if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
+        Serial.println("diagnostic_val: 3");
+      }
 #if ENABLE_FOOD_DISPENSE
       unjamDispenseByTickTock(motor1);
 #endif
     }
     else if (diagnostic_val == '4') {
-      Serial.println("diagnostic_val: 4");
+      if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
+        Serial.println("diagnostic_val: 4");
+      }
 #if ENABLE_FOOD_DISPENSE
       dispenseFeeder1();
 #endif
     }
     else if (diagnostic_val == '5') {
-      Serial.println("diagnostic_val: 5");
+      if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
+        Serial.println("diagnostic_val: 5");
+      }
       #if ENABLE_WATER_DISPENSE
         //normal dispense
       #endif
     }
     else if (diagnostic_val == '6') {
-      Serial.println("diagnostic_val: 6");
+      if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
+        Serial.println("diagnostic_val: 6");
+      }
       #if ENABLE_WATER_DISPENSE
         openSolenoid(1);
       #endif
     }
     else if (diagnostic_val == '7') {
-      Serial.println("diagnostic_val: 7");
+      if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
+        Serial.println("diagnostic_val: 7");
+      }
       #if ENABLE_WATER_DISPENSE
         closeSolenoid(1);
       #endif
     }
     else if (diagnostic_val == 'A') {
-      Serial.println("diagnostic_val: A");
+      if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
+        Serial.println("diagnostic_val: A");
+      }
 #if ENABLE_FOOD_DISPENSE
       clockwiseDispense(motor2);
 #endif
     }
     else if (diagnostic_val == 'B') {
-      Serial.println("diagnostic_val: B");
+      if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
+        Serial.println("diagnostic_val: B");
+      }
 #if ENABLE_FOOD_DISPENSE
       unjamDispenseBySimpleReverse(motor2);
 #endif
     }
     else if (diagnostic_val == 'C') {
-      Serial.println("diagnostic_val: C");
+      if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
+        Serial.println("diagnostic_val: C");
+      }
 #if ENABLE_FOOD_DISPENSE
       unjamDispenseByTickTock(motor2);
 #endif
     }
     else if (diagnostic_val == 'D') {
-      Serial.println("diagnostic_val: D");
+      if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
+        Serial.println("diagnostic_val: D");
+      }
 #if ENABLE_FOOD_DISPENSE
       dispenseFeeder2();
 #endif
     }
     else if (diagnostic_val == 'E') {
-      Serial.println("diagnostic_val: E");
+      if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
+        Serial.println("diagnostic_val: E");
+      }
       #if ENABLE_WATER_DISPENSE
         //normal dispense
       #endif
     }
     else if (diagnostic_val == 'F') {
-      Serial.println("diagnostic_val: F");
+      if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
+        Serial.println("diagnostic_val: F");
+      }
       #if ENABLE_WATER_DISPENSE
         openSolenoid(2);
       #endif
     }
     else if (diagnostic_val == 'G') {
-      Serial.println("diagnostic_val: G");
+      if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
+        Serial.println("diagnostic_val: G");
+      }
       #if ENABLE_WATER_DISPENSE
         closeSolenoid(2);
       #endif
     }
     else {
-      Serial.println("Unknown diagnostic_val");
+      if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
+        Serial.println("Unknown diagnostic_val");
+      }
     } // end cases
   }
   //delay(10); // Wait 10 milliseconds for next reading
