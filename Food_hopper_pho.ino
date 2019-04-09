@@ -4,6 +4,9 @@
   Written by Robert Zhang July 31st 2018
   Modifed by Pho Hale 3/6/2019
 */
+
+//10msec delay time
+
 #include <Wire.h>
 
 #include "Common.h";
