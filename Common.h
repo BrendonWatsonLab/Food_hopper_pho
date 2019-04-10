@@ -34,7 +34,7 @@ enum BeamBreakState {
 
 
 // Values
-enum SystemAddress { Water1 = 0b000, Water2 = 0b001, Food1 = 0b010, Food2 = 0b011, RunningWheel = 0b100};
+enum SystemAddress { Water1 = 0b000, Water2 = 0b001, Food1 = 0b010, Food2 = 0b011, RunningWheel = 0b100, Sync = 0b101};
 enum EventType { SensorChange = 0b0, ActionDispense = 0b1};
 // create a union to hold the data
 union TimestampBuffer
