@@ -15,7 +15,7 @@ Mux Breakout ----------- Arduino
 const int multiplexerSelectPins[3] = {9, 10, 13}; // S0~9, S1~10, S2~13
 const int multiplexerZOutput = 2; // Connect common (Z) to 2
 
-const int SIGNAL_ON_TIME = 5;
+const int SIGNAL_ON_TIME = 10; //msec
 
 // Function Prototypes:
 void setupMultiplexerInterface();
@@ -46,10 +46,11 @@ void loopMultiplexerInterface(unsigned long currentLoopMillis) {
 
 
 void sendMultiplexerSignal(SystemAddress addr, EventType event) {
-  if (addr > 4) {
+  if (addr > 3) {
     // Ignore the running wheel or any other inputs for now
     return;
   }
+
   byte outputPin = addr;
   // addr is either {0,1,2,3}
   if (event == ActionDispense) {
