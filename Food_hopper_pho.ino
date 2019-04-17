@@ -55,14 +55,15 @@ void setup() {
   #endif
 
   timer1 = millis();
-  timer2 = millis();
 }
 
 void loop() {
   // Get the current time in milliseconds
   unsigned long currentLoopMillis = millis();
   unsigned long lastLoopDifference = currentLoopMillis - timer1;
-  Serial.println(lastLoopDifference);
+  if (IS_DIAGNOSTIC_MODE) { //If the system is in diagnostic mode, output a line to the serial terminal indicating this to prevent diagnostic builds being deployed to production hardware.
+    Serial.println(lastLoopDifference);
+  }
   timer1 = currentLoopMillis;
   
   // read the state of the IR break beam sensors:

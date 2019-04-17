@@ -17,15 +17,13 @@
 #define ENABLE_LOGGING_SIGNAL_ON_CHANGE true
 #define ENABLE_MULTIPLEXER_INTERFACE true
 
-#define IS_DIAGNOSTIC_MODE true //IS_DIAGNOSTIC_MODE: if this value is false, all diagnostic settings will be ignored. This value should be false outside of testing.
+#define IS_DIAGNOSTIC_MODE false //IS_DIAGNOSTIC_MODE: if this value is false, all diagnostic settings will be ignored. This value should be false outside of testing.
 #define ENABLE_DIAGNOSTIC_SERIAL false 
 
 #define PostDispenseTimeout 3000 //The number of milliseconds (1/1000 of a second) after dispensing that the system will wait before allowing input.
 // Was 5000
 
 unsigned long timer1;
-unsigned long timer2;
-
 
 // reflects the open/closed state of the beambreak sensor
 enum BeamBreakState {
