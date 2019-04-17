@@ -88,8 +88,8 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
           HIGH: Sensor Beam has continuity
         */
       if ((sensor3State == LOW) || (IS_DIAGNOSTIC_MODE && DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER)) {
-          #if ENABLE_RHD2000_SERIAL_EMULATION
-            sendRHD2000Signal(Water1, ActionDispense);
+          #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
+            sendLoggingSignal(Water1, ActionDispense);
           #endif
           openSolenoid(1);
       }
@@ -112,8 +112,8 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
           HIGH: Sensor Beam has continuity
         */
       if ((sensor4State == LOW)) {
-          #if ENABLE_RHD2000_SERIAL_EMULATION
-            sendRHD2000Signal(Water2, ActionDispense);
+          #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
+            sendLoggingSignal(Water2, ActionDispense);
           #endif
           openSolenoid(2);
       }

@@ -115,15 +115,15 @@ void loopFoodDispensers(unsigned long currentLoopMillis) {
 
 
 void dispenseFeeder1() {
-  #if ENABLE_RHD2000_SERIAL_EMULATION
-    sendRHD2000Signal(Food1, ActionDispense);
+  #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
+    sendLoggingSignal(Food1, ActionDispense);
   #endif
   dispenseFood(1);
 }
 
 void dispenseFeeder2() {
-  #if ENABLE_RHD2000_SERIAL_EMULATION
-    sendRHD2000Signal(Food2, ActionDispense);
+  #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
+    sendLoggingSignal(Food2, ActionDispense);
   #endif
   dispenseFood(2);
 }

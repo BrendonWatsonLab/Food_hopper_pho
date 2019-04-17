@@ -13,6 +13,9 @@
 #if ENABLE_RHD2000_INTERFACE
   #include "RHD2000_Interface.h";
 #endif
+#if ENABLE_MULTIPLEXER_INTERFACE
+  #include "Multiplexer_Interface.h";
+#endif
 #if ENABLE_FOOD_DISPENSE
   #include "Food_Dispenser.h"; //Depends on Common.h
 #endif
@@ -35,6 +38,9 @@ void setup() {
     Serial.println("----- DIAGNOSTIC MODE -----");
   }
 
+  #if ENABLE_MULTIPLEXER_INTERFACE
+    setupMultiplexerInterface();
+  #endif
   #if ENABLE_RHD2000_INTERFACE
     setupRHD2000Interface();
   #endif
@@ -63,17 +69,17 @@ void loop() {
   #if ENABLE_FOOD_DISPENSE
     int prevSensor1State = sensor1State;
     sensor1State = digitalRead(SENSOR1PIN);
-    #if ENABLE_RHD2000_SERIAL_EMULATION
+    #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
       if (prevSensor1State != sensor1State) {
-        sendRHD2000Signal(Food1, SensorChange);
+        sendLoggingSignal(Food1, SensorChange);
       }
     #endif
     if (IS_DUAL_MOTOR_MODE) {
       int prevSensor2State = sensor2State;
       sensor2State = digitalRead(SENSOR2PIN);
-      #if ENABLE_RHD2000_SERIAL_EMULATION
+      #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
         if (prevSensor2State != sensor2State) {
-          sendRHD2000Signal(Food2, SensorChange);
+          sendLoggingSignal(Food2, SensorChange);
         }
       #endif
     }
@@ -84,13 +90,13 @@ void loop() {
     // Read the water sensors
     sensor3State = digitalRead(SENSOR3PIN);
     sensor4State = digitalRead(SENSOR4PIN);
-    #if ENABLE_RHD2000_SERIAL_EMULATION
+    #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
       // Check for changes:
       if (prevSensor3State != sensor3State) {
-        sendRHD2000Signal(Water1, SensorChange);
+        sendLoggingSignal(Water1, SensorChange);
       }
       if (prevSensor4State != sensor4State) {
-        sendRHD2000Signal(Water2, SensorChange);
+        sendLoggingSignal(Water2, SensorChange);
       }
     #endif
   #endif
@@ -98,9 +104,9 @@ void loop() {
     int prevRunningWheelSensorState = runningWheelSensorState;
     // read the state of the sensor pin:
     runningWheelSensorState = digitalRead(RUNNINGWHEEL_SENSOR_PIN);
-    #if ENABLE_RHD2000_SERIAL_EMULATION
+    #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
       if (prevRunningWheelSensorState != runningWheelSensorState) {
-        sendRHD2000Signal(RunningWheel, SensorChange);
+        sendLoggingSignal(RunningWheel, SensorChange);
       }
     #endif
   #endif
@@ -110,6 +116,9 @@ void loop() {
   // Do full loopRHD2000Interface even in INTERACTIVE DIAGNOSTIC MODE
   #if ENABLE_RHD2000_INTERFACE
     loopRHD2000Interface(currentLoopMillis);
+  #endif
+  #if ENABLE_MULTIPLEXER_INTERFACE
+    loopMultiplexerInterface(currentLoopMillis);
   #endif
   
   // Performs the interfacing with the processing software (running on the computer) while in interactive diagnostic mode
@@ -132,3 +141,14 @@ void loop() {
 
 
 } // end loop
+
+
+// A General logging function that calls the appropriate output functions.
+void sendLoggingSignal(SystemAddress addr, EventType event) {
+  #if ENABLE_RHD2000_INTERFACE
+    sendRHD2000Signal(addr, event);
+  #endif
+  #if ENABLE_MULTIPLEXER_INTERFACE
+    sendMultiplexerSignal(addr, event);
+  #endif
+}

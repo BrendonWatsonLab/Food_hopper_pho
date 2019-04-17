@@ -13,8 +13,9 @@
 #define ENABLE_FOOD_DISPENSE true
 #define ENABLE_WATER_DISPENSE true
 #define ENABLE_RUNNING_WHEEL true
-#define ENABLE_RHD2000_INTERFACE true
-#define ENABLE_RHD2000_SERIAL_EMULATION true
+#define ENABLE_RHD2000_INTERFACE false
+#define ENABLE_LOGGING_SIGNAL_ON_CHANGE true
+#define ENABLE_MULTIPLEXER_INTERFACE true
 
 #define IS_DIAGNOSTIC_MODE true //IS_DIAGNOSTIC_MODE: if this value is false, all diagnostic settings will be ignored. This value should be false outside of testing.
 #define ENABLE_DIAGNOSTIC_SERIAL false 
@@ -43,7 +44,6 @@ union TimestampBuffer
     byte longBytes[4];
 };
 TimestampBuffer timestampBuffer;
-
 
 
 #endif // end of the "#ifndef" at the start of the file that ensures this file is only included once. THIS MUST BE AT THE END OF THE FILE.
