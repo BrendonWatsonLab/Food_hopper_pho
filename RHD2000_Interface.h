@@ -11,11 +11,15 @@ int rhd2000InterfaceOutput2State = LOW;
 
 #define RHD2000_INTERFACE_HIGH_Duration 40
 
-
+// Timestamp buffer
+char timestampCharBuffer [11];
+char valueBuffer [50];
 
 // Function Prototypes:
 void setupRHD2000Interface();
 void loopRHD2000Interface(unsigned long currentLoopMillis);
+void sendRHD2000BinarySignal(SystemAddress addr, EventType event);
+void sendRHD2000ASCIISignal(SystemAddress addr, EventType event);
 void sendRHD2000Signal(SystemAddress addr, EventType event);
 void outputSignals();
 
@@ -49,7 +53,7 @@ void loopRHD2000Interface(unsigned long currentLoopMillis) {
 
   //rhd2000InterfaceOutput0State = !rhd2000InterfaceOutput0State;
   rhd2000InterfaceOutput2State = !rhd2000InterfaceOutput2State;
-  delay(50);
+  //delay(50);
   
   // Check for changes
 //  if (rhd2000InterfaceOutput0State != rhd2000InterfaceOutput0State_preUpdate) {
@@ -65,6 +69,25 @@ void loopRHD2000Interface(unsigned long currentLoopMillis) {
 
 
 void sendRHD2000Signal(SystemAddress addr, EventType event) {
+  //sendRHD2000BinarySignal(addr, event);
+  sendRHD2000ASCIISignal(addr, event);
+}
+
+void sendRHD2000ASCIISignal(SystemAddress addr, EventType event) {
+  // Get the current time in milliseconds
+  unsigned long currentLoopMillis = millis();
+  // Max value of millis() is 4,294,967,295 (10 chars long)
+  int successFlag = snprintf(timestampCharBuffer, 11, "%010ld", currentLoopMillis); // Always print as fixed width 10 character string
+  if (successFlag>=0 && successFlag<100) {
+    Serial.print("FFF");
+    Serial.print(timestampCharBuffer); // send four timestamp bytes
+    Serial.print(addr);
+    Serial.print(event);
+    Serial.println("EEE");
+  }
+}
+
+void sendRHD2000BinarySignal(SystemAddress addr, EventType event) {
   // Get the current time in milliseconds
   unsigned long currentLoopMillis = millis();
   // unsigned long: 32 bits (4 bytes)

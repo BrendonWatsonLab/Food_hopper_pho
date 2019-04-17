@@ -4,6 +4,9 @@
   Written by Robert Zhang July 31st 2018
   Modifed by Pho Hale 3/6/2019
 */
+
+//10msec delay time
+
 #include <Wire.h>
 
 #include "Common.h";
@@ -45,23 +48,34 @@ void setup() {
     setupRunningWheel();
   #endif
 
-  
+  timer1 = millis();
+  timer2 = millis();
 }
 
 void loop() {
+  // Get the current time in milliseconds
+  unsigned long currentLoopMillis = millis();
+  unsigned long lastLoopDifference = currentLoopMillis - timer1;
+  Serial.println(lastLoopDifference);
+  timer1 = currentLoopMillis;
+  
   // read the state of the IR break beam sensors:
   #if ENABLE_FOOD_DISPENSE
     int prevSensor1State = sensor1State;
     sensor1State = digitalRead(SENSOR1PIN);
-    if (prevSensor1State != sensor1State) {
-      sendRHD2000Signal(Food1, SensorChange);
-    }
+    #if ENABLE_RHD2000_SERIAL_EMULATION
+      if (prevSensor1State != sensor1State) {
+        sendRHD2000Signal(Food1, SensorChange);
+      }
+    #endif
     if (IS_DUAL_MOTOR_MODE) {
       int prevSensor2State = sensor2State;
       sensor2State = digitalRead(SENSOR2PIN);
-      if (prevSensor2State != sensor2State) {
-        sendRHD2000Signal(Food2, SensorChange);
-      }
+      #if ENABLE_RHD2000_SERIAL_EMULATION
+        if (prevSensor2State != sensor2State) {
+          sendRHD2000Signal(Food2, SensorChange);
+        }
+      #endif
     }
   #endif
   #if ENABLE_WATER_DISPENSE
@@ -70,25 +84,28 @@ void loop() {
     // Read the water sensors
     sensor3State = digitalRead(SENSOR3PIN);
     sensor4State = digitalRead(SENSOR4PIN);
-    // Check for changes:
-    if (prevSensor3State != sensor3State) {
-      sendRHD2000Signal(Water1, SensorChange);
-    }
-    if (prevSensor4State != sensor4State) {
-      sendRHD2000Signal(Water2, SensorChange);
-    }
+    #if ENABLE_RHD2000_SERIAL_EMULATION
+      // Check for changes:
+      if (prevSensor3State != sensor3State) {
+        sendRHD2000Signal(Water1, SensorChange);
+      }
+      if (prevSensor4State != sensor4State) {
+        sendRHD2000Signal(Water2, SensorChange);
+      }
+    #endif
   #endif
   #if ENABLE_RUNNING_WHEEL
     int prevRunningWheelSensorState = runningWheelSensorState;
     // read the state of the sensor pin:
     runningWheelSensorState = digitalRead(RUNNINGWHEEL_SENSOR_PIN);
-    if (prevRunningWheelSensorState != runningWheelSensorState) {
-      sendRHD2000Signal(RunningWheel, SensorChange);
-    }
+    #if ENABLE_RHD2000_SERIAL_EMULATION
+      if (prevRunningWheelSensorState != runningWheelSensorState) {
+        sendRHD2000Signal(RunningWheel, SensorChange);
+      }
+    #endif
   #endif
 
-  // Get the current time in milliseconds
-  unsigned long currentLoopMillis = millis();
+
 
   // Do full loopRHD2000Interface even in INTERACTIVE DIAGNOSTIC MODE
   #if ENABLE_RHD2000_INTERFACE
