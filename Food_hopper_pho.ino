@@ -16,6 +16,9 @@
 #if ENABLE_MULTIPLEXER_INTERFACE
   #include "Multiplexer_Interface.h";
 #endif
+
+void sendLoggingSignal(SystemAddress addr, EventType event);
+
 #if ENABLE_FOOD_DISPENSE
   #include "Food_Dispenser.h"; //Depends on Common.h
 #endif
@@ -29,9 +32,6 @@
 #include "Diagnostics.h";
 
 void setup() {
-  // initialize the LED pin as an output:
-  //pinMode(LEDPIN, OUTPUT);
-
   Serial.begin(9600); // set up Serial library at 9600 bps (for debugging)
   Serial.println("Behavior Box:");
   if (IS_DIAGNOSTIC_MODE) { //If the system is in diagnostic mode, output a line to the serial terminal indicating this to prevent diagnostic builds being deployed to production hardware.
@@ -117,9 +117,9 @@ void loop() {
   #if ENABLE_RHD2000_INTERFACE
     loopRHD2000Interface(currentLoopMillis);
   #endif
-  #if ENABLE_MULTIPLEXER_INTERFACE
-    loopMultiplexerInterface(currentLoopMillis);
-  #endif
+//  #if ENABLE_MULTIPLEXER_INTERFACE
+//    loopMultiplexerInterface(currentLoopMillis);
+//  #endif
   
   // Performs the interfacing with the processing software (running on the computer) while in interactive diagnostic mode
   if (IS_DIAGNOSTIC_MODE && SHOULD_USE_INTERACTIVE_DIAGNOSTIC) {
