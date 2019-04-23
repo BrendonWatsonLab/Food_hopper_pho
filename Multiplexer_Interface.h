@@ -19,7 +19,6 @@ const int SIGNAL_ON_TIME = 10; //msec
 
 // Function Prototypes:
 void setupMultiplexerInterface();
-void loopMultiplexerInterface(unsigned long currentLoopMillis);
 void sendMultiplexerSignal(SystemAddress addr, EventType event);
 void selectMuxPin(byte pin);
 void zeroAll();
@@ -35,14 +34,6 @@ void setupMultiplexerInterface() {
   pinMode(multiplexerZOutput, OUTPUT); // Set up Z as an output
   zeroAll();
 }
-
-
-//TODO: check if the sensor state changed, which is all we really care about.
-void loopMultiplexerInterface(unsigned long currentLoopMillis) {
-
-  
-}
-
 
 
 void sendMultiplexerSignal(SystemAddress addr, EventType event) {
@@ -70,8 +61,7 @@ void sendMultiplexerSignal(SystemAddress addr, EventType event) {
 
 // The selectMuxPin function sets the S0, S1, and S2 pins
 // accordingly, given a pin from 0-7.
-void selectMuxPin(byte pin)
-{
+void selectMuxPin(byte pin) {
   if (pin > 7) return; // Exit if pin is out of scope
   for (int i=0; i<3; i++)
   {
