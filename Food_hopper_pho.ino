@@ -5,7 +5,7 @@
   Modifed by Pho Hale 3/6/2019
 */
 
-//10msec delay time
+//10msec main loop runtime goal
 
 #include <Wire.h>
 
@@ -64,7 +64,7 @@ void loop() {
   currentLoopMillis = millis();
   #if IS_DIAGNOSTIC_MODE 
     //If the system is in diagnostic mode, output a line to the serial terminal indicating this to prevent diagnostic builds being deployed to production hardware.
-    unsigned long lastLoopDifference = currentLoopMillis - timer1;
+    unsigned long lastLoopDifference = currentLoopMillis - performanceTimer0;
     Serial.println(lastLoopDifference);
     performanceTimer0 = currentLoopMillis;
   #endif

@@ -13,9 +13,9 @@ Mux Breakout ----------- Arduino
 // Pin Definitions //
 /////////////////////
 const int multiplexerSelectPins[3] = {9, 10, 13}; // S0~9, S1~10, S2~13
-const int multiplexerZOutput = 2; // Connect common (Z) to 2
+const int multiplexerZOutputPin = 2; // Connect common (Z) to 2
 
-const int SIGNAL_ON_TIME = 10; //msec
+
 
 // Function Prototypes:
 void setupMultiplexerInterface();
@@ -31,7 +31,7 @@ void setupMultiplexerInterface() {
     pinMode(multiplexerSelectPins[i], OUTPUT);
     digitalWrite(multiplexerSelectPins[i], LOW);
   }
-  pinMode(multiplexerZOutput, OUTPUT); // Set up Z as an output
+  pinMode(multiplexerZOutputPin, OUTPUT); // Set up Z as an output
   zeroAll();
 }
 
@@ -52,9 +52,9 @@ void sendMultiplexerSignal(SystemAddress addr, EventType event) {
   // Set the S0, S1, and S2 pins to select our active output (Y0-Y7):
   selectMuxPin(outputPin);
   // While the output is selected perform the main action
-  digitalWrite(multiplexerZOutput, LOW);
+  digitalWrite(multiplexerZOutputPin, LOW);
   delay(SIGNAL_ON_TIME);
-  digitalWrite(multiplexerZOutput, HIGH);
+  digitalWrite(multiplexerZOutputPin, HIGH);
 }
 
 
@@ -81,7 +81,7 @@ void zeroAll() {
     // Set the S0, S1, and S2 pins to select our active output (Y0-Y7):
     selectMuxPin(pin);
     // While the output is selected perform the main action
-    digitalWrite(multiplexerZOutput, LOW);
+    digitalWrite(multiplexerZOutputPin, LOW);
     delay(10);
   }
 }
