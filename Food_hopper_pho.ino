@@ -54,17 +54,21 @@ void setup() {
     setupRunningWheel();
   #endif
 
-  timer1 = millis();
+  #if IS_DIAGNOSTIC_MODE 
+    performanceTimer0 = millis();
+  #endif
 }
 
 void loop() {
   // Get the current time in milliseconds
-  unsigned long currentLoopMillis = millis();
-  unsigned long lastLoopDifference = currentLoopMillis - timer1;
-  if (IS_DIAGNOSTIC_MODE) { //If the system is in diagnostic mode, output a line to the serial terminal indicating this to prevent diagnostic builds being deployed to production hardware.
+  currentLoopMillis = millis();
+  #if IS_DIAGNOSTIC_MODE 
+    //If the system is in diagnostic mode, output a line to the serial terminal indicating this to prevent diagnostic builds being deployed to production hardware.
+    unsigned long lastLoopDifference = currentLoopMillis - timer1;
     Serial.println(lastLoopDifference);
-  }
-  timer1 = currentLoopMillis;
+    performanceTimer0 = currentLoopMillis;
+  #endif
+
   
   // read the state of the IR break beam sensors:
   #if ENABLE_FOOD_DISPENSE
@@ -75,7 +79,7 @@ void loop() {
         sendLoggingSignal(Food1, SensorChange);
       }
     #endif
-    if (IS_DUAL_MOTOR_MODE) {
+    #if IS_DUAL_MOTOR_MODE
       int prevSensor2State = sensor2State;
       sensor2State = digitalRead(SENSOR2PIN);
       #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
@@ -83,7 +87,7 @@ void loop() {
           sendLoggingSignal(Food2, SensorChange);
         }
       #endif
-    }
+    #endif
   #endif
   #if ENABLE_WATER_DISPENSE
     int prevSensor3State = sensor3State;
@@ -118,10 +122,7 @@ void loop() {
   #if ENABLE_RHD2000_INTERFACE
     loopRHD2000Interface(currentLoopMillis);
   #endif
-//  #if ENABLE_MULTIPLEXER_INTERFACE
-//    loopMultiplexerInterface(currentLoopMillis);
-//  #endif
-  
+
   // Performs the interfacing with the processing software (running on the computer) while in interactive diagnostic mode
   if (IS_DIAGNOSTIC_MODE && SHOULD_USE_INTERACTIVE_DIAGNOSTIC) {
     loopDiagnostics(currentLoopMillis);

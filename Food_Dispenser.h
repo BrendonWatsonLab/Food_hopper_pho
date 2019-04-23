@@ -22,29 +22,17 @@ int moveOperationCounter1 = 0; // This variable keeps track of the total number 
 /* Feeder 2 config:
 
 */
-#define IS_DUAL_MOTOR_MODE true // IS_DUAL_MOTOR_MODE: if true, we use both motors. Otherwise we only use the motor connected to M3 & M4
 Adafruit_StepperMotor *motor2 = AFMS.getStepper(200, 1); // The motor connected to M1 & M2
 #define SENSOR2PIN 7 // SENSOR2PIN: This pin is connected by a green wire to the second beam-break sensor's "SIG" pin.
 int sensor2State = HIGH;         // variable for reading the beam-break sensor2 status
 int moveOperationCounter2 = 0; // This variable keeps track of the total number of "move" operations performed.
 
 
-/*
-   There are two types of "move" operations: move-clockwise, move-counterclockwise
-   The "move" operation performed depends on the moveOperationCounter. Every "ConsecutiveSameDirectionMovements + 1" steps we move counter-clockwise. Otherwise, we move clockwise.
-   Integer overflow is not an issue, as we only care to keep track of the proper rotation direction so that we may alternate between to the two directions.
-*/
-#define ConsecutiveSameDirectionMovements 5 //Defines the number of times it moves in a single direction before alternating the direction of moment.
-//#define NumberOfStepperCoilsActivated SINGLE // The number of coils in the stepper motor to activate. DOUBLE provides higher torque.
-#define NumberOfStepperCoilsActivated DOUBLE // The number of coils in the stepper motor to activate. DOUBLE provides higher torque.
 
-// The StepperSpeed is not in RPM (contrary to what the previous implementor thought).
-// It's a value The setSpeed() function controls the power level delivered to the motor. The speed parameter is a value between 0 and 255.
-#define StepperSpeed 127 // The speed of the stepper in rpm (default 25, previous 127).
+
 
 unsigned long lastDispenseTimer = 0; // This variable keeps track of the last time dispense was performed
 
-#define DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_FOOD false //DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_FOOD: if this value is true the system will operate continuously, ignoring the beam break sensor. This serves to allow testing. This value should be false outside of testing.
 
 
 // Function Prototypes:
