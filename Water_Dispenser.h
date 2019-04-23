@@ -34,13 +34,9 @@ SolenoidState solenoid2State = CLOSED;         // reflects the open/closed state
    Following SolenoidOpenDuration, the solenoid is closed (stopping the flow of water) for at least SolenoidPostDoseClosedDuration before re-opening
 */
 
-#define SolenoidDoseOpenDuration 100
-#define SolenoidPostDoseClosedDuration 5000
 unsigned long lastSolenoidOpenTimer = 0; // This variable keeps track of the last time the Solenoid "open" operation was performed
 unsigned long lastSolenoidCloseTimer = 0; // This variable keeps track of the last time the Solenoid "close" operation was performed
 
-
-#define DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER false //DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER: if this value is true the system will operate continuously, ignoring the beam break sensor. This serves to allow testing. This value should be false outside of testing.
 
 // Function Prototypes:
 void setupWaterDispensers();
@@ -88,8 +84,8 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
           HIGH: Sensor Beam has continuity
         */
       if ((sensor3State == LOW) || (IS_DIAGNOSTIC_MODE && DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER)) {
-          #if ENABLE_RHD2000_SERIAL_EMULATION
-            sendRHD2000Signal(Water1, ActionDispense);
+          #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
+            sendLoggingSignal(Water1, ActionDispense);
           #endif
           openSolenoid(1);
       }
@@ -112,8 +108,8 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
           HIGH: Sensor Beam has continuity
         */
       if ((sensor4State == LOW)) {
-          #if ENABLE_RHD2000_SERIAL_EMULATION
-            sendRHD2000Signal(Water2, ActionDispense);
+          #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
+            sendLoggingSignal(Water2, ActionDispense);
           #endif
           openSolenoid(2);
       }

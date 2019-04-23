@@ -13,6 +13,12 @@
 #if ENABLE_RHD2000_INTERFACE
   #include "RHD2000_Interface.h";
 #endif
+#if ENABLE_MULTIPLEXER_INTERFACE
+  #include "Multiplexer_Interface.h";
+#endif
+
+void sendLoggingSignal(SystemAddress addr, EventType event);
+
 #if ENABLE_FOOD_DISPENSE
   #include "Food_Dispenser.h"; //Depends on Common.h
 #endif
@@ -26,15 +32,15 @@
 #include "Diagnostics.h";
 
 void setup() {
-  // initialize the LED pin as an output:
-  //pinMode(LEDPIN, OUTPUT);
-
   Serial.begin(9600); // set up Serial library at 9600 bps (for debugging)
   Serial.println("Behavior Box:");
   if (IS_DIAGNOSTIC_MODE) { //If the system is in diagnostic mode, output a line to the serial terminal indicating this to prevent diagnostic builds being deployed to production hardware.
     Serial.println("----- DIAGNOSTIC MODE -----");
   }
 
+  #if ENABLE_MULTIPLEXER_INTERFACE
+    setupMultiplexerInterface();
+  #endif
   #if ENABLE_RHD2000_INTERFACE
     setupRHD2000Interface();
   #endif
@@ -48,35 +54,40 @@ void setup() {
     setupRunningWheel();
   #endif
 
-  timer1 = millis();
-  timer2 = millis();
+  #if IS_DIAGNOSTIC_MODE 
+    performanceTimer0 = millis();
+  #endif
 }
 
 void loop() {
   // Get the current time in milliseconds
-  unsigned long currentLoopMillis = millis();
-  unsigned long lastLoopDifference = currentLoopMillis - timer1;
-  Serial.println(lastLoopDifference);
-  timer1 = currentLoopMillis;
+  currentLoopMillis = millis();
+  #if IS_DIAGNOSTIC_MODE 
+    //If the system is in diagnostic mode, output a line to the serial terminal indicating this to prevent diagnostic builds being deployed to production hardware.
+    unsigned long lastLoopDifference = currentLoopMillis - timer1;
+    Serial.println(lastLoopDifference);
+    performanceTimer0 = currentLoopMillis;
+  #endif
+
   
   // read the state of the IR break beam sensors:
   #if ENABLE_FOOD_DISPENSE
     int prevSensor1State = sensor1State;
     sensor1State = digitalRead(SENSOR1PIN);
-    #if ENABLE_RHD2000_SERIAL_EMULATION
+    #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
       if (prevSensor1State != sensor1State) {
-        sendRHD2000Signal(Food1, SensorChange);
+        sendLoggingSignal(Food1, SensorChange);
       }
     #endif
-    if (IS_DUAL_MOTOR_MODE) {
+    #if IS_DUAL_MOTOR_MODE
       int prevSensor2State = sensor2State;
       sensor2State = digitalRead(SENSOR2PIN);
-      #if ENABLE_RHD2000_SERIAL_EMULATION
+      #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
         if (prevSensor2State != sensor2State) {
-          sendRHD2000Signal(Food2, SensorChange);
+          sendLoggingSignal(Food2, SensorChange);
         }
       #endif
-    }
+    #endif
   #endif
   #if ENABLE_WATER_DISPENSE
     int prevSensor3State = sensor3State;
@@ -84,13 +95,13 @@ void loop() {
     // Read the water sensors
     sensor3State = digitalRead(SENSOR3PIN);
     sensor4State = digitalRead(SENSOR4PIN);
-    #if ENABLE_RHD2000_SERIAL_EMULATION
+    #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
       // Check for changes:
       if (prevSensor3State != sensor3State) {
-        sendRHD2000Signal(Water1, SensorChange);
+        sendLoggingSignal(Water1, SensorChange);
       }
       if (prevSensor4State != sensor4State) {
-        sendRHD2000Signal(Water2, SensorChange);
+        sendLoggingSignal(Water2, SensorChange);
       }
     #endif
   #endif
@@ -98,9 +109,9 @@ void loop() {
     int prevRunningWheelSensorState = runningWheelSensorState;
     // read the state of the sensor pin:
     runningWheelSensorState = digitalRead(RUNNINGWHEEL_SENSOR_PIN);
-    #if ENABLE_RHD2000_SERIAL_EMULATION
+    #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
       if (prevRunningWheelSensorState != runningWheelSensorState) {
-        sendRHD2000Signal(RunningWheel, SensorChange);
+        sendLoggingSignal(RunningWheel, SensorChange);
       }
     #endif
   #endif
@@ -111,7 +122,7 @@ void loop() {
   #if ENABLE_RHD2000_INTERFACE
     loopRHD2000Interface(currentLoopMillis);
   #endif
-  
+
   // Performs the interfacing with the processing software (running on the computer) while in interactive diagnostic mode
   if (IS_DIAGNOSTIC_MODE && SHOULD_USE_INTERACTIVE_DIAGNOSTIC) {
     loopDiagnostics(currentLoopMillis);
@@ -132,3 +143,14 @@ void loop() {
 
 
 } // end loop
+
+
+// A General logging function that calls the appropriate output functions.
+void sendLoggingSignal(SystemAddress addr, EventType event) {
+  #if ENABLE_RHD2000_INTERFACE
+    sendRHD2000Signal(addr, event);
+  #endif
+  #if ENABLE_MULTIPLEXER_INTERFACE
+    sendMultiplexerSignal(addr, event);
+  #endif
+}

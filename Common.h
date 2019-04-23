@@ -13,18 +13,66 @@
 #define ENABLE_FOOD_DISPENSE true
 #define ENABLE_WATER_DISPENSE true
 #define ENABLE_RUNNING_WHEEL true
-#define ENABLE_RHD2000_INTERFACE true
-#define ENABLE_RHD2000_SERIAL_EMULATION true
+#define ENABLE_RHD2000_INTERFACE false
+#define ENABLE_LOGGING_SIGNAL_ON_CHANGE true
+#define ENABLE_MULTIPLEXER_INTERFACE true
 
-#define IS_DIAGNOSTIC_MODE true //IS_DIAGNOSTIC_MODE: if this value is false, all diagnostic settings will be ignored. This value should be false outside of testing.
+#define IS_DIAGNOSTIC_MODE false //IS_DIAGNOSTIC_MODE: if this value is false, all diagnostic settings will be ignored. This value should be false outside of testing.
 #define ENABLE_DIAGNOSTIC_SERIAL false 
 
 #define PostDispenseTimeout 3000 //The number of milliseconds (1/1000 of a second) after dispensing that the system will wait before allowing input.
 // Was 5000
 
-unsigned long timer1;
-unsigned long timer2;
 
+
+
+
+
+
+
+
+
+
+// FOOD:
+/*
+   There are two types of "move" operations: move-clockwise, move-counterclockwise
+   The "move" operation performed depends on the moveOperationCounter. Every "ConsecutiveSameDirectionMovements + 1" steps we move counter-clockwise. Otherwise, we move clockwise.
+   Integer overflow is not an issue, as we only care to keep track of the proper rotation direction so that we may alternate between to the two directions.
+*/
+#define IS_DUAL_MOTOR_MODE true // IS_DUAL_MOTOR_MODE: if true, we use both motors. Otherwise we only use the motor connected to M3 & M4
+#define DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_FOOD false //DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_FOOD: if this value is true the system will operate continuously, ignoring the beam break sensor. This serves to allow testing. This value should be false outside of testing.
+#define ConsecutiveSameDirectionMovements 5 //Defines the number of times it moves in a single direction before alternating the direction of moment.
+//#define NumberOfStepperCoilsActivated SINGLE // The number of coils in the stepper motor to activate. DOUBLE provides higher torque.
+#define NumberOfStepperCoilsActivated DOUBLE // The number of coils in the stepper motor to activate. DOUBLE provides higher torque.
+// The StepperSpeed is not in RPM (contrary to what the previous implementor thought).
+// It's a value The setSpeed() function controls the power level delivered to the motor. The speed parameter is a value between 0 and 255.
+#define StepperSpeed 127 // The speed of the stepper in rpm (default 25, previous 127).
+
+
+// WATER:
+ /*
+   After a beam-break, the solenoid opens for SolenoidOpenDuration to allow water to be dispensed.
+   Following SolenoidOpenDuration, the solenoid is closed (stopping the flow of water) for at least SolenoidPostDoseClosedDuration before re-opening
+*/
+#define DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER false //DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER: if this value is true the system will operate continuously, ignoring the beam break sensor. This serves to allow testing. This value should be false outside of testing.
+#define SolenoidDoseOpenDuration 100
+#define SolenoidPostDoseClosedDuration 5000
+
+// DIAGNOSTICS:
+/*
+ * 
+ */
+#define SHOULD_USE_INTERACTIVE_DIAGNOSTIC false //SHOULD_USE_INTERACTIVE_DIAGNOSTIC: enables extended diagnostics and testing via the helper Processing software.
+#define INTERACTIVE_DIAGNOSTIC_SERIAL_READ_TIMEOUT 10 //INTERACTIVE_DIAGNOSTIC_SERIAL_READ_TIMEOUT: the minimum time between serial reads for interactive diagnostics
+
+
+
+// VARIABLES
+/*
+ * 
+ */
+unsigned long currentLoopMillis; // currentLoopMillis: the millis() recorded at the start of each iteration of the main loop.
+unsigned long performanceTimer0; // performanceTimer0: a timer used to track the performance of the arduino by measuring the difference from the start of the last loop.
 
 // reflects the open/closed state of the beambreak sensor
 enum BeamBreakState {
@@ -43,7 +91,6 @@ union TimestampBuffer
     byte longBytes[4];
 };
 TimestampBuffer timestampBuffer;
-
 
 
 #endif // end of the "#ifndef" at the start of the file that ensures this file is only included once. THIS MUST BE AT THE END OF THE FILE.

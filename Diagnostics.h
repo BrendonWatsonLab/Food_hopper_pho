@@ -5,12 +5,8 @@
    The Processing sketch must be quit before the Arduino Serial Monitor can be used or a new sketch uploaded to the Arduino. This is because only one program can be using the Serial port at the same time.
 */
 
-
-#define SHOULD_USE_INTERACTIVE_DIAGNOSTIC false //SHOULD_USE_INTERACTIVE_DIAGNOSTIC: enables extended diagnostics and testing via the helper Processing software.
 char diagnostic_val; // Data received from the serial port
 unsigned long lastDiagnosticSerialReadTimer = 0; // This variable keeps track of the last time diagnostic serial read was performed
-#define INTERACTIVE_DIAGNOSTIC_SERIAL_READ_TIMEOUT 10 //INTERACTIVE_DIAGNOSTIC_SERIAL_READ_TIMEOUT: the minimum time between serial reads for interactive diagnostics
-
 
 
 // Function Prototypes:
