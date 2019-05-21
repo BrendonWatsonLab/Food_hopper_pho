@@ -21,7 +21,7 @@ Labjack Input ----------- Arduino
 /////////////////////
 // Pin Definitions //
 /////////////////////
-const int megaOutputPins[8] = {22, 24, 26, 28, 23, 25, 27, 29};
+const int megaOutputPins[9] = {22, 24, 26, 28, 23, 25, 27, 29, 30};
 
 // Function Prototypes:
 void setupMegaOutputInterface();
@@ -31,7 +31,7 @@ void sendMegaOutputSignal(SystemAddress addr, EventType event);
 // Called from setup()
 void setupMegaOutputInterface() {
   // Set up the select pins, as outputs
-  for (int i=0; i<8; i++)
+  for (int i=0; i<9; i++)
   {
     pinMode(megaOutputPins[i], OUTPUT);
     digitalWrite(megaOutputPins[i], LOW);
@@ -40,15 +40,21 @@ void setupMegaOutputInterface() {
 
 //TODO: deal with running wheel
 void sendMegaOutputSignal(SystemAddress addr, EventType event) {
-  if (addr > 3) {
+  if (addr > 4) {
     // Ignore the running wheel or any other inputs for now
     return;
   }
   byte outputPinIndex = addr;
-  // addr is either {0,1,2,3}
-  if (event == ActionDispense) {
-    // If the event type is a dispense event, add four. Shifting the outputPin to {4,5,6,7}
-    outputPinIndex = outputPinIndex + 4;
+  if (addr == 4) {
+    // Running Wheel addr is {8}
+    outputPinIndex = 8;
+  }
+  else {
+    // addr is either {0,1,2,3}
+    if (event == ActionDispense) {
+      // If the event type is a dispense event, add four. Shifting the outputPin to {4,5,6,7}
+      outputPinIndex = outputPinIndex + 4;
+    }
   }
   int outputPin = megaOutputPins[outputPinIndex];
   // While the output is selected perform the main action
