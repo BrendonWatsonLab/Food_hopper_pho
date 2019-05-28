@@ -20,8 +20,8 @@
 
 #define ENABLE_LOGGING_SIGNAL_ON_CHANGE true
 #define ENABLE_RHD2000_INTERFACE true
-#define ENABLE_MULTIPLEXER_INTERFACE false
-#define ENABLE_ARDUINOMEGA_LABJACK_INTERFACE true
+#define ENABLE_MULTIPLEXER_INTERFACE true
+#define ENABLE_ARDUINOMEGA_LABJACK_INTERFACE false
 
 
 
@@ -36,6 +36,7 @@
 // Was 5000
 #define IS_DUAL_MOTOR_MODE true // IS_DUAL_MOTOR_MODE: if true, we use both motors. Otherwise we only use the motor connected to M3 & M4
 #define DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_FOOD false //DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_FOOD: if this value is true the system will operate continuously, ignoring the beam break sensor. This serves to allow testing. This value should be false outside of testing.
+#define SHOULD_RELEASE_MOTORS_FOR_POWER_SAVING true //SHOULD_RELEASE_MOTORS_FOR_POWER_SAVING: releases the stepper motors once their movement is complete to allow power savings. Otherwise they consume power maximally when they aren't moving to hold their position. 
 #define ConsecutiveSameDirectionMovements 5 //Defines the number of times it moves in a single direction before alternating the direction of moment.
 #define NumberOfStepperCoilsActivated DOUBLE // The number of coils in the stepper motor to activate. DOUBLE provides higher torque.
 // StepperSpeed is a value used by the setSpeed() function controls the power level delivered to the motor. The speed parameter is a value between 0 and 255.
@@ -55,7 +56,7 @@
 /*
  * 
  */
-#define IS_DIAGNOSTIC_MODE false //IS_DIAGNOSTIC_MODE: if this value is false, all diagnostic settings will be ignored. This value should be false outside of testing.
+#define IS_DIAGNOSTIC_MODE true //IS_DIAGNOSTIC_MODE: if this value is false, all diagnostic settings will be ignored. This value should be false outside of testing.
 #define ENABLE_DIAGNOSTIC_SERIAL true 
 #define SHOULD_USE_INTERACTIVE_DIAGNOSTIC true //SHOULD_USE_INTERACTIVE_DIAGNOSTIC: enables extended diagnostics and testing via the helper Processing software.
 #define INTERACTIVE_DIAGNOSTIC_SERIAL_READ_TIMEOUT 10 //INTERACTIVE_DIAGNOSTIC_SERIAL_READ_TIMEOUT: the minimum time between serial reads for interactive diagnostics
