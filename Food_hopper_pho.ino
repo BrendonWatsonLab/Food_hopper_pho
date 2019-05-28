@@ -16,6 +16,9 @@
 #if ENABLE_MULTIPLEXER_INTERFACE
   #include "Multiplexer_Interface.h";
 #endif
+#if ENABLE_ARDUINOMEGA_LABJACK_INTERFACE
+  #include "Mega2560Labjack_Interface.h";
+#endif
 
 void sendLoggingSignal(SystemAddress addr, EventType event);
 
@@ -38,6 +41,9 @@ void setup() {
     Serial.println("----- DIAGNOSTIC MODE -----");
   }
 
+  #if ENABLE_ARDUINOMEGA_LABJACK_INTERFACE
+    setupMegaOutputInterface();
+  #endif
   #if ENABLE_MULTIPLEXER_INTERFACE
     setupMultiplexerInterface();
   #endif
@@ -152,5 +158,8 @@ void sendLoggingSignal(SystemAddress addr, EventType event) {
   #endif
   #if ENABLE_MULTIPLEXER_INTERFACE
     sendMultiplexerSignal(addr, event);
+  #endif
+  #if ENABLE_ARDUINOMEGA_LABJACK_INTERFACE
+    sendMegaOutputSignal(addr, event);
   #endif
 }
