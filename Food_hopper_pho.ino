@@ -20,7 +20,9 @@
   #include "Mega2560Labjack_Interface.h";
 #endif
 
+// Function Prototypes:
 void sendLoggingSignal(SystemAddress addr, EventType event);
+void loopDispense(unsigned long currentLoopMillis);
 
 #if ENABLE_FOOD_DISPENSE
   #include "Food_Dispenser.h"; //Depends on Common.h
@@ -33,6 +35,8 @@ void sendLoggingSignal(SystemAddress addr, EventType event);
 #endif
 
 #include "Diagnostics.h";
+
+
 
 void setup() {
   Serial.begin(9600); // set up Serial library at 9600 bps (for debugging)
@@ -132,19 +136,13 @@ void loop() {
   // Performs the interfacing with the processing software (running on the computer) while in interactive diagnostic mode
   if (IS_DIAGNOSTIC_MODE && SHOULD_USE_INTERACTIVE_DIAGNOSTIC) {
     loopDiagnostics(currentLoopMillis);
+    // Perform normal dispense events unless diagnostic_disable_dispensing is true
+    if (diagnostic_disable_dispensing == false) {
+      loopDispense(currentLoopMillis);
+    }
   }
   else {
-    // We don't dispense unless not in interactive diagnostic mode
-    #if ENABLE_FOOD_DISPENSE
-      loopFoodDispensers(currentLoopMillis);
-    #endif
-    #if ENABLE_WATER_DISPENSE
-      loopWaterDispensers(currentLoopMillis);
-    #endif
-    #if ENABLE_RUNNING_WHEEL
-      loopRunningWheel(currentLoopMillis);
-    #endif
-
+    loopDispense(currentLoopMillis);
   } // end interactive diagnostic if
 
 
@@ -162,4 +160,17 @@ void sendLoggingSignal(SystemAddress addr, EventType event) {
   #if ENABLE_ARDUINOMEGA_LABJACK_INTERFACE
     sendMegaOutputSignal(addr, event);
   #endif
+}
+
+// Called from the main loop to perform the dispense loops for enabled output modalities.
+void loopDispense(unsigned long currentLoopMillis) {
+  #if ENABLE_FOOD_DISPENSE
+      loopFoodDispensers(currentLoopMillis);
+    #endif
+    #if ENABLE_WATER_DISPENSE
+      loopWaterDispensers(currentLoopMillis);
+    #endif
+    #if ENABLE_RUNNING_WHEEL
+      loopRunningWheel(currentLoopMillis);
+    #endif
 }
