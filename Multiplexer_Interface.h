@@ -16,7 +16,6 @@ const int multiplexerSelectPins[3] = {9, 10, 13}; // S0~9, S1~10, S2~13
 const int multiplexerZOutputPin = 2; // Connect common (Z) to 2
 
 
-
 // Function Prototypes:
 void setupMultiplexerInterface();
 void sendMultiplexerSignal(SystemAddress addr, EventType event);

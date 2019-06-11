@@ -8,7 +8,6 @@
 #define Common_h
 
 #define DEPLOY_ARDUINO_IS_UNO true //DEPLOY_ARDUINO_IS_UNO: true if sketch will be running on Arduino Uno. Else assumed to be "Adafruit pro trinket SV p2000"
-//#define LEDPIN 13 // Pin 13: Arduino has an LED connected on pin 1
 
 // General Feature Enables:
 /*
@@ -20,8 +19,8 @@
 
 #define ENABLE_LOGGING_SIGNAL_ON_CHANGE true
 #define ENABLE_RHD2000_INTERFACE true
-#define ENABLE_MULTIPLEXER_INTERFACE false
-#define ENABLE_ARDUINOMEGA_LABJACK_INTERFACE true
+#define ENABLE_MULTIPLEXER_INTERFACE true
+#define ENABLE_ARDUINOMEGA_LABJACK_INTERFACE false
 
 
 
@@ -36,6 +35,7 @@
 // Was 5000
 #define IS_DUAL_MOTOR_MODE true // IS_DUAL_MOTOR_MODE: if true, we use both motors. Otherwise we only use the motor connected to M3 & M4
 #define DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_FOOD false //DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_FOOD: if this value is true the system will operate continuously, ignoring the beam break sensor. This serves to allow testing. This value should be false outside of testing.
+#define SHOULD_RELEASE_MOTORS_FOR_POWER_SAVING true //SHOULD_RELEASE_MOTORS_FOR_POWER_SAVING: releases the stepper motors once their movement is complete to allow power savings. Otherwise they consume power maximally when they aren't moving to hold their position. 
 #define ConsecutiveSameDirectionMovements 5 //Defines the number of times it moves in a single direction before alternating the direction of moment.
 #define NumberOfStepperCoilsActivated DOUBLE // The number of coils in the stepper motor to activate. DOUBLE provides higher torque.
 // StepperSpeed is a value used by the setSpeed() function controls the power level delivered to the motor. The speed parameter is a value between 0 and 255.
@@ -48,8 +48,8 @@
    Following SolenoidOpenDuration, the solenoid is closed (stopping the flow of water) for at least SolenoidPostDoseClosedDuration before re-opening
 */
 #define DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER false //DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER: if this value is true the system will operate continuously, ignoring the beam break sensor. This serves to allow testing. This value should be false outside of testing.
-#define SolenoidDoseOpenDuration 200
-#define SolenoidPostDoseClosedDuration 5000
+#define SolenoidDoseOpenDuration 300 //SolenoidDoseOpenDuration: The time for which the solenoid is open and the water is allowed to flow freely. 
+#define SolenoidPostDoseClosedDuration 5000 //SolenoidPostDoseClosedDuration: The time after a water dispense event before another water dispense event can be re-triggered
 
 // DIAGNOSTICS:
 /*
@@ -83,7 +83,22 @@ enum BeamBreakState {
 
 // Values
 enum SystemAddress { Water1 = 0b000, Water2 = 0b001, Food1 = 0b010, Food2 = 0b011, RunningWheel = 0b100, Sync = 0b101};
+/* SystemAddress
+ * This type specifies which system/port is being referred to.
+ * Water 1: 0
+ * Water 2: 1
+ * Food 1: 2
+ * Food 2: 3
+ * RunningWheel: 4
+ * Sync: 5
+ */
 enum EventType { SensorChange = 0b0, ActionDispense = 0b1};
+/* EventType
+ * This type species which type of event has occured
+ * Sensor Change: 0 // Occurs when a beam-break sensor changes state
+ * Action Dispense: 1 // Occurs when a dispense action has occured
+ */
+ 
 // create a union to hold the data
 union TimestampBuffer
 {

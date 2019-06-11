@@ -31,7 +31,7 @@ SolenoidState solenoid2State = CLOSED;         // reflects the open/closed state
 
 /*
    After a beam-break, the solenoid opens for SolenoidOpenDuration to allow water to be dispensed.
-   Following SolenoidOpenDuration, the solenoid is closed (stopping the flow of water) for at least SolenoidPostDoseClosedDuration before re-opening
+   Following SolenoidOpenDuration, the solenoid is closed (stopping the flow of water) for at least SolenoidPostDoseClosedDuration before re-opening.
 */
 
 unsigned long lastSolenoidOpenTimer = 0; // This variable keeps track of the last time the Solenoid "open" operation was performed
@@ -152,7 +152,6 @@ void closeSolenoid(int waterPortNumber) {
     Serial.println("----- waterPortNumber Error B! -----");
   }
 }
-
 
 void openSolenoid(int waterPortNumber) {
   int activeSolenoidPin = 0;
