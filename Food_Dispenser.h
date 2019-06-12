@@ -104,14 +104,14 @@ void loopFoodDispensers(unsigned long currentLoopMillis) {
 
 void dispenseFeeder1() {
   #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
-    sendLoggingSignal(Food1, ActionDispense);
+    sendLoggingSignal(Food1, ActionDispense, 1);
   #endif
   dispenseFood(1);
 }
 
 void dispenseFeeder2() {
   #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
-    sendLoggingSignal(Food2, ActionDispense);
+    sendLoggingSignal(Food2, ActionDispense, 1);
   #endif
   dispenseFood(2);
 }

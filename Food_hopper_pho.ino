@@ -21,7 +21,7 @@
 #endif
 
 // Function Prototypes:
-void sendLoggingSignal(SystemAddress addr, EventType event);
+void sendLoggingSignal(SystemAddress addr, EventType event, int newValue);
 void loopDispense(unsigned long currentLoopMillis);
 
 #if ENABLE_FOOD_DISPENSE
@@ -86,7 +86,7 @@ void loop() {
     sensor1State = digitalRead(SENSOR1PIN);
     #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
       if (prevSensor1State != sensor1State) {
-        sendLoggingSignal(Food1, SensorChange);
+        sendLoggingSignal(Food1, SensorChange, sensor1State);
       }
     #endif
     #if IS_DUAL_MOTOR_MODE
@@ -94,7 +94,7 @@ void loop() {
       sensor2State = digitalRead(SENSOR2PIN);
       #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
         if (prevSensor2State != sensor2State) {
-          sendLoggingSignal(Food2, SensorChange);
+          sendLoggingSignal(Food2, SensorChange, sensor2State);
         }
       #endif
     #endif
@@ -108,10 +108,10 @@ void loop() {
     #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
       // Check for changes:
       if (prevSensor3State != sensor3State) {
-        sendLoggingSignal(Water1, SensorChange);
+        sendLoggingSignal(Water1, SensorChange, sensor3State);
       }
       if (prevSensor4State != sensor4State) {
-        sendLoggingSignal(Water2, SensorChange);
+        sendLoggingSignal(Water2, SensorChange, sensor4State);
       }
     #endif
   #endif
@@ -121,7 +121,7 @@ void loop() {
     runningWheelSensorState = digitalRead(RUNNINGWHEEL_SENSOR_PIN);
     #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
       if (prevRunningWheelSensorState != runningWheelSensorState) {
-        sendLoggingSignal(RunningWheel, SensorChange);
+        sendLoggingSignal(RunningWheel, SensorChange, runningWheelSensorState);
       }
     #endif
   #endif
@@ -150,7 +150,7 @@ void loop() {
 
 
 // A General logging function that calls the appropriate output functions.
-void sendLoggingSignal(SystemAddress addr, EventType event) {
+void sendLoggingSignal(SystemAddress addr, EventType event, int newValue) {
   #if ENABLE_RHD2000_INTERFACE
     sendRHD2000Signal(addr, event);
   #endif
@@ -158,7 +158,7 @@ void sendLoggingSignal(SystemAddress addr, EventType event) {
     sendMultiplexerSignal(addr, event);
   #endif
   #if ENABLE_ARDUINOMEGA_LABJACK_INTERFACE
-    sendMegaOutputSignal(addr, event);
+    sendMegaOutputSignal(addr, event, newValue);
   #endif
 }
 

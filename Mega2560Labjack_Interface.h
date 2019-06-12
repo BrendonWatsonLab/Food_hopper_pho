@@ -25,7 +25,7 @@ const int megaOutputPins[9] = {22, 24, 26, 28, 23, 25, 27, 29, 30};
 
 // Function Prototypes:
 void setupMegaOutputInterface();
-void sendMegaOutputSignal(SystemAddress addr, EventType event);
+void sendMegaOutputSignal(SystemAddress addr, EventType event, int newValue);
 
 
 // Called from setup()
@@ -39,7 +39,7 @@ void setupMegaOutputInterface() {
 }
 
 //TODO: deal with running wheel
-void sendMegaOutputSignal(SystemAddress addr, EventType event) {
+void sendMegaOutputSignal(SystemAddress addr, EventType event, int newValue) {
   if (addr > 4) {
     // Ignore the running wheel or any other inputs for now
     return;
@@ -58,7 +58,8 @@ void sendMegaOutputSignal(SystemAddress addr, EventType event) {
   }
   int outputPin = megaOutputPins[outputPinIndex];
   // While the output is selected perform the main action
-  digitalWrite(outputPin, LOW);
-  delay(SIGNAL_ON_TIME);
-  digitalWrite(outputPin, HIGH);
+//  digitalWrite(outputPin, LOW);
+//  delay(SIGNAL_ON_TIME);
+//  digitalWrite(outputPin, HIGH);
+  digitalWrite(outputPin, newValue); 
 }

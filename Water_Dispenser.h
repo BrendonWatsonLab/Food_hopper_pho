@@ -85,7 +85,7 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
         */
       if ((sensor3State == LOW) || (IS_DIAGNOSTIC_MODE && DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER)) {
           #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
-            sendLoggingSignal(Water1, ActionDispense);
+            sendLoggingSignal(Water1, ActionDispense, OPEN);
           #endif
           openSolenoid(1);
       }
@@ -109,7 +109,7 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
         */
       if ((sensor4State == LOW)) {
           #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
-            sendLoggingSignal(Water2, ActionDispense);
+            sendLoggingSignal(Water2, ActionDispense, OPEN);
           #endif
           openSolenoid(2);
       }
