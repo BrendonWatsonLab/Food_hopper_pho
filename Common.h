@@ -15,12 +15,12 @@
  */
 #define ENABLE_FOOD_DISPENSE true
 #define ENABLE_WATER_DISPENSE true
-#define ENABLE_RUNNING_WHEEL true
+#define ENABLE_RUNNING_WHEEL false
 
 #define ENABLE_LOGGING_SIGNAL_ON_CHANGE true
 #define ENABLE_RHD2000_INTERFACE true
-#define ENABLE_MULTIPLEXER_INTERFACE true
-#define ENABLE_ARDUINOMEGA_LABJACK_INTERFACE false
+#define ENABLE_MULTIPLEXER_INTERFACE false
+#define ENABLE_ARDUINOMEGA_LABJACK_INTERFACE true
 
 
 
@@ -55,7 +55,7 @@
 /*
  * 
  */
-#define IS_DIAGNOSTIC_MODE false //IS_DIAGNOSTIC_MODE: if this value is false, all diagnostic settings will be ignored. This value should be false outside of testing.
+#define IS_DIAGNOSTIC_MODE true //IS_DIAGNOSTIC_MODE: if this value is false, all diagnostic settings will be ignored. This value should be false outside of testing.
 #define ENABLE_DIAGNOSTIC_SERIAL true 
 #define SHOULD_USE_INTERACTIVE_DIAGNOSTIC true //SHOULD_USE_INTERACTIVE_DIAGNOSTIC: enables extended diagnostics and testing via the helper Processing software.
 #define INTERACTIVE_DIAGNOSTIC_SERIAL_READ_TIMEOUT 10 //INTERACTIVE_DIAGNOSTIC_SERIAL_READ_TIMEOUT: the minimum time between serial reads for interactive diagnostics
