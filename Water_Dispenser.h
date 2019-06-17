@@ -82,15 +82,17 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
       /* Check sensor beam state:
           LOW: Sensor Beam is broken
           HIGH: Sensor Beam has continuity
-        */
-      if ((sensor3State == LOW) || (IS_DIAGNOSTIC_MODE && DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER)) {
+      */
+      // The sensor must have changed state after the end of the last water dispense and timeout period
+      if (lastSensorChangeEvent3  > (lastSolenoidCloseTimer + SolenoidPostDoseClosedDuration)) {
+        if ((sensor3State == LOW) || (IS_DIAGNOSTIC_MODE && DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER)) {
           #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
             sendLoggingSignal(Water1, ActionDispense);
           #endif
           openSolenoid(1);
+        }
       }
     }
-
   }
 
   // Check Water Port 2:
@@ -107,15 +109,17 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
           LOW: Sensor Beam is broken
           HIGH: Sensor Beam has continuity
         */
-      if ((sensor4State == LOW)) {
-          #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
-            sendLoggingSignal(Water2, ActionDispense);
-          #endif
-          openSolenoid(2);
+       // The sensor must have changed state after the end of the last water dispense and timeout period
+      if (lastSensorChangeEvent4  > (lastSolenoidCloseTimer + SolenoidPostDoseClosedDuration)) {
+        if ((sensor4State == LOW)) {
+            #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
+              sendLoggingSignal(Water2, ActionDispense);
+            #endif
+            openSolenoid(2);
+        }
       }
     }
   }
-
 }
 
 void closeSolenoid(int waterPortNumber) {

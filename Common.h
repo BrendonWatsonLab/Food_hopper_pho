@@ -74,6 +74,12 @@ const int SIGNAL_ON_TIME = 10; //msec
 unsigned long currentLoopMillis; // currentLoopMillis: the millis() recorded at the start of each iteration of the main loop.
 unsigned long performanceTimer0; // performanceTimer0: a timer used to track the performance of the arduino by measuring the difference from the start of the last loop.
 
+unsigned long lastSensorChangeEvent1 = 0; // The last loop time the sensor was detected to have changed value
+unsigned long lastSensorChangeEvent2 = 0; 
+unsigned long lastSensorChangeEvent3 = 0;
+unsigned long lastSensorChangeEvent4 = 0;
+
+
 // reflects the open/closed state of the beambreak sensor
 enum BeamBreakState {
   CLEAR,
