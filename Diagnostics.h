@@ -197,10 +197,5 @@ void diagnostic_send_info() {
   Serial.println(moveOperationCounter4);
 #endif
 
-#if ENABLE_RUNNING_WHEEL
-  Serial.print("INFO://");
-  Serial.print("runningWheelSensorState//");
-  Serial.println(runningWheelSensorState);
-#endif
 
 }

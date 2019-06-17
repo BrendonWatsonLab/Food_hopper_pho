@@ -30,9 +30,6 @@ void loopDispense(unsigned long currentLoopMillis);
 #if ENABLE_WATER_DISPENSE
   #include "Water_Dispenser.h";
 #endif
-#if ENABLE_RUNNING_WHEEL
-  #include "RunningWheel.h";
-#endif
 
 #include "Diagnostics.h";
 
@@ -59,9 +56,6 @@ void setup() {
   #endif
   #if ENABLE_WATER_DISPENSE
     setupWaterDispensers();
-  #endif
-  #if ENABLE_RUNNING_WHEEL
-    setupRunningWheel();
   #endif
 
   #if IS_DIAGNOSTIC_MODE 
@@ -130,18 +124,6 @@ void loop() {
       }
     #endif
   #endif
-  #if ENABLE_RUNNING_WHEEL
-    int prevRunningWheelSensorState = runningWheelSensorState;
-    // read the state of the sensor pin:
-    runningWheelSensorState = digitalRead(RUNNINGWHEEL_SENSOR_PIN);
-    #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
-      if (prevRunningWheelSensorState != runningWheelSensorState) {
-        sendLoggingSignal(RunningWheel, SensorChange);
-      }
-    #endif
-  #endif
-
-
 
   // Do full loopRHD2000Interface even in INTERACTIVE DIAGNOSTIC MODE
   #if ENABLE_RHD2000_INTERFACE
@@ -184,8 +166,5 @@ void loopDispense(unsigned long currentLoopMillis) {
     #endif
     #if ENABLE_WATER_DISPENSE
       loopWaterDispensers(currentLoopMillis);
-    #endif
-    #if ENABLE_RUNNING_WHEEL
-      loopRunningWheel(currentLoopMillis);
     #endif
 }

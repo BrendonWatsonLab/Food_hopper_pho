@@ -38,7 +38,6 @@ void setupMegaOutputInterface() {
   }
 }
 
-//TODO: deal with running wheel
 void sendMegaOutputSignal(SystemAddress addr, EventType event) {
   if (addr > 4) {
     // Ignore the running wheel or any other inputs for now
