@@ -50,7 +50,7 @@
 #define DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER false //DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER: if this value is true the system will operate continuously, ignoring the beam break sensor. This serves to allow testing. This value should be false outside of testing.
 #define SolenoidDoseOpenDuration 300 //SolenoidDoseOpenDuration: The time for which the solenoid is open and the water is allowed to flow freely. 
 #define SolenoidPostDoseClosedDuration 5000 //SolenoidPostDoseClosedDuration: The time after a water dispense event before another water dispense event can be re-triggered
-
+#define REQUIRE_STATE_CHANGE_BEFORE_SECOND_WATER_DISPENSE true //REQUIRE_STATE_CHANGE_BEFORE_DISPENSE: if false, permits dispensing water if the beambroke remains broken after the timeout period. If true, it requires the the beambreak state to open before it closes again. 
 // DIAGNOSTICS:
 /*
  * 
@@ -73,6 +73,12 @@ const int SIGNAL_ON_TIME = 10; //msec
  */
 unsigned long currentLoopMillis; // currentLoopMillis: the millis() recorded at the start of each iteration of the main loop.
 unsigned long performanceTimer0; // performanceTimer0: a timer used to track the performance of the arduino by measuring the difference from the start of the last loop.
+
+unsigned long lastSensorChangeEvent1 = 0; // The last loop time the sensor was detected to have changed value
+unsigned long lastSensorChangeEvent2 = 0; 
+unsigned long lastSensorChangeEvent3 = 0;
+unsigned long lastSensorChangeEvent4 = 0;
+
 
 // reflects the open/closed state of the beambreak sensor
 enum BeamBreakState {
