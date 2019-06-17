@@ -84,14 +84,18 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
           HIGH: Sensor Beam has continuity
       */
       // The sensor must have changed state after the end of the last water dispense and timeout period
+      #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_WATER_DISPENSE
       if (lastSensorChangeEvent3  > (lastSolenoidCloseTimer + SolenoidPostDoseClosedDuration)) {
+      #endif
         if ((sensor3State == LOW) || (IS_DIAGNOSTIC_MODE && DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER)) {
           #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
             sendLoggingSignal(Water1, ActionDispense);
           #endif
           openSolenoid(1);
         }
+      #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_WATER_DISPENSE
       }
+      #endif
     }
   }
 
@@ -110,14 +114,18 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
           HIGH: Sensor Beam has continuity
         */
        // The sensor must have changed state after the end of the last water dispense and timeout period
+      #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_WATER_DISPENSE
       if (lastSensorChangeEvent4  > (lastSolenoidCloseTimer + SolenoidPostDoseClosedDuration)) {
+      #endif
         if ((sensor4State == LOW)) {
             #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
               sendLoggingSignal(Water2, ActionDispense);
             #endif
             openSolenoid(2);
         }
+      #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_WATER_DISPENSE
       }
+      #endif
     }
   }
 }
