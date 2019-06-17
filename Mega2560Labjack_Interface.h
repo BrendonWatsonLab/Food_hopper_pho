@@ -26,6 +26,7 @@ const int megaOutputPins[9] = {22, 24, 26, 28, 23, 25, 27, 29, 30};
 // Function Prototypes:
 void setupMegaOutputInterface();
 void sendMegaOutputSignal(SystemAddress addr, EventType event);
+bool turnOffSignal(void *argument /* optional argument given to in/at/every */);
 
 
 // Called from setup()
@@ -34,7 +35,7 @@ void setupMegaOutputInterface() {
   for (int i=0; i<9; i++)
   {
     pinMode(megaOutputPins[i], OUTPUT);
-    digitalWrite(megaOutputPins[i], LOW);
+    digitalWrite(megaOutputPins[i], HIGH);
   }
 }
 
@@ -58,6 +59,15 @@ void sendMegaOutputSignal(SystemAddress addr, EventType event) {
   int outputPin = megaOutputPins[outputPinIndex];
   // While the output is selected perform the main action
   digitalWrite(outputPin, LOW);
-  delay(SIGNAL_ON_TIME);
-  digitalWrite(outputPin, HIGH);
+  //timer.in(SIGNAL_ON_TIME, [](void *argument) -> bool { return argument; }, argument);
+  timer.in(SIGNAL_ON_TIME, turnOffSignal, outputPin); // or with an optional argument for function_to_call
+  //delay(SIGNAL_ON_TIME);
+  //digitalWrite(outputPin, HIGH);
+}
+
+
+// Called when ready to turn off the pin
+bool turnOffSignal(void *argument /* optional argument given to in/at/every */) {
+   digitalWrite(argument, HIGH);
+   return false; // to repeat the action - false to stop
 }
