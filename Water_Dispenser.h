@@ -34,8 +34,10 @@ SolenoidState solenoid2State = CLOSED;         // reflects the open/closed state
    Following SolenoidOpenDuration, the solenoid is closed (stopping the flow of water) for at least SolenoidPostDoseClosedDuration before re-opening.
 */
 
-unsigned long lastSolenoidOpenTimer = 0; // This variable keeps track of the last time the Solenoid "open" operation was performed
-unsigned long lastSolenoidCloseTimer = 0; // This variable keeps track of the last time the Solenoid "close" operation was performed
+unsigned long lastSolenoidOpenTimer1 = 0; // This variable keeps track of the last time the Solenoid1 "open" operation was performed
+unsigned long lastSolenoidCloseTimer1 = 0; // This variable keeps track of the last time the Solenoid1 "close" operation was performed
+unsigned long lastSolenoidOpenTimer2 = 0; // This variable keeps track of the last time the Solenoid2 "open" operation was performed
+unsigned long lastSolenoidCloseTimer2 = 0; // This variable keeps track of the last time the Solenoid2 "close" operation was performed
 
 
 // Function Prototypes:
@@ -62,7 +64,7 @@ void setupWaterDispensers() {
 }
 
 
-//TODO: allows independent solenoid operation (simultaneous) but they're coupled by using a single timer variable (lastSolenoidOpenTimer)
+//allows independent solenoid operation (simultaneous)
 void loopWaterDispensers(unsigned long currentLoopMillis) {
   // For any open solenoid, check to see if it's time to close it.
     // If it's not, do nothing.
@@ -71,21 +73,21 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
     
   // Check Water Port 1:
   if (solenoid1State == OPEN) {
-    if (currentLoopMillis - lastSolenoidOpenTimer >= SolenoidDoseOpenDuration) {
+    if (currentLoopMillis - lastSolenoidOpenTimer1 >= SolenoidDoseOpenDuration) {
       // Close the solenoid
       closeSolenoid(1);
     }
   }
   else { // else the solenoid is CLOSED
     // Check if at least SolenoidPostDoseClosedDuration msec have passed since the last solenoid close event (to prevent immediate re-opening).
-    if (currentLoopMillis - lastSolenoidCloseTimer >= SolenoidPostDoseClosedDuration) {
+    if (currentLoopMillis - lastSolenoidCloseTimer1 >= SolenoidPostDoseClosedDuration) {
       /* Check sensor beam state:
           LOW: Sensor Beam is broken
           HIGH: Sensor Beam has continuity
       */
       // The sensor must have changed state after the end of the last water dispense and timeout period
       #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_WATER_DISPENSE
-      if (lastSensorChangeEvent3  > (lastSolenoidCloseTimer + SolenoidPostDoseClosedDuration)) {
+      if (lastSensorChangeEvent3  > (lastSolenoidCloseTimer1 + SolenoidPostDoseClosedDuration)) {
       #endif
         if ((sensor3State == LOW) || (IS_DIAGNOSTIC_MODE && DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER)) {
           #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
@@ -101,21 +103,21 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
 
   // Check Water Port 2:
   if (solenoid2State == OPEN) {
-    if (currentLoopMillis - lastSolenoidOpenTimer >= SolenoidDoseOpenDuration) {
+    if (currentLoopMillis - lastSolenoidOpenTimer2 >= SolenoidDoseOpenDuration) {
       // Close the solenoid
       closeSolenoid(2);
     }
   }
   else { // else the solenoid is CLOSED
      // Check if at least SolenoidPostDoseClosedDuration msec have passed since the last solenoid close event (to prevent immediate re-opening).
-    if (currentLoopMillis - lastSolenoidCloseTimer >= SolenoidPostDoseClosedDuration) {
+    if (currentLoopMillis - lastSolenoidCloseTimer2 >= SolenoidPostDoseClosedDuration) {
       /* Check sensor beam state:
           LOW: Sensor Beam is broken
           HIGH: Sensor Beam has continuity
         */
        // The sensor must have changed state after the end of the last water dispense and timeout period
       #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_WATER_DISPENSE
-      if (lastSensorChangeEvent4  > (lastSolenoidCloseTimer + SolenoidPostDoseClosedDuration)) {
+      if (lastSensorChangeEvent4  > (lastSolenoidCloseTimer2 + SolenoidPostDoseClosedDuration)) {
       #endif
         if ((sensor4State == LOW)) {
             #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
@@ -145,15 +147,16 @@ void closeSolenoid(int waterPortNumber) {
   }
   // Actually close the solenoid and save the time it was closed
   digitalWrite(activeSolenoidPin, LOW);
-  lastSolenoidCloseTimer = millis();
   
   if (waterPortNumber == 1) {
+    lastSolenoidCloseTimer1 = millis();
     if (solenoid1State == OPEN) {
       solenoid1State = CLOSED; // update the state to closed
       moveOperationCounter3++; // when the solenoid is transitioned from opened to closed, count that as a move operation
     }
   }
   else if (waterPortNumber == 2) {
+    lastSolenoidCloseTimer2 = millis();
     if (solenoid2State == OPEN) {
       solenoid2State = CLOSED; // update the state to closed
       moveOperationCounter4++; // when the solenoid is transitioned from opened to closed, count that as a move operation
@@ -181,5 +184,14 @@ void openSolenoid(int waterPortNumber) {
   }
   // Actually close the solenoid and save the time it was closed
   digitalWrite(activeSolenoidPin, HIGH);
-  lastSolenoidOpenTimer = millis();
+  if (waterPortNumber == 1) {
+    lastSolenoidOpenTimer1 = millis();
+  }
+  else if (waterPortNumber == 2) {
+    lastSolenoidOpenTimer2 = millis();
+  }
+  else {
+    // Should never happen. Would be nice to assert.
+    Serial.println("----- waterPortNumber Error B! -----");
+  }
 }
