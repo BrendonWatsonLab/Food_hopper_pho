@@ -20,7 +20,9 @@
   #include "Mega2560Labjack_Interface.h";
 #endif
 
+// Function Prototypes:
 void sendLoggingSignal(SystemAddress addr, EventType event);
+void loopDispense(unsigned long currentLoopMillis);
 
 #if ENABLE_FOOD_DISPENSE
   #include "Food_Dispenser.h"; //Depends on Common.h
@@ -28,11 +30,10 @@ void sendLoggingSignal(SystemAddress addr, EventType event);
 #if ENABLE_WATER_DISPENSE
   #include "Water_Dispenser.h";
 #endif
-#if ENABLE_RUNNING_WHEEL
-  #include "RunningWheel.h";
-#endif
 
 #include "Diagnostics.h";
+
+
 
 void setup() {
   Serial.begin(9600); // set up Serial library at 9600 bps (for debugging)
@@ -56,9 +57,6 @@ void setup() {
   #if ENABLE_WATER_DISPENSE
     setupWaterDispensers();
   #endif
-  #if ENABLE_RUNNING_WHEEL
-    setupRunningWheel();
-  #endif
 
   #if IS_DIAGNOSTIC_MODE 
     performanceTimer0 = millis();
@@ -66,6 +64,9 @@ void setup() {
 }
 
 void loop() {
+  // Tick the timer
+  timer.tick();
+  
   // Get the current time in milliseconds
   currentLoopMillis = millis();
   #if IS_DIAGNOSTIC_MODE 
@@ -80,6 +81,9 @@ void loop() {
   #if ENABLE_FOOD_DISPENSE
     int prevSensor1State = sensor1State;
     sensor1State = digitalRead(SENSOR1PIN);
+    if (prevSensor1State != sensor1State) {
+      lastSensorChangeEvent1 = currentLoopMillis;
+    }
     #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
       if (prevSensor1State != sensor1State) {
         sendLoggingSignal(Food1, SensorChange);
@@ -88,6 +92,9 @@ void loop() {
     #if IS_DUAL_MOTOR_MODE
       int prevSensor2State = sensor2State;
       sensor2State = digitalRead(SENSOR2PIN);
+      if (prevSensor2State != sensor2State) {
+        lastSensorChangeEvent2 = currentLoopMillis;
+      }
       #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
         if (prevSensor2State != sensor2State) {
           sendLoggingSignal(Food2, SensorChange);
@@ -101,6 +108,15 @@ void loop() {
     // Read the water sensors
     sensor3State = digitalRead(SENSOR3PIN);
     sensor4State = digitalRead(SENSOR4PIN);
+
+    // Check for changes:
+    if (prevSensor3State != sensor3State) {
+      lastSensorChangeEvent3 = currentLoopMillis;
+    }
+    if (prevSensor4State != sensor4State) {
+      lastSensorChangeEvent4 = currentLoopMillis;
+    }
+      
     #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
       // Check for changes:
       if (prevSensor3State != sensor3State) {
@@ -111,18 +127,6 @@ void loop() {
       }
     #endif
   #endif
-  #if ENABLE_RUNNING_WHEEL
-    int prevRunningWheelSensorState = runningWheelSensorState;
-    // read the state of the sensor pin:
-    runningWheelSensorState = digitalRead(RUNNINGWHEEL_SENSOR_PIN);
-    #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
-      if (prevRunningWheelSensorState != runningWheelSensorState) {
-        sendLoggingSignal(RunningWheel, SensorChange);
-      }
-    #endif
-  #endif
-
-
 
   // Do full loopRHD2000Interface even in INTERACTIVE DIAGNOSTIC MODE
   #if ENABLE_RHD2000_INTERFACE
@@ -132,19 +136,13 @@ void loop() {
   // Performs the interfacing with the processing software (running on the computer) while in interactive diagnostic mode
   if (IS_DIAGNOSTIC_MODE && SHOULD_USE_INTERACTIVE_DIAGNOSTIC) {
     loopDiagnostics(currentLoopMillis);
+    // Perform normal dispense events unless diagnostic_disable_dispensing is true
+    if (diagnostic_disable_dispensing == false) {
+      loopDispense(currentLoopMillis);
+    }
   }
   else {
-    // We don't dispense unless not in interactive diagnostic mode
-    #if ENABLE_FOOD_DISPENSE
-      loopFoodDispensers(currentLoopMillis);
-    #endif
-    #if ENABLE_WATER_DISPENSE
-      loopWaterDispensers(currentLoopMillis);
-    #endif
-    #if ENABLE_RUNNING_WHEEL
-      loopRunningWheel(currentLoopMillis);
-    #endif
-
+    loopDispense(currentLoopMillis);
   } // end interactive diagnostic if
 
 
@@ -162,4 +160,14 @@ void sendLoggingSignal(SystemAddress addr, EventType event) {
   #if ENABLE_ARDUINOMEGA_LABJACK_INTERFACE
     sendMegaOutputSignal(addr, event);
   #endif
+}
+
+// Called from the main loop to perform the dispense loops for enabled output modalities.
+void loopDispense(unsigned long currentLoopMillis) {
+  #if ENABLE_FOOD_DISPENSE
+      loopFoodDispensers(currentLoopMillis);
+    #endif
+    #if ENABLE_WATER_DISPENSE
+      loopWaterDispensers(currentLoopMillis);
+    #endif
 }

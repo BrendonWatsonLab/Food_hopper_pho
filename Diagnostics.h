@@ -7,7 +7,7 @@
 
 char diagnostic_val; // Data received from the serial port
 unsigned long lastDiagnosticSerialReadTimer = 0; // This variable keeps track of the last time diagnostic serial read was performed
-
+bool diagnostic_disable_dispensing = false; //diagnostic_disable_dispensing: if true, dispense events are not performed as a result of beambreak events.
 
 // Function Prototypes:
 void loopDiagnostics(unsigned long currentLoopMillis);
@@ -197,10 +197,5 @@ void diagnostic_send_info() {
   Serial.println(moveOperationCounter4);
 #endif
 
-#if ENABLE_RUNNING_WHEEL
-  Serial.print("INFO://");
-  Serial.print("runningWheelSensorState//");
-  Serial.println(runningWheelSensorState);
-#endif
 
 }
