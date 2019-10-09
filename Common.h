@@ -7,6 +7,8 @@
 #ifndef Common_h
 #define Common_h
 
+#include <timer.h>
+
 #define DEPLOY_ARDUINO_IS_UNO true //DEPLOY_ARDUINO_IS_UNO: true if sketch will be running on Arduino Uno. Else assumed to be "Adafruit pro trinket SV p2000"
 
 // General Feature Enables:
@@ -21,7 +23,7 @@
 #define ENABLE_MULTIPLEXER_INTERFACE false
 #define ENABLE_ARDUINOMEGA_LABJACK_INTERFACE true
 
-
+auto timer = timer_create_default();
 
 
 // FOOD:
@@ -39,7 +41,7 @@
 #define NumberOfStepperCoilsActivated DOUBLE // The number of coils in the stepper motor to activate. DOUBLE provides higher torque.
 // StepperSpeed is a value used by the setSpeed() function controls the power level delivered to the motor. The speed parameter is a value between 0 and 255.
 #define StepperSpeed 127 // The speed of the stepper in rpm (default 25, previous 127).
-
+#define REQUIRE_STATE_CHANGE_BEFORE_SECOND_FOOD_DISPENSE true //REQUIRE_STATE_CHANGE_BEFORE_SECOND_FOOD_DISPENSE: if false, permits dispensing food pellets if the beambreak remains broken after the timeout period. If true, it requires the the beambreak state to open before it closes again. 
 
 // WATER:
  /*
@@ -48,13 +50,13 @@
 */
 #define DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER false //DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER: if this value is true the system will operate continuously, ignoring the beam break sensor. This serves to allow testing. This value should be false outside of testing.
 #define SolenoidDoseOpenDuration 300 //SolenoidDoseOpenDuration: The time for which the solenoid is open and the water is allowed to flow freely. 
-#define SolenoidPostDoseClosedDuration 5000 //SolenoidPostDoseClosedDuration: The time after a water dispense event before another water dispense event can be re-triggered
-#define REQUIRE_STATE_CHANGE_BEFORE_SECOND_WATER_DISPENSE true //REQUIRE_STATE_CHANGE_BEFORE_DISPENSE: if false, permits dispensing water if the beambroke remains broken after the timeout period. If true, it requires the the beambreak state to open before it closes again. 
+#define SolenoidPostDoseClosedDuration 1500 //SolenoidPostDoseClosedDuration: The time after a water dispense event before another water dispense event can be re-triggered
+#define REQUIRE_STATE_CHANGE_BEFORE_SECOND_WATER_DISPENSE true //REQUIRE_STATE_CHANGE_BEFORE_SECOND_WATER_DISPENSE: if false, permits dispensing water if the beambroke remains broken after the timeout period. If true, it requires the the beambreak state to open before it closes again. 
 // DIAGNOSTICS:
 /*
  * 
  */
-#define IS_DIAGNOSTIC_MODE true //IS_DIAGNOSTIC_MODE: if this value is false, all diagnostic settings will be ignored. This value should be false outside of testing.
+#define IS_DIAGNOSTIC_MODE false //IS_DIAGNOSTIC_MODE: if this value is false, all diagnostic settings will be ignored. This value should be false outside of testing.
 #define ENABLE_DIAGNOSTIC_SERIAL true 
 #define SHOULD_USE_INTERACTIVE_DIAGNOSTIC true //SHOULD_USE_INTERACTIVE_DIAGNOSTIC: enables extended diagnostics and testing via the helper Processing software.
 #define INTERACTIVE_DIAGNOSTIC_SERIAL_READ_TIMEOUT 10 //INTERACTIVE_DIAGNOSTIC_SERIAL_READ_TIMEOUT: the minimum time between serial reads for interactive diagnostics

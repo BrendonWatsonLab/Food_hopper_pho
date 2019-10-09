@@ -64,6 +64,9 @@ void setup() {
 }
 
 void loop() {
+  // Tick the timer
+  timer.tick();
+  
   // Get the current time in milliseconds
   currentLoopMillis = millis();
   #if IS_DIAGNOSTIC_MODE 

@@ -14,7 +14,12 @@ Adafruit_MotorShield AFMS = Adafruit_MotorShield();
    A "Feeder" consists of a food hopper containing pellets, a stepper motor to rotate the dispenser, a shoot, and a port. The port contains a beam-break sensor (SENSOR) that when broken dispenses food.
    CONCERN: they're going to figure out that you don't have to wait as long if you alternate between the two types of food.
 */
-Adafruit_StepperMotor *motor1 = AFMS.getStepper(200, 2); // The motor connected to M3 & M4
+/*
+ * The motor plugged into M1 & M2 is retreived with AFMS.getStepper(200, 1);
+ * The one plugged into M3 & M4 is retreived with AFMS.getStepper(200, 2)
+ * 
+ */
+Adafruit_StepperMotor *motor1 = AFMS.getStepper(200, 1); // The motor connected to M1 & M2
 #define SENSOR1PIN 5 // SENSOR1PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
 int sensor1State = HIGH;         // variable for reading the beam-break sensor1 status
 int moveOperationCounter1 = 0; // This variable keeps track of the total number of "move" operations performed.
@@ -22,13 +27,10 @@ int moveOperationCounter1 = 0; // This variable keeps track of the total number 
 /* Feeder 2 config:
 
 */
-Adafruit_StepperMotor *motor2 = AFMS.getStepper(200, 1); // The motor connected to M1 & M2
+Adafruit_StepperMotor *motor2 = AFMS.getStepper(200, 2); // The motor connected to M3 & M4
 #define SENSOR2PIN 7 // SENSOR2PIN: This pin is connected by a green wire to the second beam-break sensor's "SIG" pin.
 int sensor2State = HIGH;         // variable for reading the beam-break sensor2 status
 int moveOperationCounter2 = 0; // This variable keeps track of the total number of "move" operations performed.
-
-
-
 
 
 unsigned long lastDispenseTimer = 0; // This variable keeps track of the last time dispense was performed
@@ -83,21 +85,31 @@ void loopFoodDispensers(unsigned long currentLoopMillis) {
         HIGH: Sensor Beam has continuity
       */
       // Currently DIAGNOSTIC_MODE Only dispenses feeder1
-      if ((sensor1State == LOW)) {
-        //delay(40);
-        dispenseFeeder1();
-      }
-      else if (IS_DUAL_MOTOR_MODE && (sensor2State == LOW)) {
-        dispenseFeeder2();
-      }
-      else {
-        // turn status LED off:
-        //digitalWrite(LEDPIN, LOW);
-      }
+      // The sensor must have changed state after the end of the last food dispense and timeout period
+      #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_FOOD_DISPENSE
+        if (lastSensorChangeEvent1  > (lastDispenseTimer + PostDispenseTimeout)) {
+      #endif
+        if ((sensor1State == LOW)) {
+          dispenseFeeder1();
+          return;
+        }
+      #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_FOOD_DISPENSE
+        }
+      #endif
+      // The sensor must have changed state after the end of the last food dispense and timeout period
+      #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_FOOD_DISPENSE
+        if (lastSensorChangeEvent2  > (lastDispenseTimer + PostDispenseTimeout)) {
+      #endif
+        if (IS_DUAL_MOTOR_MODE && (sensor2State == LOW)) {
+          dispenseFeeder2();
+          return;
+        }
+      #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_FOOD_DISPENSE
+        }
+      #endif
     }
 
   }
-  // The status LED is left lit until it's possible to dispense again.
 }
 
 
