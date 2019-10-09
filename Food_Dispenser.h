@@ -85,21 +85,31 @@ void loopFoodDispensers(unsigned long currentLoopMillis) {
         HIGH: Sensor Beam has continuity
       */
       // Currently DIAGNOSTIC_MODE Only dispenses feeder1
-      if ((sensor1State == LOW)) {
-        //delay(40);
-        dispenseFeeder1();
-      }
-      else if (IS_DUAL_MOTOR_MODE && (sensor2State == LOW)) {
-        dispenseFeeder2();
-      }
-      else {
-        // turn status LED off:
-        //digitalWrite(LEDPIN, LOW);
-      }
+      // The sensor must have changed state after the end of the last food dispense and timeout period
+      #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_FOOD_DISPENSE
+        if (lastSensorChangeEvent1  > (lastDispenseTimer + PostDispenseTimeout)) {
+      #endif
+        if ((sensor1State == LOW)) {
+          dispenseFeeder1();
+          return;
+        }
+      #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_FOOD_DISPENSE
+        }
+      #endif
+      // The sensor must have changed state after the end of the last food dispense and timeout period
+      #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_FOOD_DISPENSE
+        if (lastSensorChangeEvent2  > (lastDispenseTimer + PostDispenseTimeout)) {
+      #endif
+        if (IS_DUAL_MOTOR_MODE && (sensor2State == LOW)) {
+          dispenseFeeder2();
+          return;
+        }
+      #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_FOOD_DISPENSE
+        }
+      #endif
     }
 
   }
-  // The status LED is left lit until it's possible to dispense again.
 }
 
 
