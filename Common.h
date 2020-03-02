@@ -7,6 +7,7 @@
 #ifndef Common_h
 #define Common_h
 
+// Uses "arduino-timer" by Michael Contreras, Version 1.0.0
 #include <timer.h>
 
 #define DEPLOY_ARDUINO_IS_UNO true //DEPLOY_ARDUINO_IS_UNO: true if sketch will be running on Arduino Uno. Else assumed to be "Adafruit pro trinket SV p2000"
