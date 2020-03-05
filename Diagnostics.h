@@ -26,6 +26,24 @@ void loopDiagnostics(unsigned long currentLoopMillis) {
 }
 
 // Called to read in a "command" that has been sent by the Processing sketch over serial.
+/*
+enum EventType { SensorChange = 0b0, ActionDispense = 0b1};
+
+// +------------------------------+------------+------------+
+// |           Command            | Dispenser1 | Dispenser2 |
+// +------------------------------+------------+------------+
+// | NOOP                         | '0'        | '0'        |
+// | ClockwiseDispense            | '1'        | 'A'        |
+// | UnjamDispenseBySimpleReverse | '2'        | 'B'        |
+// | UnjamDispenseByTickTock      | '3'        | 'C'        |
+// | NormalDispense               | '4'        | 'D'        |
+// | NormalWaterDispense          | '5'        | 'E'        |
+// | SolenoidOpen                 | '6'        | 'F'        |
+// | SolenoidClose                | '7'        | 'G'        |
+// +------------------------------+------------+------------+
+
+
+*/
 void diagnostic_read_command() {
   if (Serial.available()) { // If data is available to read,
     diagnostic_val = Serial.read(); // read it and store it in val
@@ -33,6 +51,7 @@ void diagnostic_read_command() {
     if (diagnostic_val == '0') {
       if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
         Serial.println("diagnostic_val: 0");
+        //NO-OP
       }
     }
     else if (diagnostic_val == '1') {
@@ -73,6 +92,7 @@ void diagnostic_read_command() {
       }
       #if ENABLE_WATER_DISPENSE
         //normal dispense
+        //TODO: Enable water dispense
       #endif
     }
     else if (diagnostic_val == '6') {
