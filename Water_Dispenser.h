@@ -8,7 +8,7 @@ enum SolenoidState {
 // HeldOpenOverrideState: reflects whether the solenoid is currently in a state where it's normal behavior is being overriden and it's remaining held open.
 enum HeldOpenOverrideState {
   OVERRIDDEN_OPEN,
-  DEFAULT
+  NORMAL
 };
 
 /* Water 1 config:
@@ -26,7 +26,7 @@ SolenoidState solenoid1State = CLOSED;         // reflects the open/closed state
 #if DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER
 HeldOpenOverrideState solenoid1HeldOpenState = OVERRIDDEN_OPEN;
 #else
-HeldOpenOverrideState solenoid1HeldOpenState = DEFAULT;
+HeldOpenOverrideState solenoid1HeldOpenState = NORMAL;
 #endif
 
 /* Water 2 config:
@@ -43,7 +43,7 @@ SolenoidState solenoid2State = CLOSED;         // reflects the open/closed state
 #if DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER
 HeldOpenOverrideState solenoid2HeldOpenState = OVERRIDDEN_OPEN;
 #else
-HeldOpenOverrideState solenoid2HeldOpenState = DEFAULT;
+HeldOpenOverrideState solenoid2HeldOpenState = NORMAL;
 #endif
 
 /*

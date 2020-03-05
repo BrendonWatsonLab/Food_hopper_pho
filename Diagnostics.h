@@ -95,7 +95,7 @@ void diagnostic_read_command() {
         #if DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER
           // If DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER is true, don't allow anything to set the HeldOpenState to false
         #else
-          solenoid1HeldOpenState = false;
+          solenoid1HeldOpenState = NORMAL;
           // DECISION: If the solenoid is currently being held open and the user pushes the regular dispense event, it will remain open for the duration expected and then close. This is opposed to closing first, and then opening like normal. A normal dispense issued by diagnostic command will effectively end the open period then.
           openSolenoid(1);
         #endif
@@ -107,7 +107,7 @@ void diagnostic_read_command() {
         Serial.println("diagnostic_val: 6");
       }
       #if ENABLE_WATER_DISPENSE
-        solenoid1HeldOpenState = true;
+        solenoid1HeldOpenState = OVERRIDDEN_OPEN;
       #endif
     }
     else if (diagnostic_val == '7') { // SolenoidClose: 1
@@ -118,7 +118,7 @@ void diagnostic_read_command() {
         #if DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER
           // If DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER is true, don't allow anything to set the HeldOpenState to false
         #else
-          solenoid1HeldOpenState = false;
+          solenoid1HeldOpenState = NORMAL;
         #endif
       #endif
     }
@@ -163,7 +163,7 @@ void diagnostic_read_command() {
         #if DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER
           // If DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER is true, don't allow anything to set the HeldOpenState to false
         #else
-          solenoid2HeldOpenState = false;
+          solenoid2HeldOpenState = NORMAL;
           // DECISION: If the solenoid is currently being held open and the user pushes the regular dispense event, it will remain open for the duration expected and then close. This is opposed to closing first, and then opening like normal. A normal dispense issued by diagnostic command will effectively end the open period then.
           openSolenoid(2);
         #endif
@@ -174,7 +174,7 @@ void diagnostic_read_command() {
         Serial.println("diagnostic_val: F");
       }
       #if ENABLE_WATER_DISPENSE
-        solenoid2HeldOpenState = true;
+        solenoid2HeldOpenState = OVERRIDDEN_OPEN;
       #endif
     }
     else if (diagnostic_val == 'G') { // SolenoidClose: 2
@@ -185,7 +185,7 @@ void diagnostic_read_command() {
         #if DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER
           // If DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER is true, don't allow anything to set the HeldOpenState to false
         #else
-          solenoid2HeldOpenState = false;
+          solenoid2HeldOpenState = NORMAL;
         #endif
       #endif
     }
