@@ -48,13 +48,13 @@ void diagnostic_read_command() {
   if (Serial.available()) { // If data is available to read,
     diagnostic_val = Serial.read(); // read it and store it in val
     // Check the character recieved
-    if (diagnostic_val == '0') {
+    if (diagnostic_val == '0') { //NOOP: (0 & 1)
       if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
         Serial.println("diagnostic_val: 0");
         //NO-OP
       }
     }
-    else if (diagnostic_val == '1') {
+    else if (diagnostic_val == '1') { //ClockwiseDispense: 1
       if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
         Serial.println("diagnostic_val: 1");
       }
@@ -62,7 +62,7 @@ void diagnostic_read_command() {
       clockwiseDispense(motor1);
 #endif
     }
-    else if (diagnostic_val == '2') {
+    else if (diagnostic_val == '2') { //UnjamDispenseBySimpleReverse: 1
       if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
         Serial.println("diagnostic_val: 2");
       }
@@ -70,7 +70,7 @@ void diagnostic_read_command() {
       unjamDispenseBySimpleReverse(motor1);
 #endif
     }
-    else if (diagnostic_val == '3') {
+    else if (diagnostic_val == '3') { //UnjamDispenseByTickTock: 1
       if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
         Serial.println("diagnostic_val: 3");
       }
@@ -78,7 +78,7 @@ void diagnostic_read_command() {
       unjamDispenseByTickTock(motor1);
 #endif
     }
-    else if (diagnostic_val == '4') {
+    else if (diagnostic_val == '4') { //NormalDispense: 1
       if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
         Serial.println("diagnostic_val: 4");
       }
@@ -86,7 +86,7 @@ void diagnostic_read_command() {
       dispenseFeeder1();
 #endif
     }
-    else if (diagnostic_val == '5') { //NormalWaterDispense
+    else if (diagnostic_val == '5') { //NormalWaterDispense: 1
       if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
         Serial.println("diagnostic_val: 5");
       }
@@ -102,7 +102,7 @@ void diagnostic_read_command() {
 
       #endif
     }
-    else if (diagnostic_val == '6') { // SolenoidOpen
+    else if (diagnostic_val == '6') { // SolenoidOpen: 1
       if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
         Serial.println("diagnostic_val: 6");
       }
@@ -110,7 +110,7 @@ void diagnostic_read_command() {
         solenoid1HeldOpenState = true;
       #endif
     }
-    else if (diagnostic_val == '7') { // SolenoidClose
+    else if (diagnostic_val == '7') { // SolenoidClose: 1
       if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
         Serial.println("diagnostic_val: 7");
       }
@@ -122,7 +122,7 @@ void diagnostic_read_command() {
         #endif
       #endif
     }
-    else if (diagnostic_val == 'A') {
+    else if (diagnostic_val == 'A') { //ClockwiseDispense: 2
       if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
         Serial.println("diagnostic_val: A");
       }
@@ -130,7 +130,7 @@ void diagnostic_read_command() {
       clockwiseDispense(motor2);
 #endif
     }
-    else if (diagnostic_val == 'B') {
+    else if (diagnostic_val == 'B') { //UnjamDispenseBySimpleReverse: 2
       if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
         Serial.println("diagnostic_val: B");
       }
@@ -138,7 +138,7 @@ void diagnostic_read_command() {
       unjamDispenseBySimpleReverse(motor2);
 #endif
     }
-    else if (diagnostic_val == 'C') {
+    else if (diagnostic_val == 'C') { //UnjamDispenseByTickTock: 2
       if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
         Serial.println("diagnostic_val: C");
       }
@@ -146,7 +146,7 @@ void diagnostic_read_command() {
       unjamDispenseByTickTock(motor2);
 #endif
     }
-    else if (diagnostic_val == 'D') {
+    else if (diagnostic_val == 'D') { //NormalDispense: 2
       if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
         Serial.println("diagnostic_val: D");
       }
@@ -154,7 +154,7 @@ void diagnostic_read_command() {
       dispenseFeeder2();
 #endif
     }
-    else if (diagnostic_val == 'E') { //NormalWaterDispense
+    else if (diagnostic_val == 'E') { //NormalWaterDispense: 2
       if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
         Serial.println("diagnostic_val: E");
       }
@@ -167,10 +167,9 @@ void diagnostic_read_command() {
           // DECISION: If the solenoid is currently being held open and the user pushes the regular dispense event, it will remain open for the duration expected and then close. This is opposed to closing first, and then opening like normal. A normal dispense issued by diagnostic command will effectively end the open period then.
           openSolenoid(2);
         #endif
-
       #endif
     }
-    else if (diagnostic_val == 'F') { // SolenoidOpen
+    else if (diagnostic_val == 'F') { // SolenoidOpen: 2
       if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
         Serial.println("diagnostic_val: F");
       }
@@ -178,7 +177,7 @@ void diagnostic_read_command() {
         solenoid2HeldOpenState = true;
       #endif
     }
-    else if (diagnostic_val == 'G') { // SolenoidClose
+    else if (diagnostic_val == 'G') { // SolenoidClose: 2
       if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
         Serial.println("diagnostic_val: G");
       }
