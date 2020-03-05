@@ -4,6 +4,13 @@ enum SolenoidState {
   CLOSED
 };
 
+
+// HeldOpenOverrideState: reflects whether the solenoid is currently in a state where it's normal behavior is being overriden and it's remaining held open.
+enum HeldOpenOverrideState {
+  OVERRIDDEN_OPEN,
+  DEFAULT
+};
+
 /* Water 1 config:
     A "Water" consists of a solenoid that controls the flow of water from the resevour to the port. The port contains a beam-break sensor (SENSOR) that when broken dispenses a drop of water.
 */
@@ -16,6 +23,11 @@ int sensor3State = HIGH;         // variable for reading the beam-break sensor3 
 int moveOperationCounter3 = 0; // This variable keeps track of the total number of "move" operations performed.
 
 SolenoidState solenoid1State = CLOSED;         // reflects the open/closed state of the solenoid
+#if DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER
+HeldOpenOverrideState solenoid1HeldOpenState = OVERRIDDEN_OPEN;
+#else
+HeldOpenOverrideState solenoid1HeldOpenState = DEFAULT;
+#endif
 
 /* Water 2 config:
 
@@ -28,6 +40,11 @@ int sensor4State = HIGH;         // variable for reading the beam-break sensor4 
 int moveOperationCounter4 = 0; // This variable keeps track of the total number of "move" operations performed.
 
 SolenoidState solenoid2State = CLOSED;         // reflects the open/closed state of the solenoid
+#if DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER
+HeldOpenOverrideState solenoid2HeldOpenState = OVERRIDDEN_OPEN;
+#else
+HeldOpenOverrideState solenoid2HeldOpenState = DEFAULT;
+#endif
 
 /*
    After a beam-break, the solenoid opens for SolenoidOpenDuration to allow water to be dispensed.
@@ -64,6 +81,7 @@ void setupWaterDispensers() {
 }
 
 
+//TODO: Logic is almost correct. When DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER is true, it should open the solenoid immediately and then never close it (and open it only once).
 //allows independent solenoid operation (simultaneous)
 void loopWaterDispensers(unsigned long currentLoopMillis) {
   // For any open solenoid, check to see if it's time to close it.
@@ -73,63 +91,98 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
     
   // Check Water Port 1:
   if (solenoid1State == OPEN) {
-    if (currentLoopMillis - lastSolenoidOpenTimer1 >= SolenoidDoseOpenDuration) {
-      // Close the solenoid
-      closeSolenoid(1);
+    // We only need to check if it's time to close the solenoid if we're not continuously dispensing water.
+    if (solenoid1HeldOpenState == OVERRIDDEN_OPEN) {
+      // If it's already open and OVERRIDEN_OPEN, do nothing.
     }
+    else {
+        // Do the normal, non-overidden behavior
+        if (currentLoopMillis - lastSolenoidOpenTimer1 >= SolenoidDoseOpenDuration) {
+          // Close the solenoid
+          closeSolenoid(1);
+        }
+    }
+    
   }
   else { // else the solenoid is CLOSED
-    // Check if at least SolenoidPostDoseClosedDuration msec have passed since the last solenoid close event (to prevent immediate re-opening).
-    if (currentLoopMillis - lastSolenoidCloseTimer1 >= SolenoidPostDoseClosedDuration) {
-      /* Check sensor beam state:
-          LOW: Sensor Beam is broken
-          HIGH: Sensor Beam has continuity
-      */
-      // The sensor must have changed state after the end of the last water dispense and timeout period
-      #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_WATER_DISPENSE
-      if (lastSensorChangeEvent3  > (lastSolenoidCloseTimer1 + SolenoidPostDoseClosedDuration)) {
-      #endif
-        if ((sensor3State == LOW) || (IS_DIAGNOSTIC_MODE && DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER)) {
-          #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
-            sendLoggingSignal(Water1, ActionDispense);
-          #endif
-          openSolenoid(1);
-        }
-      #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_WATER_DISPENSE
-      }
-      #endif
+
+    if (solenoid1HeldOpenState == OVERRIDDEN_OPEN) {
+      // If it's supposed to be OVERRIDDEN_OPEN, we better open it!
+      openSolenoid(1);
     }
+    else {
+      // Do the normal, non-overidden behavior
+      // Check if at least SolenoidPostDoseClosedDuration msec have passed since the last solenoid close event (to prevent immediate re-opening).
+      if (currentLoopMillis - lastSolenoidCloseTimer1 >= SolenoidPostDoseClosedDuration) {
+        /* Check sensor beam state:
+            LOW: Sensor Beam is broken
+            HIGH: Sensor Beam has continuity
+        */
+        // The sensor must have changed state after the end of the last water dispense and timeout period
+        #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_WATER_DISPENSE
+        if (lastSensorChangeEvent3  > (lastSolenoidCloseTimer1 + SolenoidPostDoseClosedDuration)) {
+        #endif
+          if (sensor3State == LOW) {
+            #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
+              sendLoggingSignal(Water1, ActionDispense);
+            #endif
+            openSolenoid(1);
+          }
+        #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_WATER_DISPENSE
+        }
+        #endif
+      }
+    }
+
   }
 
   // Check Water Port 2:
   if (solenoid2State == OPEN) {
-    if (currentLoopMillis - lastSolenoidOpenTimer2 >= SolenoidDoseOpenDuration) {
-      // Close the solenoid
-      closeSolenoid(2);
+    // We only need to check if it's time to close the solenoid if we're not continuously dispensing water.
+    if (solenoid2HeldOpenState == OVERRIDDEN_OPEN) {
+      // If it's already open and OVERRIDEN_OPEN, do nothing.
     }
+    else {
+        // Do the normal, non-overidden behavior
+        if (currentLoopMillis - lastSolenoidOpenTimer2 >= SolenoidDoseOpenDuration) {
+          // Close the solenoid
+          closeSolenoid(2);
+        }
+    }
+
   }
   else { // else the solenoid is CLOSED
-     // Check if at least SolenoidPostDoseClosedDuration msec have passed since the last solenoid close event (to prevent immediate re-opening).
-    if (currentLoopMillis - lastSolenoidCloseTimer2 >= SolenoidPostDoseClosedDuration) {
-      /* Check sensor beam state:
-          LOW: Sensor Beam is broken
-          HIGH: Sensor Beam has continuity
-        */
-       // The sensor must have changed state after the end of the last water dispense and timeout period
-      #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_WATER_DISPENSE
-      if (lastSensorChangeEvent4  > (lastSolenoidCloseTimer2 + SolenoidPostDoseClosedDuration)) {
-      #endif
-        if ((sensor4State == LOW)) {
-            #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
-              sendLoggingSignal(Water2, ActionDispense);
-            #endif
-            openSolenoid(2);
+
+    if (solenoid2HeldOpenState == OVERRIDDEN_OPEN) {
+      // If it's supposed to be OVERRIDDEN_OPEN, we better open it!
+      openSolenoid(2);
+    }
+    else {
+      // Do the normal, non-overidden behavior
+      // Check if at least SolenoidPostDoseClosedDuration msec have passed since the last solenoid close event (to prevent immediate re-opening).
+      if (currentLoopMillis - lastSolenoidCloseTimer2 >= SolenoidPostDoseClosedDuration) {
+        /* Check sensor beam state:
+            LOW: Sensor Beam is broken
+            HIGH: Sensor Beam has continuity
+          */
+        // The sensor must have changed state after the end of the last water dispense and timeout period
+        #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_WATER_DISPENSE
+        if (lastSensorChangeEvent4  > (lastSolenoidCloseTimer2 + SolenoidPostDoseClosedDuration)) {
+        #endif
+          if (sensor4State == LOW) {
+              #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
+                sendLoggingSignal(Water2, ActionDispense);
+              #endif
+              openSolenoid(2);
+          }
+        #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_WATER_DISPENSE
         }
-      #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_WATER_DISPENSE
+        #endif
       }
-      #endif
+
     }
   }
+  
 }
 
 void closeSolenoid(int waterPortNumber) {

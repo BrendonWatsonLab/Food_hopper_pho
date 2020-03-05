@@ -165,9 +165,9 @@ void sendLoggingSignal(SystemAddress addr, EventType event) {
 // Called from the main loop to perform the dispense loops for enabled output modalities.
 void loopDispense(unsigned long currentLoopMillis) {
   #if ENABLE_FOOD_DISPENSE
-      loopFoodDispensers(currentLoopMillis);
-    #endif
-    #if ENABLE_WATER_DISPENSE
-      loopWaterDispensers(currentLoopMillis);
-    #endif
+    loopFoodDispensers(currentLoopMillis);
+  #endif
+  #if ENABLE_WATER_DISPENSE
+    loopWaterDispensers(currentLoopMillis);
+  #endif
 }
