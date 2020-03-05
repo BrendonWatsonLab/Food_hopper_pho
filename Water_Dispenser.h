@@ -182,9 +182,11 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
 
     }
   }
-  
+
 }
 
+
+//TODO: The openSolenoid(...) and closeSolenoid(...) functions should actually be titled something related to dispensing.
 void closeSolenoid(int waterPortNumber) {
   int activeSolenoidPin = 0;
   

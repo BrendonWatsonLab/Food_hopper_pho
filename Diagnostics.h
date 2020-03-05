@@ -86,29 +86,40 @@ void diagnostic_read_command() {
       dispenseFeeder1();
 #endif
     }
-    else if (diagnostic_val == '5') {
+    else if (diagnostic_val == '5') { //NormalWaterDispense
       if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
         Serial.println("diagnostic_val: 5");
       }
       #if ENABLE_WATER_DISPENSE
-        //normal dispense
-        //TODO: Enable water dispense
+        // Disable any existing HeldOpenState overiride unless it was set by the firmware preprocessor variable DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER:
+        #if DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER
+          // If DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER is true, don't allow anything to set the HeldOpenState to false
+        #else
+          solenoid1HeldOpenState = false;
+          // DECISION: If the solenoid is currently being held open and the user pushes the regular dispense event, it will remain open for the duration expected and then close. This is opposed to closing first, and then opening like normal. A normal dispense issued by diagnostic command will effectively end the open period then.
+          openSolenoid(1);
+        #endif
+
       #endif
     }
-    else if (diagnostic_val == '6') {
+    else if (diagnostic_val == '6') { // SolenoidOpen
       if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
         Serial.println("diagnostic_val: 6");
       }
       #if ENABLE_WATER_DISPENSE
-        openSolenoid(1);
+        solenoid1HeldOpenState = true;
       #endif
     }
-    else if (diagnostic_val == '7') {
+    else if (diagnostic_val == '7') { // SolenoidClose
       if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
         Serial.println("diagnostic_val: 7");
       }
       #if ENABLE_WATER_DISPENSE
-        closeSolenoid(1);
+        #if DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER
+          // If DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER is true, don't allow anything to set the HeldOpenState to false
+        #else
+          solenoid1HeldOpenState = false;
+        #endif
       #endif
     }
     else if (diagnostic_val == 'A') {
@@ -143,28 +154,40 @@ void diagnostic_read_command() {
       dispenseFeeder2();
 #endif
     }
-    else if (diagnostic_val == 'E') {
+    else if (diagnostic_val == 'E') { //NormalWaterDispense
       if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
         Serial.println("diagnostic_val: E");
       }
       #if ENABLE_WATER_DISPENSE
-        //normal dispense
+        // Disable any existing HeldOpenState overiride unless it was set by the firmware preprocessor variable DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER:
+        #if DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER
+          // If DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER is true, don't allow anything to set the HeldOpenState to false
+        #else
+          solenoid2HeldOpenState = false;
+          // DECISION: If the solenoid is currently being held open and the user pushes the regular dispense event, it will remain open for the duration expected and then close. This is opposed to closing first, and then opening like normal. A normal dispense issued by diagnostic command will effectively end the open period then.
+          openSolenoid(2);
+        #endif
+
       #endif
     }
-    else if (diagnostic_val == 'F') {
+    else if (diagnostic_val == 'F') { // SolenoidOpen
       if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
         Serial.println("diagnostic_val: F");
       }
       #if ENABLE_WATER_DISPENSE
-        openSolenoid(2);
+        solenoid2HeldOpenState = true;
       #endif
     }
-    else if (diagnostic_val == 'G') {
+    else if (diagnostic_val == 'G') { // SolenoidClose
       if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
         Serial.println("diagnostic_val: G");
       }
       #if ENABLE_WATER_DISPENSE
-        closeSolenoid(2);
+        #if DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER
+          // If DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER is true, don't allow anything to set the HeldOpenState to false
+        #else
+          solenoid2HeldOpenState = false;
+        #endif
       #endif
     }
     else {
