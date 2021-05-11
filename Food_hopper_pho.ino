@@ -65,7 +65,7 @@ void setup() {
 
 void loop() {
   // Tick the timer
-  timer.tick();
+//   timer.tick();
   
   // Get the current time in milliseconds
   currentLoopMillis = millis();
@@ -149,6 +149,10 @@ void loop() {
     loopDispense(currentLoopMillis);
   } // end interactive diagnostic if
 
+	#if ENABLE_ARDUINOMEGA_LABJACK_INTERFACE
+		// Added to turn off signals that are currently high.
+		loopEndMegaOutputSignals(currentLoopMillis);
+  	#endif
 
 } // end loop
 

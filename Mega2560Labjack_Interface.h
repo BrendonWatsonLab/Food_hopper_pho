@@ -23,10 +23,33 @@ Labjack Input ----------- Arduino
 /////////////////////
 const int megaOutputPins[9] = {22, 24, 26, 28, 23, 25, 27, 29, 30};
 
+// Variables
+
+// reflects the open/closed state of the solenoid
+enum LabjackSignalPinState {
+  LOW,
+  HIGH
+};
+
+LabjackSignalPinState labjackSignalPinState[8] = {HIGH, HIGH, HIGH, HIGH, HIGH, HIGH, HIGH, HIGH};         // reflects the HIGH/LOW state of the labjack signal pins
+unsigned long lastSignalLowTimer[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+
+// unsigned long lastSignalHighTimer1 = 0; // This variable keeps track of the last time the Solenoid1 "open" operation was performed
+// unsigned long lastSignalHighTimer2 = 0; // This variable keeps track of the last time the Solenoid1 "open" operation was performed
+// unsigned long lastSignalHighTimer3 = 0; // This variable keeps track of the last time the Solenoid1 "open" operation was performed
+// unsigned long lastSignalHighTimer4 = 0; // This variable keeps track of the last time the Solenoid1 "open" operation was performed
+
+// unsigned long lastSolenoidCloseTimer1 = 0; // This variable keeps track of the last time the Solenoid1 "close" operation was performed
+// unsigned long lastSolenoidOpenTimer2 = 0; // This variable keeps track of the last time the Solenoid2 "open" operation was performed
+// unsigned long lastSolenoidCloseTimer2 = 0; // This variable keeps track of the last time the Solenoid2 "close" operation was performed
+
+
 // Function Prototypes:
 void setupMegaOutputInterface();
 void sendMegaOutputSignal(SystemAddress addr, EventType event);
-bool turnOffSignal(void *argument /* optional argument given to in/at/every */);
+void loopEndMegaOutputSignals(unsigned long currentLoopMillis);
+
+// bool turnOffSignal(void *argument /* optional argument given to in/at/every */);
 
 
 // Called from setup()
@@ -58,19 +81,33 @@ void sendMegaOutputSignal(SystemAddress addr, EventType event) {
   }
   int outputPin = megaOutputPins[outputPinIndex];
   // While the output is selected perform the main action
-  digitalWrite(outputPin, LOW);
 
-// CONCERN: Can this timer routine be queued up multiple times? What happens if a new signal comes in during that time?
+  // check if it's still set low, and if not, set it low and update the lastSignalLowTimer:
+  if (labjackSignalPinState[outputPinIndex] == HIGH) {
+	labjackSignalPinState[outputPinIndex] = LOW;
+	digitalWrite(outputPin, LOW);
+	lastSignalLowTimer[outputPinIndex] = millis(); // Capture the time when the pin was set low
+  }
+  else {
+	  // Error, the pin was attempted to be set low while it was already still low. 
+	  // TODO: figure how much time is left and maybe perform and update??
+	  Serial.println("ERROR: Attempted to set Labjack pin LOW when already low!!!");
+  }
 
-  //timer.in(SIGNAL_ON_TIME, [](void *argument) -> bool { return argument; }, argument);
-  timer.in(SIGNAL_ON_TIME, turnOffSignal, outputPin); // or with an optional argument for function_to_call
-  //delay(SIGNAL_ON_TIME);
-  //digitalWrite(outputPin, HIGH);
 }
 
-
-// Called when ready to turn off the pin
-bool turnOffSignal(void *argument /* optional argument given to in/at/every */) {
-   digitalWrite(argument, HIGH);
-   return false; // to repeat the action - false to stop
+// Called to check whether to turn off the pin
+void loopEndMegaOutputSignals(unsigned long currentLoopMillis) {
+	for (int i=0; i<8; i++)
+	{
+		// Loop through the labjackSignalPins and see if any are up for termination
+		if (labjackSignalPinState[i] == LOW) {
+			// Check the lastSignalLowTimer to see how long it has been LOW
+			if (currentLoopMillis - lastSignalLowTimer[i] >= SIGNAL_ON_TIME) {
+				// Turn off the signal
+				digitalWrite(megaOutputPins[i], HIGH); // Set its output pin to high
+				labjackSignalPinState[i] = HIGH;  // Set the pin state
+			}
+		} // end if 
+	} // end for
 }
