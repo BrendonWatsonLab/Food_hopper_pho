@@ -120,17 +120,23 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
         */
         // The sensor must have changed state after the end of the last water dispense and timeout period
         #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_WATER_DISPENSE
-        if (lastSensorChangeEvent3  > (lastSolenoidCloseTimer1 + SolenoidPostDoseClosedDuration)) {
-        #endif
+			if (lastSensorChangeEvent3  > (lastSolenoidCloseTimer1 + SolenoidPostDoseClosedDuration)) {
+				if (sensor3State == LOW) {
+					#if ENABLE_LOGGING_SIGNAL_ON_CHANGE
+					sendLoggingSignal(Water1, ActionDispense);
+					#endif
+					openSolenoid(1);
+				}
+			}
+		#else
           if (sensor3State == LOW) {
             #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
               sendLoggingSignal(Water1, ActionDispense);
             #endif
             openSolenoid(1);
           }
-        #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_WATER_DISPENSE
-        }
         #endif
+
       }
     }
 
@@ -165,18 +171,26 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
             LOW: Sensor Beam is broken
             HIGH: Sensor Beam has continuity
           */
-        // The sensor must have changed state after the end of the last water dispense and timeout period
-        #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_WATER_DISPENSE
-        if (lastSensorChangeEvent4  > (lastSolenoidCloseTimer2 + SolenoidPostDoseClosedDuration)) {
-        #endif
-          if (sensor4State == LOW) {
-              #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
-                sendLoggingSignal(Water2, ActionDispense);
-              #endif
-              openSolenoid(2);
-          }
-        #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_WATER_DISPENSE
-        }
+		#if REQUIRE_STATE_CHANGE_BEFORE_SECOND_WATER_DISPENSE
+			// CONCERN: I suspect the problem is coming in here??
+        	if (lastSensorChangeEvent4  > (lastSolenoidCloseTimer2 + SolenoidPostDoseClosedDuration)) {
+			        // The sensor must have changed state *after the end* of the last water dispense and timeout period
+				if (sensor4State == LOW) {
+					// And the sensor must be currently low (although this may not be the changed state... *should something be updated if it is still high?*
+					#if ENABLE_LOGGING_SIGNAL_ON_CHANGE
+						sendLoggingSignal(Water2, ActionDispense);
+					#endif
+					openSolenoid(2);
+				}
+			}
+
+		#else
+			if (sensor4State == LOW) {
+				#if ENABLE_LOGGING_SIGNAL_ON_CHANGE
+					sendLoggingSignal(Water2, ActionDispense);
+				#endif
+				openSolenoid(2);
+			}
         #endif
       }
 

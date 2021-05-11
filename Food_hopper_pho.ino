@@ -76,6 +76,7 @@ void loop() {
     performanceTimer0 = currentLoopMillis;
   #endif
 
+  // CONCERN: Should these digital reads be done in batch/bulk at the start of the loop cycle (preventing delays that occur due to logging-induced latency)?
   
   // read the state of the IR break beam sensors:
   #if ENABLE_FOOD_DISPENSE
@@ -109,20 +110,23 @@ void loop() {
     sensor3State = digitalRead(SENSOR3PIN);
     sensor4State = digitalRead(SENSOR4PIN);
 
+	bool didSensor3StateChange = (prevSensor3State != sensor3State);
+	bool didSensor4StateChange = (prevSensor4State != sensor4State);
+
     // Check for changes:
-    if (prevSensor3State != sensor3State) {
+    if (didSensor3StateChange) {
       lastSensorChangeEvent3 = currentLoopMillis;
     }
-    if (prevSensor4State != sensor4State) {
+    if (didSensor4StateChange) {
       lastSensorChangeEvent4 = currentLoopMillis;
     }
       
     #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
       // Check for changes:
-      if (prevSensor3State != sensor3State) {
+      if (didSensor3StateChange) {
         sendLoggingSignal(Water1, SensorChange);
       }
-      if (prevSensor4State != sensor4State) {
+      if (didSensor4StateChange) {
         sendLoggingSignal(Water2, SensorChange);
       }
     #endif

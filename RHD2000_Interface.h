@@ -70,7 +70,7 @@ void loopRHD2000Interface(unsigned long currentLoopMillis) {
 
 void sendRHD2000Signal(SystemAddress addr, EventType event) {
   //sendRHD2000BinarySignal(addr, event);
-  sendRHD2000ASCIISignal(addr, event);
+  sendRHD2000ASCIISignal(addr, event); // Ah, is this done for the Diagnostic software?
 }
 
 void sendRHD2000ASCIISignal(SystemAddress addr, EventType event) {

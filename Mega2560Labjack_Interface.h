@@ -59,6 +59,9 @@ void sendMegaOutputSignal(SystemAddress addr, EventType event) {
   int outputPin = megaOutputPins[outputPinIndex];
   // While the output is selected perform the main action
   digitalWrite(outputPin, LOW);
+
+// CONCERN: Can this timer routine be queued up multiple times? What happens if a new signal comes in during that time?
+
   //timer.in(SIGNAL_ON_TIME, [](void *argument) -> bool { return argument; }, argument);
   timer.in(SIGNAL_ON_TIME, turnOffSignal, outputPin); // or with an optional argument for function_to_call
   //delay(SIGNAL_ON_TIME);
