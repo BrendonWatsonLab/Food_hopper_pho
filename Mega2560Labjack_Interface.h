@@ -27,11 +27,11 @@ const int megaOutputPins[9] = {22, 24, 26, 28, 23, 25, 27, 29, 30};
 
 // reflects the open/closed state of the solenoid
 enum LabjackSignalPinState {
-  LOW,
-  HIGH
+  LabjackSignalPinState_Signalling = 0b0,
+  LabjackSignalPinState_Rest = 0b1
 };
 
-LabjackSignalPinState labjackSignalPinState[8] = {HIGH, HIGH, HIGH, HIGH, HIGH, HIGH, HIGH, HIGH};         // reflects the HIGH/LOW state of the labjack signal pins
+LabjackSignalPinState labjackSignalPinState[8] = {LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest};         // reflects the HIGH/LOW state of the labjack signal pins
 unsigned long lastSignalLowTimer[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
 // unsigned long lastSignalHighTimer1 = 0; // This variable keeps track of the last time the Solenoid1 "open" operation was performed
@@ -58,13 +58,13 @@ void setupMegaOutputInterface() {
   for (int i=0; i<9; i++)
   {
     pinMode(megaOutputPins[i], OUTPUT);
-    digitalWrite(megaOutputPins[i], HIGH);
+    digitalWrite(megaOutputPins[i], LabjackSignalPinState_Rest);
   }
 }
 
 void sendMegaOutputSignal(SystemAddress addr, EventType event) {
   if (addr > 4) {
-    // Ignore the running wheel or any other inputs for now
+    // No signals above addr 4 should be sent.
     return;
   }
   byte outputPinIndex = addr;
@@ -83,9 +83,9 @@ void sendMegaOutputSignal(SystemAddress addr, EventType event) {
   // While the output is selected perform the main action
 
   // check if it's still set low, and if not, set it low and update the lastSignalLowTimer:
-  if (labjackSignalPinState[outputPinIndex] == HIGH) {
-	labjackSignalPinState[outputPinIndex] = LOW;
-	digitalWrite(outputPin, LOW);
+  if (labjackSignalPinState[outputPinIndex] == LabjackSignalPinState_Rest) {
+	labjackSignalPinState[outputPinIndex] = LabjackSignalPinState_Signalling;
+	digitalWrite(outputPin, LabjackSignalPinState_Signalling);
 	lastSignalLowTimer[outputPinIndex] = millis(); // Capture the time when the pin was set low
   }
   else {
@@ -101,12 +101,12 @@ void loopEndMegaOutputSignals(unsigned long currentLoopMillis) {
 	for (int i=0; i<8; i++)
 	{
 		// Loop through the labjackSignalPins and see if any are up for termination
-		if (labjackSignalPinState[i] == LOW) {
-			// Check the lastSignalLowTimer to see how long it has been LOW
+		if (labjackSignalPinState[i] == LabjackSignalPinState_Signalling) {
+			// Check the lastSignalLowTimer to see how long it has been LabjackSignalPinState_Signalling
 			if (currentLoopMillis - lastSignalLowTimer[i] >= SIGNAL_ON_TIME) {
 				// Turn off the signal
-				digitalWrite(megaOutputPins[i], HIGH); // Set its output pin to high
-				labjackSignalPinState[i] = HIGH;  // Set the pin state
+				digitalWrite(megaOutputPins[i], LabjackSignalPinState_Rest); // Set its output pin to Rest/high
+				labjackSignalPinState[i] = LabjackSignalPinState_Rest;  // Set the pin state
 			}
 		} // end if 
 	} // end for

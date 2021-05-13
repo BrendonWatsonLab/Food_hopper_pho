@@ -21,7 +21,6 @@
 #define ENABLE_MULTIPLEXER_INTERFACE false
 #define ENABLE_ARDUINOMEGA_LABJACK_INTERFACE true
 
-auto timer = timer_create_default();
 
 
 // FOOD:
