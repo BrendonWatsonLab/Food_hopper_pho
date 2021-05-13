@@ -1,7 +1,7 @@
 // reflects the open/closed state of the solenoid
 enum SolenoidState {
-  OPEN,
-  CLOSED
+  SS_OPEN,
+  SS_CLOSED
 };
 
 
@@ -22,7 +22,7 @@ enum HeldOpenOverrideState {
 int sensor3State = HIGH;         // variable for reading the beam-break sensor3 status
 int moveOperationCounter3 = 0; // This variable keeps track of the total number of "move" operations performed.
 
-SolenoidState solenoid1State = CLOSED;         // reflects the open/closed state of the solenoid
+SolenoidState solenoid1State = SS_CLOSED;         // reflects the open/closed state of the solenoid
 #if DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER
 HeldOpenOverrideState solenoid1HeldOpenState = HOOS_OVERRIDDEN_OPEN;
 #else
@@ -39,7 +39,7 @@ HeldOpenOverrideState solenoid1HeldOpenState = HOOS_NORMAL;
 int sensor4State = HIGH;         // variable for reading the beam-break sensor4 status
 int moveOperationCounter4 = 0; // This variable keeps track of the total number of "move" operations performed.
 
-SolenoidState solenoid2State = CLOSED;         // reflects the open/closed state of the solenoid
+SolenoidState solenoid2State = SS_CLOSED;         // reflects the open/closed state of the solenoid
 #if DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER
 HeldOpenOverrideState solenoid2HeldOpenState = HOOS_OVERRIDDEN_OPEN;
 #else
@@ -90,7 +90,7 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
     // If it is, open it.
     
   // Check Water Port 1:
-  if (solenoid1State == OPEN) {
+  if (solenoid1State == SS_OPEN) {
     // We only need to check if it's time to close the solenoid if we're not continuously dispensing water.
     if (solenoid1HeldOpenState == HOOS_OVERRIDDEN_OPEN) {
       // If it's already open and OVERRIDEN_OPEN, do nothing.
@@ -104,7 +104,7 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
     }
     
   }
-  else { // else the solenoid is CLOSED
+  else { // else the solenoid is SS_CLOSED
 
     if (solenoid1HeldOpenState == HOOS_OVERRIDDEN_OPEN) {
       // If it's supposed to be HOOS_OVERRIDDEN_OPEN, we better open it!
@@ -143,7 +143,7 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
   }
 
   // Check Water Port 2:
-  if (solenoid2State == OPEN) {
+  if (solenoid2State == SS_OPEN) {
     // We only need to check if it's time to close the solenoid if we're not continuously dispensing water.
     if (solenoid2HeldOpenState == HOOS_OVERRIDDEN_OPEN) {
       // If it's already open and OVERRIDEN_OPEN, do nothing.
@@ -157,7 +157,7 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
     }
 
   }
-  else { // else the solenoid is CLOSED
+  else { // else the solenoid is SS_CLOSED
 
     if (solenoid2HeldOpenState == HOOS_OVERRIDDEN_OPEN) {
       // If it's supposed to be HOOS_OVERRIDDEN_OPEN, we better open it!
@@ -219,15 +219,15 @@ void closeSolenoid(int waterPortNumber) {
   
   if (waterPortNumber == 1) {
     lastSolenoidCloseTimer1 = millis();
-    if (solenoid1State == OPEN) {
-      solenoid1State = CLOSED; // update the state to closed
+    if (solenoid1State == SS_OPEN) {
+      solenoid1State = SS_CLOSED; // update the state to closed
       moveOperationCounter3++; // when the solenoid is transitioned from opened to closed, count that as a move operation
     }
   }
   else if (waterPortNumber == 2) {
     lastSolenoidCloseTimer2 = millis();
-    if (solenoid2State == OPEN) {
-      solenoid2State = CLOSED; // update the state to closed
+    if (solenoid2State == SS_OPEN) {
+      solenoid2State = SS_CLOSED; // update the state to closed
       moveOperationCounter4++; // when the solenoid is transitioned from opened to closed, count that as a move operation
     }
   }
@@ -241,11 +241,11 @@ void openSolenoid(int waterPortNumber) {
   int activeSolenoidPin = 0;
   if (waterPortNumber == 1) {
     activeSolenoidPin = SOLENOID1PIN;
-    solenoid1State = OPEN; // update the state to closed before actually closing it (just to avoid another if/elseif/else block)
+    solenoid1State = SS_OPEN; // update the state to closed before actually closing it (just to avoid another if/elseif/else block)
   }
   else if (waterPortNumber == 2) {
     activeSolenoidPin = SOLENOID2PIN;
-    solenoid2State = OPEN; // update the state to closed before actually closing it (just to avoid another if/elseif/else block)
+    solenoid2State = SS_OPEN; // update the state to closed before actually closing it (just to avoid another if/elseif/else block)
   }
   else {
     // Should never happen. Would be nice to assert.
