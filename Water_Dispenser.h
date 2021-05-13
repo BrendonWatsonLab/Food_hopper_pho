@@ -7,8 +7,8 @@ enum SolenoidState {
 
 // HeldOpenOverrideState: reflects whether the solenoid is currently in a state where it's normal behavior is being overriden and it's remaining held open.
 enum HeldOpenOverrideState {
-  OVERRIDDEN_OPEN,
-  NORMAL
+  HOOS_OVERRIDDEN_OPEN,
+  HOOS_NORMAL
 };
 
 /* Water 1 config:
@@ -24,9 +24,9 @@ int moveOperationCounter3 = 0; // This variable keeps track of the total number 
 
 SolenoidState solenoid1State = CLOSED;         // reflects the open/closed state of the solenoid
 #if DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER
-HeldOpenOverrideState solenoid1HeldOpenState = OVERRIDDEN_OPEN;
+HeldOpenOverrideState solenoid1HeldOpenState = HOOS_OVERRIDDEN_OPEN;
 #else
-HeldOpenOverrideState solenoid1HeldOpenState = NORMAL;
+HeldOpenOverrideState solenoid1HeldOpenState = HOOS_NORMAL;
 #endif
 
 /* Water 2 config:
@@ -41,9 +41,9 @@ int moveOperationCounter4 = 0; // This variable keeps track of the total number 
 
 SolenoidState solenoid2State = CLOSED;         // reflects the open/closed state of the solenoid
 #if DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER
-HeldOpenOverrideState solenoid2HeldOpenState = OVERRIDDEN_OPEN;
+HeldOpenOverrideState solenoid2HeldOpenState = HOOS_OVERRIDDEN_OPEN;
 #else
-HeldOpenOverrideState solenoid2HeldOpenState = NORMAL;
+HeldOpenOverrideState solenoid2HeldOpenState = HOOS_NORMAL;
 #endif
 
 /*
@@ -92,7 +92,7 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
   // Check Water Port 1:
   if (solenoid1State == OPEN) {
     // We only need to check if it's time to close the solenoid if we're not continuously dispensing water.
-    if (solenoid1HeldOpenState == OVERRIDDEN_OPEN) {
+    if (solenoid1HeldOpenState == HOOS_OVERRIDDEN_OPEN) {
       // If it's already open and OVERRIDEN_OPEN, do nothing.
     }
     else {
@@ -106,8 +106,8 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
   }
   else { // else the solenoid is CLOSED
 
-    if (solenoid1HeldOpenState == OVERRIDDEN_OPEN) {
-      // If it's supposed to be OVERRIDDEN_OPEN, we better open it!
+    if (solenoid1HeldOpenState == HOOS_OVERRIDDEN_OPEN) {
+      // If it's supposed to be HOOS_OVERRIDDEN_OPEN, we better open it!
       openSolenoid(1);
     }
     else {
@@ -145,7 +145,7 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
   // Check Water Port 2:
   if (solenoid2State == OPEN) {
     // We only need to check if it's time to close the solenoid if we're not continuously dispensing water.
-    if (solenoid2HeldOpenState == OVERRIDDEN_OPEN) {
+    if (solenoid2HeldOpenState == HOOS_OVERRIDDEN_OPEN) {
       // If it's already open and OVERRIDEN_OPEN, do nothing.
     }
     else {
@@ -159,8 +159,8 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
   }
   else { // else the solenoid is CLOSED
 
-    if (solenoid2HeldOpenState == OVERRIDDEN_OPEN) {
-      // If it's supposed to be OVERRIDDEN_OPEN, we better open it!
+    if (solenoid2HeldOpenState == HOOS_OVERRIDDEN_OPEN) {
+      // If it's supposed to be HOOS_OVERRIDDEN_OPEN, we better open it!
       openSolenoid(2);
     }
     else {
