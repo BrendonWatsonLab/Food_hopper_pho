@@ -81,7 +81,7 @@ void loop() {
   // read the state of the IR break beam sensors:
   #if ENABLE_FOOD_DISPENSE
     BeamBreakState prevSensor1State = sensor1State;
-    sensor1State = digitalRead(SENSOR1PIN);
+    sensor1State = BeamBreakState(digitalRead(SENSOR1PIN));
     if (prevSensor1State != sensor1State) {
       lastSensorChangeEvent1 = currentLoopMillis;
     }
@@ -92,7 +92,7 @@ void loop() {
     #endif
     #if IS_DUAL_MOTOR_MODE
       BeamBreakState prevSensor2State = sensor2State;
-      sensor2State = digitalRead(SENSOR2PIN);
+      sensor2State = BeamBreakState(digitalRead(SENSOR2PIN));
       if (prevSensor2State != sensor2State) {
         lastSensorChangeEvent2 = currentLoopMillis;
       }
@@ -107,8 +107,8 @@ void loop() {
     BeamBreakState prevSensor3State = sensor3State;
     BeamBreakState prevSensor4State = sensor4State;
     // Read the water sensors
-    sensor3State = digitalRead(SENSOR3PIN);
-    sensor4State = digitalRead(SENSOR4PIN);
+    sensor3State = BeamBreakState(digitalRead(SENSOR3PIN));
+    sensor4State = BeamBreakState(digitalRead(SENSOR4PIN));
 
 	bool didSensor3StateChange = (prevSensor3State != sensor3State);
 	bool didSensor4StateChange = (prevSensor4State != sensor4State);
