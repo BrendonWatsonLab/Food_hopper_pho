@@ -85,16 +85,23 @@ void sendMegaOutputSignal(SystemAddress addr, EventType event) {
   // check if it's still set low, and if not, set it low and update the lastSignalLowTimer:
   if (labjackSignalPinState[outputPinIndex] == LabjackSignalPinState_Rest) {
 	labjackSignalPinState[outputPinIndex] = LabjackSignalPinState_Signalling;
-	digitalWrite(outputPin, LabjackSignalPinState_Signalling);
+	phoFastDigitalWrite(outputPin, LabjackSignalPinState_Signalling);
 	lastSignalSignallingTimer[outputPinIndex] = millis(); // Capture the time when the pin was set low
   }
   else {
 	  // Error, the pin was attempted to be set low while it was already still low. 
 	  // TODO: figure how much time is left and maybe perform and update??
-	  Serial.println("ERROR: Attempted to set Labjack pin LOW when already low!!!");
+	  Serial.println("ERROR: Attempted to set Labjack pin to Signalling (LOW) when already signalling!!!");
   }
-
 }
+
+
+// Set all simultaneously:
+/*
+PORTA = 0b10000000
+
+*/
+
 
 // Called to check whether to turn off the pin
 void loopEndMegaOutputSignals(unsigned long currentLoopMillis) {
@@ -105,9 +112,12 @@ void loopEndMegaOutputSignals(unsigned long currentLoopMillis) {
 			// Check the lastSignalLowTimer to see how long it has been LabjackSignalPinState_Signalling
 			if (currentLoopMillis - lastSignalSignallingTimer[i] >= SIGNAL_ON_TIME) {
 				// Turn off the signal
-				digitalWrite(megaOutputPins[i], LabjackSignalPinState_Rest); // Set its output pin to Rest/high
+				// digitalWrite(megaOutputPins[i], LabjackSignalPinState_Rest); // Set its output pin to Rest/high
+				phoFastDigitalWrite(megaOutputPins[i], LabjackSignalPinState_Rest); // Set its output pin to Rest/high
+				// WRITE(megaOutputRegisters[i], LabjackSignalPinState_Rest);
 				labjackSignalPinState[i] = LabjackSignalPinState_Rest;  // Set the pin state
 			}
 		} // end if 
 	} // end for
+
 }

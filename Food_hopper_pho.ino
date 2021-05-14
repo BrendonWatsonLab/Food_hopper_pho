@@ -8,16 +8,17 @@
 //10msec main loop runtime goal
 
 #include <Wire.h>
+#include "fastio/phoFastGPIO.h"
+#include "Common.h"
 
-#include "Common.h";
 #if ENABLE_RHD2000_INTERFACE
-  #include "RHD2000_Interface.h";
+  #include "RHD2000_Interface.h"
 #endif
 #if ENABLE_MULTIPLEXER_INTERFACE
-  #include "Multiplexer_Interface.h";
+  #include "Multiplexer_Interface.h"
 #endif
 #if ENABLE_ARDUINOMEGA_LABJACK_INTERFACE
-  #include "Mega2560Labjack_Interface.h";
+  #include "Mega2560Labjack_Interface.h"
 #endif
 
 // Function Prototypes:
@@ -25,13 +26,13 @@ void sendLoggingSignal(SystemAddress addr, EventType event);
 void loopDispense(unsigned long currentLoopMillis);
 
 #if ENABLE_FOOD_DISPENSE
-  #include "Food_Dispenser.h"; //Depends on Common.h
+  #include "Food_Dispenser.h" //Depends on Common.h
 #endif
 #if ENABLE_WATER_DISPENSE
-  #include "Water_Dispenser.h";
+  #include "Water_Dispenser.h"
 #endif
 
-#include "Diagnostics.h";
+#include "Diagnostics.h"
 
 
 
@@ -152,7 +153,7 @@ void loop() {
 	#if ENABLE_ARDUINOMEGA_LABJACK_INTERFACE
 		// Added to turn off signals that are currently high.
 		loopEndMegaOutputSignals(currentLoopMillis);
-  	#endif
+	#endif
 
 } // end loop
 
