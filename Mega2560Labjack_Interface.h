@@ -32,7 +32,7 @@ enum LabjackSignalPinState {
 };
 
 LabjackSignalPinState labjackSignalPinState[8] = {LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest};         // reflects the HIGH/LOW state of the labjack signal pins
-unsigned long lastSignalLowTimer[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+unsigned long lastSignalSignallingTimer[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
 // unsigned long lastSignalHighTimer1 = 0; // This variable keeps track of the last time the Solenoid1 "open" operation was performed
 // unsigned long lastSignalHighTimer2 = 0; // This variable keeps track of the last time the Solenoid1 "open" operation was performed
@@ -86,7 +86,7 @@ void sendMegaOutputSignal(SystemAddress addr, EventType event) {
   if (labjackSignalPinState[outputPinIndex] == LabjackSignalPinState_Rest) {
 	labjackSignalPinState[outputPinIndex] = LabjackSignalPinState_Signalling;
 	digitalWrite(outputPin, LabjackSignalPinState_Signalling);
-	lastSignalLowTimer[outputPinIndex] = millis(); // Capture the time when the pin was set low
+	lastSignalSignallingTimer[outputPinIndex] = millis(); // Capture the time when the pin was set low
   }
   else {
 	  // Error, the pin was attempted to be set low while it was already still low. 
@@ -103,7 +103,7 @@ void loopEndMegaOutputSignals(unsigned long currentLoopMillis) {
 		// Loop through the labjackSignalPins and see if any are up for termination
 		if (labjackSignalPinState[i] == LabjackSignalPinState_Signalling) {
 			// Check the lastSignalLowTimer to see how long it has been LabjackSignalPinState_Signalling
-			if (currentLoopMillis - lastSignalLowTimer[i] >= SIGNAL_ON_TIME) {
+			if (currentLoopMillis - lastSignalSignallingTimer[i] >= SIGNAL_ON_TIME) {
 				// Turn off the signal
 				digitalWrite(megaOutputPins[i], LabjackSignalPinState_Rest); // Set its output pin to Rest/high
 				labjackSignalPinState[i] = LabjackSignalPinState_Rest;  // Set the pin state
