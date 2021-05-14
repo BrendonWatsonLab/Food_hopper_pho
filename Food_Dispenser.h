@@ -21,7 +21,7 @@ Adafruit_MotorShield AFMS = Adafruit_MotorShield();
  */
 Adafruit_StepperMotor *motor1 = AFMS.getStepper(200, 1); // The motor connected to M1 & M2
 #define SENSOR1PIN 5 // SENSOR1PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
-int sensor1State = HIGH;         // variable for reading the beam-break sensor1 status
+BeamBreakState sensor1State = BBS_CLEAR;         // variable for reading the beam-break sensor1 status
 int moveOperationCounter1 = 0; // This variable keeps track of the total number of "move" operations performed.
 
 /* Feeder 2 config:
@@ -29,7 +29,7 @@ int moveOperationCounter1 = 0; // This variable keeps track of the total number 
 */
 Adafruit_StepperMotor *motor2 = AFMS.getStepper(200, 2); // The motor connected to M3 & M4
 #define SENSOR2PIN 7 // SENSOR2PIN: This pin is connected by a green wire to the second beam-break sensor's "SIG" pin.
-int sensor2State = HIGH;         // variable for reading the beam-break sensor2 status
+BeamBreakState sensor2State = BBS_CLEAR;         // variable for reading the beam-break sensor2 status
 int moveOperationCounter2 = 0; // This variable keeps track of the total number of "move" operations performed.
 
 
@@ -89,7 +89,7 @@ void loopFoodDispensers(unsigned long currentLoopMillis) {
       #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_FOOD_DISPENSE
         if (lastSensorChangeEvent1  > (lastDispenseTimer + PostDispenseTimeout)) {
       #endif
-        if ((sensor1State == LOW)) {
+        if ((sensor1State == BBS_BROKEN)) {
           dispenseFeeder1();
           return;
         }
@@ -100,7 +100,7 @@ void loopFoodDispensers(unsigned long currentLoopMillis) {
       #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_FOOD_DISPENSE
         if (lastSensorChangeEvent2  > (lastDispenseTimer + PostDispenseTimeout)) {
       #endif
-        if (IS_DUAL_MOTOR_MODE && (sensor2State == LOW)) {
+        if (IS_DUAL_MOTOR_MODE && (sensor2State == BBS_BROKEN)) {
           dispenseFeeder2();
           return;
         }

@@ -87,12 +87,16 @@ unsigned long lastSensorChangeEvent3 = 0;
 unsigned long lastSensorChangeEvent4 = 0;
 
 
+//unsigned long[4] lastSensorChangeEventTime = {0, 0, 0, 0};
 
 
 // reflects the open/closed state of the beambreak sensor
-enum BeamBreakState {
-  CLEAR,
-  BROKEN
+// 	LOW: Sensor Beam is BROKEN
+// 	HIGH: Sensor Beam has continuity (CLEAR)
+
+enum BeamBreakState { 
+	BBS_BROKEN = 0b000,
+	BBS_CLEAR = 0b001
 };
 
 

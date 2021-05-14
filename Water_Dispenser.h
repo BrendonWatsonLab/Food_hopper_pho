@@ -19,7 +19,7 @@ enum HeldOpenOverrideState {
 #define SENSOR3PIN 3 // SENSOR1PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
 #define SOLENOID1PIN 8
 
-int sensor3State = HIGH;         // variable for reading the beam-break sensor3 status
+BeamBreakState sensor3State = BBS_CLEAR;         // variable for reading the beam-break sensor3 status
 int moveOperationCounter3 = 0; // This variable keeps track of the total number of "move" operations performed.
 
 SolenoidState solenoid1State = SS_CLOSED;         // reflects the open/closed state of the solenoid
@@ -36,7 +36,7 @@ HeldOpenOverrideState solenoid1HeldOpenState = HOOS_NORMAL;
 #define SENSOR4PIN 6 // SENSOR1PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
 #define SOLENOID2PIN 11
 
-int sensor4State = HIGH;         // variable for reading the beam-break sensor4 status
+BeamBreakState sensor4State = BBS_CLEAR;         // variable for reading the beam-break sensor4 status
 int moveOperationCounter4 = 0; // This variable keeps track of the total number of "move" operations performed.
 
 SolenoidState solenoid2State = SS_CLOSED;         // reflects the open/closed state of the solenoid
@@ -121,7 +121,7 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
         // The sensor must have changed state after the end of the last water dispense and timeout period
         #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_WATER_DISPENSE
 			if (lastSensorChangeEvent3  > (lastSolenoidCloseTimer1 + SolenoidPostDoseClosedDuration)) {
-				if (sensor3State == LOW) {
+				if (sensor3State == BBS_BROKEN) {
 					#if ENABLE_LOGGING_SIGNAL_ON_CHANGE
 					sendLoggingSignal(Water1, ActionDispense);
 					#endif
@@ -129,7 +129,7 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
 				}
 			}
 		#else
-          if (sensor3State == LOW) {
+          if (sensor3State == BBS_BROKEN) {
             #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
               sendLoggingSignal(Water1, ActionDispense);
             #endif
@@ -175,7 +175,7 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
 			// CONCERN: I suspect the problem is coming in here??
         	if (lastSensorChangeEvent4  > (lastSolenoidCloseTimer2 + SolenoidPostDoseClosedDuration)) {
 			        // The sensor must have changed state *after the end* of the last water dispense and timeout period
-				if (sensor4State == LOW) {
+				if (sensor4State == BBS_BROKEN) {
 					// And the sensor must be currently low (although this may not be the changed state... *should something be updated if it is still high?*
 					#if ENABLE_LOGGING_SIGNAL_ON_CHANGE
 						sendLoggingSignal(Water2, ActionDispense);
@@ -185,7 +185,7 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
 			}
 
 		#else
-			if (sensor4State == LOW) {
+			if (sensor4State == BBS_BROKEN) {
 				#if ENABLE_LOGGING_SIGNAL_ON_CHANGE
 					sendLoggingSignal(Water2, ActionDispense);
 				#endif
