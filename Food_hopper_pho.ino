@@ -14,9 +14,6 @@
 #if ENABLE_RHD2000_INTERFACE
   #include "RHD2000_Interface.h"
 #endif
-#if ENABLE_MULTIPLEXER_INTERFACE
-  #include "Multiplexer_Interface.h"
-#endif
 #if ENABLE_ARDUINOMEGA_LABJACK_INTERFACE
   #include "Mega2560Labjack_Interface.h"
 #endif
@@ -45,9 +42,6 @@ void setup() {
 
   #if ENABLE_ARDUINOMEGA_LABJACK_INTERFACE
     setupMegaOutputInterface();
-  #endif
-  #if ENABLE_MULTIPLEXER_INTERFACE
-    setupMultiplexerInterface();
   #endif
   #if ENABLE_RHD2000_INTERFACE
     setupRHD2000Interface();
@@ -162,9 +156,6 @@ void loop() {
 void sendLoggingSignal(SystemAddress addr, EventType event) {
   #if ENABLE_RHD2000_INTERFACE
     sendRHD2000Signal(addr, event);
-  #endif
-  #if ENABLE_MULTIPLEXER_INTERFACE
-    sendMultiplexerSignal(addr, event);
   #endif
   #if ENABLE_ARDUINOMEGA_LABJACK_INTERFACE
     sendMegaOutputSignal(addr, event);
