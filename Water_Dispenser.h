@@ -119,23 +119,15 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
             HIGH: Sensor Beam has continuity
         */
         // The sensor must have changed state after the end of the last water dispense and timeout period
-        #if REQUIRE_STATE_CHANGE_BEFORE_SECOND_WATER_DISPENSE
-			if (lastSensorChangeEvent3  > (lastSolenoidCloseTimer1 + SolenoidPostDoseClosedDuration)) {
-				if (sensor3State == BBS_BROKEN) {
-					#if ENABLE_LOGGING_SIGNAL_ON_CHANGE
+		if (lastSensorChangeEvent3  > (lastSolenoidCloseTimer1 + SolenoidPostDoseClosedDuration)) {
+			if (sensor3State == BBS_BROKEN) {
+				#if ENABLE_LOGGING_SIGNAL_ON_CHANGE
 					sendLoggingSignal(Water1, ActionDispense);
-					#endif
-					openSolenoid(1);
-				}
+				#endif
+				openSolenoid(1);
 			}
-		#else
-          if (sensor3State == BBS_BROKEN) {
-            #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
-              sendLoggingSignal(Water1, ActionDispense);
-            #endif
-            openSolenoid(1);
-          }
-        #endif
+		}
+		
 
       }
     }
@@ -171,28 +163,20 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
             LOW: Sensor Beam is broken
             HIGH: Sensor Beam has continuity
           */
-		#if REQUIRE_STATE_CHANGE_BEFORE_SECOND_WATER_DISPENSE
-			// CONCERN: I suspect the problem is coming in here??
-        	if (lastSensorChangeEvent4  > (lastSolenoidCloseTimer2 + SolenoidPostDoseClosedDuration)) {
-			        // The sensor must have changed state *after the end* of the last water dispense and timeout period
-				if (sensor4State == BBS_BROKEN) {
-					// And the sensor must be currently low (although this may not be the changed state... *should something be updated if it is still high?*
-					#if ENABLE_LOGGING_SIGNAL_ON_CHANGE
-						sendLoggingSignal(Water2, ActionDispense);
-					#endif
-					openSolenoid(2);
-				}
-			}
-
-		#else
+		// CONCERN: I suspect the problem is coming in here??
+		if (lastSensorChangeEvent4  > (lastSolenoidCloseTimer2 + SolenoidPostDoseClosedDuration)) {
+				// The sensor must have changed state *after the end* of the last water dispense and timeout period
 			if (sensor4State == BBS_BROKEN) {
+				// And the sensor must be currently low (although this may not be the changed state... *should something be updated if it is still high?*
 				#if ENABLE_LOGGING_SIGNAL_ON_CHANGE
 					sendLoggingSignal(Water2, ActionDispense);
 				#endif
 				openSolenoid(2);
 			}
-        #endif
-      }
+		}
+      
+	  } // end if
+
 
     }
   }
