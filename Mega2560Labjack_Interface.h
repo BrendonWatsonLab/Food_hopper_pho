@@ -138,11 +138,3 @@ void loopEndMegaOutputSignals() {
 	} // end for
 
 }
-
-
-
-
-void debuggingOnly_testOutputSignals() {
-	
-
-}
