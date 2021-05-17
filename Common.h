@@ -17,7 +17,6 @@
 #define ENABLE_WATER_DISPENSE true
 
 #define ENABLE_LOGGING_SIGNAL_ON_CHANGE true
-#define ENABLE_RHD2000_INTERFACE true
 #define ENABLE_ARDUINOMEGA_LABJACK_INTERFACE true
 
 
@@ -116,13 +115,6 @@ enum EventType { SensorChange = 0b0, ActionDispense = 0b1};
  * Action Dispense: 1 // Occurs when a dispense action has occured
  */
  
-// create a union to hold the data
-union TimestampBuffer
-{
-    unsigned long longNumber;
-    byte longBytes[4];
-};
-TimestampBuffer timestampBuffer;
 
 
 #endif // end of the "#ifndef" at the start of the file that ensures this file is only included once. THIS MUST BE AT THE END OF THE FILE.

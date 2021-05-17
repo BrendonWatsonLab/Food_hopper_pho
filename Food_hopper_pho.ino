@@ -11,9 +11,6 @@
 #include "fastio/phoFastGPIO.h"
 #include "Common.h"
 
-#if ENABLE_RHD2000_INTERFACE
-  #include "RHD2000_Interface.h"
-#endif
 #if ENABLE_ARDUINOMEGA_LABJACK_INTERFACE
   #include "Mega2560Labjack_Interface.h"
 #endif
@@ -42,9 +39,6 @@ void setup() {
 
   #if ENABLE_ARDUINOMEGA_LABJACK_INTERFACE
     setupMegaOutputInterface();
-  #endif
-  #if ENABLE_RHD2000_INTERFACE
-    setupRHD2000Interface();
   #endif
   #if ENABLE_FOOD_DISPENSE
     setupFoodDispensers();
@@ -127,11 +121,6 @@ void loop() {
     #endif
   #endif
 
-  // Do full loopRHD2000Interface even in INTERACTIVE DIAGNOSTIC MODE
-  #if ENABLE_RHD2000_INTERFACE
-    loopRHD2000Interface(currentLoopMillis);
-  #endif
-
   // Performs the interfacing with the processing software (running on the computer) while in interactive diagnostic mode
   if (IS_DIAGNOSTIC_MODE && SHOULD_USE_INTERACTIVE_DIAGNOSTIC) {
     loopDiagnostics(currentLoopMillis);
@@ -154,9 +143,6 @@ void loop() {
 
 // A General logging function that calls the appropriate output functions.
 void sendLoggingSignal(SystemAddress addr, EventType event) {
-  #if ENABLE_RHD2000_INTERFACE
-    sendRHD2000Signal(addr, event);
-  #endif
   #if ENABLE_ARDUINOMEGA_LABJACK_INTERFACE
     sendMegaOutputSignal(addr, event);
   #endif
