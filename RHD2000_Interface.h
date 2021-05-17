@@ -26,12 +26,6 @@ void outputSignals();
 // Called from setup()
 void setupRHD2000Interface() {
   // initialize the output pins:
-//  digitalWrite(RHD2000_INTERFACE_OUTPUT0_PIN, LOW);
-//  pinMode(RHD2000_INTERFACE_OUTPUT0_PIN, OUTPUT);
-//  digitalWrite(RHD2000_INTERFACE_OUTPUT0_PIN, LOW);
-//  digitalWrite(RHD2000_INTERFACE_OUTPUT0_PIN, rhd2000InterfaceOutput0State);
-  //pinMode(RHD2000_INTERFACE_OUTPUT1_PIN, OUTPUT);
-  //digitalWrite(RHD2000_INTERFACE_OUTPUT1_PIN, rhd2000InterfaceOutput1State);
   pinMode(RHD2000_INTERFACE_OUTPUT2_PIN, OUTPUT);
   digitalWrite(RHD2000_INTERFACE_OUTPUT2_PIN, rhd2000InterfaceOutput2State);
 }
@@ -56,12 +50,6 @@ void loopRHD2000Interface(unsigned long currentLoopMillis) {
   //delay(50);
   
   // Check for changes
-//  if (rhd2000InterfaceOutput0State != rhd2000InterfaceOutput0State_preUpdate) {
-//    digitalWrite(RHD2000_INTERFACE_OUTPUT0_PIN, rhd2000InterfaceOutput0State);
-//  }
-  //if (rhd2000InterfaceOutput1State != rhd2000InterfaceOutput1State_preUpdate) {
-    //digitalWrite(RHD2000_INTERFACE_OUTPUT1_PIN, rhd2000InterfaceOutput1State);
-  //}
   if (rhd2000InterfaceOutput2State != rhd2000InterfaceOutput2State_preUpdate) {
     digitalWrite(RHD2000_INTERFACE_OUTPUT2_PIN, rhd2000InterfaceOutput2State);
   }
@@ -104,7 +92,5 @@ void sendRHD2000BinarySignal(SystemAddress addr, EventType event) {
 }
 
 void outputSignals() {
-  //digitalWrite(RHD2000_INTERFACE_OUTPUT0_PIN, rhd2000InterfaceOutput0State);
-  //digitalWrite(RHD2000_INTERFACE_OUTPUT1_PIN, rhd2000InterfaceOutput1State);
   digitalWrite(RHD2000_INTERFACE_OUTPUT2_PIN, rhd2000InterfaceOutput2State);
 }
