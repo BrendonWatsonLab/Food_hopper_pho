@@ -22,6 +22,8 @@ Labjack Input ----------- Arduino
 // Pin Definitions //
 /////////////////////
 const int megaOutputPins[9] = {22, 24, 26, 28, 23, 25, 27, 29, 30};
+// const int megaOutputRegisters[9] = {PORTA0, PORTA2, PORTA4, PORTA6, PORTA1, PORTA3, PORTA5, PORTA7};
+
 
 // Variables
 
@@ -47,7 +49,7 @@ unsigned long lastSignalSignallingTimer[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 // Function Prototypes:
 void setupMegaOutputInterface();
 void sendMegaOutputSignal(SystemAddress addr, EventType event);
-void loopEndMegaOutputSignals(unsigned long currentLoopMillis);
+void loopEndMegaOutputSignals();
 
 // bool turnOffSignal(void *argument /* optional argument given to in/at/every */);
 
@@ -58,6 +60,8 @@ void setupMegaOutputInterface() {
   for (int i=0; i<9; i++)
   {
     pinMode(megaOutputPins[i], OUTPUT);
+	// Do I need to turn on the pull-ups?
+
     digitalWrite(megaOutputPins[i], LabjackSignalPinState_Rest);
   }
 }
@@ -76,7 +80,17 @@ void sendMegaOutputSignal(SystemAddress addr, EventType event) {
     // addr is either {0,1,2,3}
     if (event == ActionDispense) {
       // If the event type is a dispense event, add four. Shifting the outputPin to {4,5,6,7}
-      outputPinIndex = outputPinIndex + 4;
+      outputPinIndex = outputPinIndex + 4; 
+	  /*	Water1: 0+4 = 4; -> Pin 23
+	  	Water2: 1+4 = 5; -> Pin 25
+		
+			* Water 1: 0+4 = 4; -> Pin 23
+			* Water 2: 1+4 = 5; -> Pin 25
+			// * Food 1: 2+4 = 6; -> Pin 27
+			// * Food 2: 3+4 = 7; -> Pin 29
+			* RunningWheel: 4
+			* Sync: 5
+		*/
     }
   }
   int outputPin = megaOutputPins[outputPinIndex];
@@ -85,7 +99,7 @@ void sendMegaOutputSignal(SystemAddress addr, EventType event) {
   // check if it's still set low, and if not, set it low and update the lastSignalLowTimer:
   if (labjackSignalPinState[outputPinIndex] == LabjackSignalPinState_Rest) {
 	labjackSignalPinState[outputPinIndex] = LabjackSignalPinState_Signalling;
-	phoFastDigitalWrite(outputPin, LabjackSignalPinState_Signalling);
+	digitalWrite(outputPin, LabjackSignalPinState_Signalling);
 	lastSignalSignallingTimer[outputPinIndex] = millis(); // Capture the time when the pin was set low
   }
   else {
@@ -104,20 +118,31 @@ PORTA = 0b10000000
 
 
 // Called to check whether to turn off the pin
-void loopEndMegaOutputSignals(unsigned long currentLoopMillis) {
+void loopEndMegaOutputSignals() {
+	// Get the actual millis again
+	unsigned long currentLoopMillis = millis();
+
 	for (int i=0; i<8; i++)
 	{
 		// Loop through the labjackSignalPins and see if any are up for termination
 		if (labjackSignalPinState[i] == LabjackSignalPinState_Signalling) {
 			// Check the lastSignalLowTimer to see how long it has been LabjackSignalPinState_Signalling
-			if (currentLoopMillis - lastSignalSignallingTimer[i] >= SIGNAL_ON_TIME) {
+			if ((currentLoopMillis - lastSignalSignallingTimer[i]) >= SIGNAL_ON_TIME) {
 				// Turn off the signal
 				// digitalWrite(megaOutputPins[i], LabjackSignalPinState_Rest); // Set its output pin to Rest/high
-				phoFastDigitalWrite(megaOutputPins[i], LabjackSignalPinState_Rest); // Set its output pin to Rest/high
+				digitalWrite(megaOutputPins[i], LabjackSignalPinState_Rest); // Set its output pin to Rest/high
 				// WRITE(megaOutputRegisters[i], LabjackSignalPinState_Rest);
 				labjackSignalPinState[i] = LabjackSignalPinState_Rest;  // Set the pin state
 			}
 		} // end if 
 	} // end for
+
+}
+
+
+
+
+void debuggingOnly_testOutputSignals() {
+	
 
 }

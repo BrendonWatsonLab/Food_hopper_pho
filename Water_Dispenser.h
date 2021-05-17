@@ -70,7 +70,6 @@ void setupWaterDispensers() {
 }
 
 
-//TODO: Logic is almost correct. When DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER is true, it should open the solenoid immediately and then never close it (and open it only once).
 //allows independent solenoid operation (simultaneous)
 void loopWaterDispensers(unsigned long currentLoopMillis) {
   // For any open solenoid, check to see if it's time to close it.
@@ -82,7 +81,7 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
   if (solenoid1State == SS_OPEN) {
     // We only need to check if it's time to close the solenoid if we're not continuously dispensing water.
 	// Do the normal, non-overidden behavior
-	if (currentLoopMillis - lastSolenoidOpenTimer1 >= SolenoidDoseOpenDuration) {
+	if ((currentLoopMillis - lastSolenoidOpenTimer1) >= SolenoidDoseOpenDuration) {
 		// Close the solenoid
 		closeSolenoid(1);
 	}
@@ -93,11 +92,11 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
 
 	// Do the normal, non-overidden behavior
 	// Check if at least SolenoidPostDoseClosedDuration msec have passed since the last solenoid close event (to prevent immediate re-opening).
-	if (currentLoopMillis - lastSolenoidCloseTimer1 >= SolenoidPostDoseClosedDuration) {
-	/* Check sensor beam state:
-		LOW: Sensor Beam is broken
-		HIGH: Sensor Beam has continuity
-	*/
+	if ((currentLoopMillis - lastSolenoidCloseTimer1) >= SolenoidPostDoseClosedDuration) {
+		/* Check sensor beam state:
+			LOW: Sensor Beam is broken
+			HIGH: Sensor Beam has continuity
+		*/
 		// The sensor must have changed state after the end of the last water dispense and timeout period
 		if (lastSensorChangeEvent3  > (lastSolenoidCloseTimer1 + SolenoidPostDoseClosedDuration)) {
 			if (sensor3State == BBS_BROKEN) {

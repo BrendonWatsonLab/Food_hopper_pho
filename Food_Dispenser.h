@@ -32,10 +32,7 @@ Adafruit_StepperMotor *motor2 = AFMS.getStepper(200, 2); // The motor connected 
 BeamBreakState sensor2State = BBS_CLEAR;         // variable for reading the beam-break sensor2 status
 int moveOperationCounter2 = 0; // This variable keeps track of the total number of "move" operations performed.
 
-
 unsigned long lastDispenseTimer = 0; // This variable keeps track of the last time dispense was performed
-
-
 
 // Function Prototypes:
 void setupFoodDispensers();

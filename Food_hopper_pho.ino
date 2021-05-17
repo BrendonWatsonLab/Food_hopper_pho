@@ -119,7 +119,7 @@ void loop() {
 	loopDispense(currentLoopMillis);
 	#if ENABLE_ARDUINOMEGA_LABJACK_INTERFACE
 		// Added to turn off signals that are currently high.
-		loopEndMegaOutputSignals(currentLoopMillis);
+		loopEndMegaOutputSignals();
 	#endif
 
 } // end loop

@@ -44,7 +44,6 @@
    Following SolenoidOpenDuration, the solenoid is closed (stopping the flow of water) for at least SolenoidPostDoseClosedDuration before re-opening
 */
 // UNCOMMENT THIS BLOCK FOR REGULAR OPERATION OR DYNAMIC DIAGNOSTIC MODE:
-#define DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER false //DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER: if this value is true the system will operate continuously, ignoring the beam break sensor. This serves to allow testing. This value should be false outside of testing.
 #define SolenoidDoseOpenDuration 300 //SolenoidDoseOpenDuration: The time for which the solenoid is open and the water is allowed to flow freely. 
 #define SolenoidPostDoseClosedDuration 1500 //SolenoidPostDoseClosedDuration: The time after a water dispense event before another water dispense event can be re-triggered
 
