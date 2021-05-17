@@ -26,8 +26,6 @@ void loopDispense(unsigned long currentLoopMillis);
   #include "Water_Dispenser.h"
 #endif
 
-#include "Diagnostics.h"
-
 
 
 void setup() {
@@ -53,9 +51,6 @@ void setup() {
 }
 
 void loop() {
-  // Tick the timer
-//   timer.tick();
-  
   // Get the current time in milliseconds
   currentLoopMillis = millis();
   #if IS_DIAGNOSTIC_MODE 
@@ -121,18 +116,7 @@ void loop() {
     #endif
   #endif
 
-  // Performs the interfacing with the processing software (running on the computer) while in interactive diagnostic mode
-  if (IS_DIAGNOSTIC_MODE && SHOULD_USE_INTERACTIVE_DIAGNOSTIC) {
-    loopDiagnostics(currentLoopMillis);
-    // Perform normal dispense events unless diagnostic_disable_dispensing is true
-    if (diagnostic_disable_dispensing == false) {
-      loopDispense(currentLoopMillis);
-    }
-  }
-  else {
-    loopDispense(currentLoopMillis);
-  } // end interactive diagnostic if
-
+	loopDispense(currentLoopMillis);
 	#if ENABLE_ARDUINOMEGA_LABJACK_INTERFACE
 		// Added to turn off signals that are currently high.
 		loopEndMegaOutputSignals(currentLoopMillis);
