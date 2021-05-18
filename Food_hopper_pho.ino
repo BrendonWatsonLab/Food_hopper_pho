@@ -8,7 +8,6 @@
 //10msec main loop runtime goal
 
 #include <Wire.h>
-#include "fastio/phoFastGPIO.h"
 #include "Common.h"
 
 #if ENABLE_ARDUINOMEGA_LABJACK_INTERFACE

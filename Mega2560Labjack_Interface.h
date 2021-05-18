@@ -36,16 +36,6 @@ enum LabjackSignalPinState {
 LabjackSignalPinState labjackSignalPinState[8] = {LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest};         // reflects the HIGH/LOW state of the labjack signal pins
 unsigned long lastSignalSignallingTimer[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
-// unsigned long lastSignalHighTimer1 = 0; // This variable keeps track of the last time the Solenoid1 "open" operation was performed
-// unsigned long lastSignalHighTimer2 = 0; // This variable keeps track of the last time the Solenoid1 "open" operation was performed
-// unsigned long lastSignalHighTimer3 = 0; // This variable keeps track of the last time the Solenoid1 "open" operation was performed
-// unsigned long lastSignalHighTimer4 = 0; // This variable keeps track of the last time the Solenoid1 "open" operation was performed
-
-// unsigned long lastSolenoidCloseTimer1 = 0; // This variable keeps track of the last time the Solenoid1 "close" operation was performed
-// unsigned long lastSolenoidOpenTimer2 = 0; // This variable keeps track of the last time the Solenoid2 "open" operation was performed
-// unsigned long lastSolenoidCloseTimer2 = 0; // This variable keeps track of the last time the Solenoid2 "close" operation was performed
-
-
 // Function Prototypes:
 void setupMegaOutputInterface();
 void sendMegaOutputSignal(SystemAddress addr, EventType event);
@@ -136,5 +126,4 @@ void loopEndMegaOutputSignals() {
 			}
 		} // end if 
 	} // end for
-
 }
