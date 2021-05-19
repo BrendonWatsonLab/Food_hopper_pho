@@ -57,8 +57,8 @@
 /*
  * 
  */
-//#define IS_DIAGNOSTIC_MODE true //IS_DIAGNOSTIC_MODE: if this value is false, all diagnostic settings will be ignored. This value should be false outside of testing.
-#define IS_DIAGNOSTIC_MODE false //IS_DIAGNOSTIC_MODE: if this value is false, all diagnostic settings will be ignored. This value should be false outside of testing.
+#define IS_DIAGNOSTIC_MODE true //IS_DIAGNOSTIC_MODE: if this value is false, all diagnostic settings will be ignored. This value should be false outside of testing.
+//#define IS_DIAGNOSTIC_MODE false //IS_DIAGNOSTIC_MODE: if this value is false, all diagnostic settings will be ignored. This value should be false outside of testing.
 #define ENABLE_DIAGNOSTIC_SERIAL false 
 #define SHOULD_USE_INTERACTIVE_DIAGNOSTIC false //SHOULD_USE_INTERACTIVE_DIAGNOSTIC: enables extended diagnostics and testing via the helper Processing software.
 #define INTERACTIVE_DIAGNOSTIC_SERIAL_READ_TIMEOUT 10 //INTERACTIVE_DIAGNOSTIC_SERIAL_READ_TIMEOUT: the minimum time between serial reads for interactive diagnostics
@@ -67,7 +67,10 @@
 /*
  * 
  */
-const int SIGNAL_ON_TIME = 100; //msec
+#define SignalOnDuration 100 //SignalOnDuration: The timein msec for which a given output pin his in the signalling state to the labjack.
+#define SignalPostSignalBreakDuration 10 //SignalPostSignalBreakDuration: The time after the completion of a signal event on a given pin before another event can be re-triggered
+
+
 
 
 // VARIABLES
@@ -75,7 +78,11 @@ const int SIGNAL_ON_TIME = 100; //msec
  * 
  */
 unsigned long currentLoopMillis; // currentLoopMillis: the millis() recorded at the start of each iteration of the main loop.
+
+unsigned long performanceLoopCurrentLoopIterationCount = 0; // performanceLoopCurrentLoopIterationCount: used to keep track of the current iteration number of the main run loop
 unsigned long performanceTimer0; // performanceTimer0: a timer used to track the performance of the arduino by measuring the difference from the start of the last loop.
+
+unsigned long performanceTestingGeneralPurposeCounter0 = 0; // performanceTestingGeneralPurposeCounter0: a counter that can be used for debugging
 
 unsigned long lastSensorChangeEvent1 = 0; // The last loop time the sensor was detected to have changed value
 unsigned long lastSensorChangeEvent2 = 0; 

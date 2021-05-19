@@ -17,6 +17,8 @@
 // Function Prototypes:
 void sendLoggingSignal(SystemAddress addr, EventType event);
 void loopDispense(unsigned long currentLoopMillis);
+//void loop_disabled()
+
 
 #if ENABLE_FOOD_DISPENSE
   #include "Food_Dispenser.h" //Depends on Common.h
@@ -49,14 +51,36 @@ void setup() {
   #endif
 }
 
+
+//void loop() {
+//  // Pho: Just test the output signals
+//  currentLoopMillis = millis();
+//
+//  debugTestOutputPorts();
+//
+//}
+
 void loop() {
   // Get the current time in milliseconds
   currentLoopMillis = millis();
+
+
+
   #if IS_DIAGNOSTIC_MODE 
+    performanceLoopCurrentLoopIterationCount++; // Increment the loop iteration counter: 
     //If the system is in diagnostic mode, output a line to the serial terminal indicating this to prevent diagnostic builds being deployed to production hardware.
     unsigned long lastLoopDifference = currentLoopMillis - performanceTimer0;
-    Serial.println(lastLoopDifference);
+    Serial.print("iter[");
+    Serial.print(performanceLoopCurrentLoopIterationCount);
+    Serial.print("]: lastLoopDifference(");
+    Serial.print(lastLoopDifference);  
+    Serial.print("), currentLoopMillis(");
+    Serial.print(currentLoopMillis);
+    Serial.println(");");
+    
     performanceTimer0 = currentLoopMillis;
+
+    debugTestOutputPorts();
   #endif
 
   // CONCERN: Should these digital reads be done in batch/bulk at the start of the loop cycle (preventing delays that occur due to logging-induced latency)?

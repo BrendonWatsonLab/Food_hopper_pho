@@ -35,11 +35,16 @@ enum LabjackSignalPinState {
 
 LabjackSignalPinState labjackSignalPinState[8] = {LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest};         // reflects the HIGH/LOW state of the labjack signal pins
 unsigned long lastSignalSignallingTimer[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+unsigned long lastSignalSignalCompleteTimer[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+
+
 
 // Function Prototypes:
 void setupMegaOutputInterface();
 void sendMegaOutputSignal(SystemAddress addr, EventType event);
 void loopEndMegaOutputSignals();
+void debugTestOutputPorts();
+
 
 // bool turnOffSignal(void *argument /* optional argument given to in/at/every */);
 
@@ -87,10 +92,12 @@ void sendMegaOutputSignal(SystemAddress addr, EventType event) {
   // While the output is selected perform the main action
 
   // check if it's still set low, and if not, set it low and update the lastSignalLowTimer:
+
+
   if (labjackSignalPinState[outputPinIndex] == LabjackSignalPinState_Rest) {
-	labjackSignalPinState[outputPinIndex] = LabjackSignalPinState_Signalling;
-	digitalWrite(outputPin, LabjackSignalPinState_Signalling);
-	lastSignalSignallingTimer[outputPinIndex] = millis(); // Capture the time when the pin was set low
+  	labjackSignalPinState[outputPinIndex] = LabjackSignalPinState_Signalling;
+  	digitalWrite(outputPin, LabjackSignalPinState_Signalling);
+  	lastSignalSignallingTimer[outputPinIndex] = millis(); // Capture the time when the pin was set low
   }
   else {
 	  // Error, the pin was attempted to be set low while it was already still low. 
@@ -110,20 +117,51 @@ PORTA = 0b10000000
 // Called to check whether to turn off the pin
 void loopEndMegaOutputSignals() {
 	// Get the actual millis again
-	unsigned long currentLoopMillis = millis();
+	unsigned long currentMillis = millis();
 
 	for (int i=0; i<8; i++)
 	{
 		// Loop through the labjackSignalPins and see if any are up for termination
 		if (labjackSignalPinState[i] == LabjackSignalPinState_Signalling) {
 			// Check the lastSignalLowTimer to see how long it has been LabjackSignalPinState_Signalling
-			if ((currentLoopMillis - lastSignalSignallingTimer[i]) >= SIGNAL_ON_TIME) {
+			if ((currentMillis - lastSignalSignallingTimer[i]) >= SignalOnDuration) {
 				// Turn off the signal
 				// digitalWrite(megaOutputPins[i], LabjackSignalPinState_Rest); // Set its output pin to Rest/high
 				digitalWrite(megaOutputPins[i], LabjackSignalPinState_Rest); // Set its output pin to Rest/high
 				// WRITE(megaOutputRegisters[i], LabjackSignalPinState_Rest);
 				labjackSignalPinState[i] = LabjackSignalPinState_Rest;  // Set the pin state
+        lastSignalSignalCompleteTimer[i] = currentMillis;
 			}
+      else {
+        // TEsting only:
+        Serial.print("DEBUG: loopEndMegaOutputSignals() encountered but signal[");
+        Serial.print(i);
+        Serial.print("] is not finished yet and has ");
+        Serial.print((currentMillis - lastSignalSignallingTimer[i]));
+        Serial.println(" [ms] remaining.");
+      }
 		} // end if 
 	} // end for
+}
+
+
+void debugTestOutputPorts() {
+
+ // loopEndMegaOutputSignals();
+  sendMegaOutputSignal(Water1, ActionDispense);
+
+  performanceTestingGeneralPurposeCounter0++;
+
+  
+ // delay(10);
+//  sendMegaOutputSignal(Water1, ActionDispense);
+//  delay(10);
+//  loopEndMegaOutputSignals();
+
+//  sendMegaOutputSignal(Water2, ActionDispense);
+//  delay(10);
+//  loopEndMegaOutputSignals();
+
+ // delay(2000); // 2 sec delay btween iterations of the loop
+
 }
