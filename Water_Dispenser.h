@@ -137,8 +137,9 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
 				// The sensor must have changed state *after the end* of the last water dispense and timeout period
 			if (sensor4State == BBS_BROKEN) {
 				// And the sensor must be currently low (although this may not be the changed state... *should something be updated if it is still high?*
-				#if ENABLE_LOGGING_SIGNAL_ON_CHANGE
-					sendLoggingSignal(Water2, ActionDispense);
+				#if ENABLE_LOGGING_SIGNAL_ON_CHANGE					
+						sendLoggingSignal(Water2, ActionDispense);					
+
 				#endif
 				openSolenoid(2);
 			}

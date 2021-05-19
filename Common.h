@@ -77,7 +77,7 @@
 /*
  * 
  */
-unsigned long currentLoopMillis; // currentLoopMillis: the millis() recorded at the start of each iteration of the main loop.
+unsigned long currentLoopMillis = 0; // currentLoopMillis: the millis() recorded at the start of each iteration of the main loop.
 
 unsigned long performanceLoopCurrentLoopIterationCount = 0; // performanceLoopCurrentLoopIterationCount: used to keep track of the current iteration number of the main run loop
 unsigned long performanceTimer0; // performanceTimer0: a timer used to track the performance of the arduino by measuring the difference from the start of the last loop.
