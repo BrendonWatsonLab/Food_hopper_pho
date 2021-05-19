@@ -70,19 +70,23 @@ void loop() {
     performanceLoopCurrentLoopIterationCount++; // Increment the loop iteration counter: 
     //If the system is in diagnostic mode, output a line to the serial terminal indicating this to prevent diagnostic builds being deployed to production hardware.
     unsigned long lastLoopDifference = currentLoopMillis - performanceTimer0;
-    Serial.print("iter[");
-    Serial.print(performanceLoopCurrentLoopIterationCount);
-    Serial.print("]: lastLoopDifference(");
-    Serial.print(lastLoopDifference);  
-    Serial.print("), currentLoopMillis(");
-    Serial.print(currentLoopMillis);
-    Serial.println(");");
+//    Serial.print("iter[");
+//    Serial.print(performanceLoopCurrentLoopIterationCount);
+//    Serial.print("]: lastLoopDifference(");
+//    Serial.print(lastLoopDifference);  
+//    Serial.print("), currentLoopMillis(");
+//    Serial.print(currentLoopMillis);
+//    Serial.println(");");
     
     performanceTimer0 = currentLoopMillis;
-
-    debugTestOutputPorts();
   #endif
 
+  #if ENABLE_ARDUINOMEGA_LABJACK_INTERFACE
+		// Added to turn off signals that are currently high.
+		loopEndMegaOutputSignals();
+	#endif
+
+  debugTestOutputPorts();
   // CONCERN: Should these digital reads be done in batch/bulk at the start of the loop cycle (preventing delays that occur due to logging-induced latency)?
   
   // read the state of the IR break beam sensors:
@@ -140,10 +144,7 @@ void loop() {
   #endif
 
 	loopDispense(currentLoopMillis);
-	#if ENABLE_ARDUINOMEGA_LABJACK_INTERFACE
-		// Added to turn off signals that are currently high.
-		loopEndMegaOutputSignals();
-	#endif
+
 
 } // end loop
 

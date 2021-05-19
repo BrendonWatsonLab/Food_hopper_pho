@@ -26,7 +26,7 @@ const int megaOutputPins[9] = {22, 24, 26, 28, 23, 25, 27, 29, 30};
 
 
 #define DebuggingTestLoggingSignalPauseDuration 2000
-
+unsigned long lastDebuggingTestLoggingSignalTimer = 0;
 
 // Variables
 
@@ -140,10 +140,14 @@ PORTA = 0b10000000
 void loopEndMegaOutputSignals() {
 	// Get the actual millis again
 
-  unsigned long updatedCallMillis = millis();
+//   unsigned long updatedCallMillis = millis();
 //	unsigned long currentMillis = millis();
 
   unsigned long currentMillis = currentLoopMillis;
+
+ 	// Serial.print("DEBUG: loopEndMegaOutputSignals() (updatedCallMillis - currentMillis) = ");
+	// Serial.println(updatedCallMillis - currentMillis);
+	
 
 	for (int i=0; i<8; i++)
 	{
@@ -154,16 +158,24 @@ void loopEndMegaOutputSignals() {
 				// Turn off the signal
 				digitalWrite(megaOutputPins[i], LabjackSignalPinState_Rest); // Set its output pin to Rest/high
 				labjackSignalPinState[i] = LabjackSignalPinState_Rest;  // Set the pin state
-        lastSignalSignalCompleteTimer[i] = currentMillis;
+        		lastSignalSignalCompleteTimer[i] = currentMillis;
+
+				Serial.print("DEBUG: loopEndMegaOutputSignals() completed for signal[");
+				Serial.print(i);
+				Serial.print("] which lasted ");
+				Serial.print((lastSignalSignalCompleteTimer[i] - lastSignalSignallingTimer[i]));
+				Serial.println(" [ms].");
+
+
 			}
-      else {
-        // TEsting only:
-        Serial.print("DEBUG: loopEndMegaOutputSignals() encountered but signal[");
-        Serial.print(i);
-        Serial.print("] is not finished yet and has ");
-        Serial.print((currentMillis - lastSignalSignallingTimer[i]));
-        Serial.println(" [ms] elapsed so far.");
-      }
+			else {
+				// TEsting only:
+				Serial.print("DEBUG: loopEndMegaOutputSignals() encountered but signal[");
+				Serial.print(i);
+				Serial.print("] is not finished yet and has ");
+				Serial.print((currentMillis - lastSignalSignallingTimer[i]));
+				Serial.println(" [ms] elapsed so far.");
+			}
 		} // end if 
 	} // end for
 }
@@ -172,18 +184,23 @@ void loopEndMegaOutputSignals() {
 void debugTestOutputPorts() {
 
  // loopEndMegaOutputSignals();
+ 
+	// approximately 65 millis from the end of the loop
+ 	Serial.print("DEBUG: debugTestOutputPorts() (millis() - currentLoopMillis) = ");
+	Serial.println(millis() - currentLoopMillis);
+ 
 
- if ((currentMillis - lastSignalSignallingTimer[i]) >= DebuggingTestLoggingSignalPauseDuration) {
-       // Turn off the signal
-        digitalWrite(megaOutputPins[i], LabjackSignalPinState_Rest); // Set its output pin to Rest/high
-        labjackSignalPinState[i] = LabjackSignalPinState_Rest;  // Set the pin state
-        lastSignalSignalCompleteTimer[i] = currentMillis;
+	if ((currentLoopMillis - lastDebuggingTestLoggingSignalTimer) >= DebuggingTestLoggingSignalPauseDuration) {
+       // Send the debugging log signal
+	   	sendMegaOutputSignal(Water1, SensorChange);
+		sendMegaOutputSignal(Water1, ActionDispense);
+		// sendMegaOutputSignal(Water2, ActionDispense);
+        lastDebuggingTestLoggingSignalTimer = currentLoopMillis;
+		performanceTestingGeneralPurposeCounter0++;
       }
 
       
-  sendMegaOutputSignal(Water1, ActionDispense);
-
-  performanceTestingGeneralPurposeCounter0++;
+  
 
   
  // delay(10);

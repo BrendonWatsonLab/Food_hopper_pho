@@ -60,14 +60,12 @@
 #define IS_DIAGNOSTIC_MODE true //IS_DIAGNOSTIC_MODE: if this value is false, all diagnostic settings will be ignored. This value should be false outside of testing.
 //#define IS_DIAGNOSTIC_MODE false //IS_DIAGNOSTIC_MODE: if this value is false, all diagnostic settings will be ignored. This value should be false outside of testing.
 #define ENABLE_DIAGNOSTIC_SERIAL false 
-#define SHOULD_USE_INTERACTIVE_DIAGNOSTIC false //SHOULD_USE_INTERACTIVE_DIAGNOSTIC: enables extended diagnostics and testing via the helper Processing software.
-#define INTERACTIVE_DIAGNOSTIC_SERIAL_READ_TIMEOUT 10 //INTERACTIVE_DIAGNOSTIC_SERIAL_READ_TIMEOUT: the minimum time between serial reads for interactive diagnostics
 
-// MULTIPLEXER:
+// Labjack Signalling Outputs:
 /*
  * 
  */
-#define SignalOnDuration 100 //SignalOnDuration: The timein msec for which a given output pin his in the signalling state to the labjack.
+#define SignalOnDuration 10 //SignalOnDuration: The timein msec for which a given output pin his in the signalling state to the labjack.
 #define SignalPostSignalBreakDuration 10 //SignalPostSignalBreakDuration: The time after the completion of a signal event on a given pin before another event can be re-triggered
 
 
