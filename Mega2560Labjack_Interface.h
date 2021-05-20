@@ -96,21 +96,22 @@ void sendMegaOutputSignal(SystemAddress addr, EventType event) {
 
   // check if it's still set low, and if not, set it low and update the lastSignalLowTimer:
 if (labjackSignalPinState[outputPinIndex] == LabjackSignalPinState_Rest) {
+	unsigned long currentMillis = millis();
 	// IF it's in the rest state, see if it has been long enough at rest
-	if ((currentLoopMillis - lastSignalSignalCompleteTimer[outputPinIndex]) >= SignalPostSignalBreakDuration) {
+	if ((currentMillis - lastSignalSignalCompleteTimer[outputPinIndex]) >= SignalPostSignalBreakDuration) {
 		// It's been off for long enough to give the computer a chance to read it.
 		labjackSignalPinState[outputPinIndex] = LabjackSignalPinState_Signalling;
 		digitalWrite(outputPin, LabjackSignalPinState_Signalling);
-		lastSignalSignallingTimer[outputPinIndex] = currentLoopMillis; // Capture the time when the pin was set low
+		lastSignalSignallingTimer[outputPinIndex] = currentMillis; // Capture the time when the pin was set low
 
 	}
 	else {
 		// TEsting only:
-		Serial.print("DEBUG: sendMegaOutputSignal(...) called and pin state is at rest (correct) but it is too soon to send the signal for pin[");
-		Serial.print(outputPinIndex);
-		Serial.print("] is not finished yet and has ");
-		Serial.print((currentLoopMillis - lastSignalSignalCompleteTimer[outputPinIndex]));
-		Serial.println(" [ms] elapsed so far.");
+		// Serial.print("DEBUG: sendMegaOutputSignal(...) called and pin state is at rest (correct) but it is too soon to send the signal for pin[");
+		// Serial.print(outputPinIndex);
+		// Serial.print("] is not finished yet and has ");
+		// Serial.print((currentLoopMillis - lastSignalSignalCompleteTimer[outputPinIndex]));
+		// Serial.println(" [ms] elapsed so far.");
 	}
 
 
@@ -119,7 +120,7 @@ if (labjackSignalPinState[outputPinIndex] == LabjackSignalPinState_Rest) {
 else {
 	// Error, the pin was attempted to be set low while it was already still low. 
 	// TODO: figure how much time is left and maybe perform and update??
-	Serial.println("ERROR: Attempted to set Labjack pin to Signalling (LOW) when already signalling!!!");
+	// Serial.println("ERROR: Attempted to set Labjack pin to Signalling (LOW) when already signalling!!!");
 }
 
   
@@ -141,9 +142,9 @@ void loopEndMegaOutputSignals() {
 	// Get the actual millis again
 
 //   unsigned long updatedCallMillis = millis();
-//	unsigned long currentMillis = millis();
+	unsigned long currentMillis = millis();
 
-  unsigned long currentMillis = currentLoopMillis;
+//   unsigned long currentMillis = currentLoopMillis;
 
  	// Serial.print("DEBUG: loopEndMegaOutputSignals() (updatedCallMillis - currentMillis) = ");
 	// Serial.println(updatedCallMillis - currentMillis);
@@ -160,21 +161,21 @@ void loopEndMegaOutputSignals() {
 				labjackSignalPinState[i] = LabjackSignalPinState_Rest;  // Set the pin state
         		lastSignalSignalCompleteTimer[i] = currentMillis;
 
-				Serial.print("DEBUG: loopEndMegaOutputSignals() completed for signal[");
-				Serial.print(i);
-				Serial.print("] which lasted ");
-				Serial.print((lastSignalSignalCompleteTimer[i] - lastSignalSignallingTimer[i]));
-				Serial.println(" [ms].");
+				// Serial.print("DEBUG: loopEndMegaOutputSignals() completed for signal[");
+				// Serial.print(i);
+				// Serial.print("] which lasted ");
+				// Serial.print((lastSignalSignalCompleteTimer[i] - lastSignalSignallingTimer[i]));
+				// Serial.println(" [ms].");
 
 
 			}
 			else {
 				// TEsting only:
-				Serial.print("DEBUG: loopEndMegaOutputSignals() encountered but signal[");
-				Serial.print(i);
-				Serial.print("] is not finished yet and has ");
-				Serial.print((currentMillis - lastSignalSignallingTimer[i]));
-				Serial.println(" [ms] elapsed so far.");
+				// Serial.print("DEBUG: loopEndMegaOutputSignals() encountered but signal[");
+				// Serial.print(i);
+				// Serial.print("] is not finished yet and has ");
+				// Serial.print((currentMillis - lastSignalSignallingTimer[i]));
+				// Serial.println(" [ms] elapsed so far.");
 			}
 		} // end if 
 	} // end for
@@ -186,14 +187,20 @@ void debugTestOutputPorts() {
  // loopEndMegaOutputSignals();
  
 	// approximately 65 millis from the end of the loop
- 	Serial.print("DEBUG: debugTestOutputPorts() (millis() - currentLoopMillis) = ");
-	Serial.println(millis() - currentLoopMillis);
+ 	// Serial.print("DEBUG: debugTestOutputPorts() (millis() - currentLoopMillis) = ");
+	// Serial.println(millis() - currentLoopMillis);
  
-
 	if ((currentLoopMillis - lastDebuggingTestLoggingSignalTimer) >= DebuggingTestLoggingSignalPauseDuration) {
        // Send the debugging log signal
-	   	sendMegaOutputSignal(Water1, SensorChange);
-		sendMegaOutputSignal(Water1, ActionDispense);
+	   	// sendMegaOutputSignal(Water1, SensorChange);
+		// sendMegaOutputSignal(Water1, ActionDispense);
+
+		sendMegaOutputSignal(Food1, SensorChange);
+		sendMegaOutputSignal(Food1, ActionDispense);
+
+		sendMegaOutputSignal(Food2, SensorChange);
+		sendMegaOutputSignal(Food2, ActionDispense);
+
 		// sendMegaOutputSignal(Water2, ActionDispense);
         lastDebuggingTestLoggingSignalTimer = currentLoopMillis;
 		performanceTestingGeneralPurposeCounter0++;

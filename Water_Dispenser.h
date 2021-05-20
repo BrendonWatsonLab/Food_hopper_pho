@@ -165,7 +165,7 @@ void closeSolenoid(int waterPortNumber) {
   }
   else {
     // Should never happen. Would be nice to assert.
-    Serial.println("----- waterPortNumber Error A! -----");
+    // Serial.println("----- waterPortNumber Error A! -----");
   }
   // Actually close the solenoid and save the time it was closed
   digitalWrite(activeSolenoidPin, LOW);
@@ -186,7 +186,7 @@ void closeSolenoid(int waterPortNumber) {
   }
   else {
     // Should never happen. Would be nice to assert.
-    Serial.println("----- waterPortNumber Error B! -----");
+    // Serial.println("----- waterPortNumber Error B! -----");
   }
 }
 
@@ -202,7 +202,7 @@ void openSolenoid(int waterPortNumber) {
   }
   else {
     // Should never happen. Would be nice to assert.
-    Serial.println("----- waterPortNumber Error A! -----");
+    // Serial.println("----- waterPortNumber Error A! -----");
   }
   // Actually close the solenoid and save the time it was closed
   digitalWrite(activeSolenoidPin, HIGH);
@@ -214,6 +214,6 @@ void openSolenoid(int waterPortNumber) {
   }
   else {
     // Should never happen. Would be nice to assert.
-    Serial.println("----- waterPortNumber Error B! -----");
+    // Serial.println("----- waterPortNumber Error B! -----");
   }
 }

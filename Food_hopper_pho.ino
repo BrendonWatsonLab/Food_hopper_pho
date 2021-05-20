@@ -30,11 +30,11 @@ void loopDispense(unsigned long currentLoopMillis);
 
 
 void setup() {
-  Serial.begin(9600); // set up Serial library at 9600 bps (for debugging)
-  Serial.println("Behavior Box:");
-  if (IS_DIAGNOSTIC_MODE) { //If the system is in diagnostic mode, output a line to the serial terminal indicating this to prevent diagnostic builds being deployed to production hardware.
-    Serial.println("----- DIAGNOSTIC MODE -----");
-  }
+  // Serial.begin(9600); // set up Serial library at 9600 bps (for debugging)
+  // Serial.println("Behavior Box:");
+  // if (IS_DIAGNOSTIC_MODE) { //If the system is in diagnostic mode, output a line to the serial terminal indicating this to prevent diagnostic builds being deployed to production hardware.
+  //   Serial.println("----- DIAGNOSTIC MODE -----");
+  // }
 
   #if ENABLE_ARDUINOMEGA_LABJACK_INTERFACE
     setupMegaOutputInterface();
@@ -64,8 +64,6 @@ void loop() {
   // Get the current time in milliseconds
   currentLoopMillis = millis();
 
-
-
   #if IS_DIAGNOSTIC_MODE 
     performanceLoopCurrentLoopIterationCount++; // Increment the loop iteration counter: 
     //If the system is in diagnostic mode, output a line to the serial terminal indicating this to prevent diagnostic builds being deployed to production hardware.
@@ -89,61 +87,61 @@ void loop() {
   debugTestOutputPorts();
   // CONCERN: Should these digital reads be done in batch/bulk at the start of the loop cycle (preventing delays that occur due to logging-induced latency)?
   
-  // read the state of the IR break beam sensors:
-  #if ENABLE_FOOD_DISPENSE
-    BeamBreakState prevSensor1State = sensor1State;
-    sensor1State = BeamBreakState(digitalRead(SENSOR1PIN));
-    if (prevSensor1State != sensor1State) {
-      lastSensorChangeEvent1 = currentLoopMillis;
-    }
-    #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
-      if (prevSensor1State != sensor1State) {
-        sendLoggingSignal(Food1, SensorChange);
-      }
-    #endif
-    #if IS_DUAL_MOTOR_MODE
-      BeamBreakState prevSensor2State = sensor2State;
-      sensor2State = BeamBreakState(digitalRead(SENSOR2PIN));
-      if (prevSensor2State != sensor2State) {
-        lastSensorChangeEvent2 = currentLoopMillis;
-      }
-      #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
-        if (prevSensor2State != sensor2State) {
-          sendLoggingSignal(Food2, SensorChange);
-        }
-      #endif
-    #endif
-  #endif
-  #if ENABLE_WATER_DISPENSE
-    BeamBreakState prevSensor3State = sensor3State;
-    BeamBreakState prevSensor4State = sensor4State;
-    // Read the water sensors
-    sensor3State = BeamBreakState(digitalRead(SENSOR3PIN));
-    sensor4State = BeamBreakState(digitalRead(SENSOR4PIN));
+  // // read the state of the IR break beam sensors:
+  // #if ENABLE_FOOD_DISPENSE
+  //   BeamBreakState prevSensor1State = sensor1State;
+  //   sensor1State = BeamBreakState(digitalRead(SENSOR1PIN));
+  //   if (prevSensor1State != sensor1State) {
+  //     lastSensorChangeEvent1 = currentLoopMillis;
+  //   }
+  //   #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
+  //     if (prevSensor1State != sensor1State) {
+  //       sendLoggingSignal(Food1, SensorChange);
+  //     }
+  //   #endif
+  //   #if IS_DUAL_MOTOR_MODE
+  //     BeamBreakState prevSensor2State = sensor2State;
+  //     sensor2State = BeamBreakState(digitalRead(SENSOR2PIN));
+  //     if (prevSensor2State != sensor2State) {
+  //       lastSensorChangeEvent2 = currentLoopMillis;
+  //     }
+  //     #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
+  //       if (prevSensor2State != sensor2State) {
+  //         sendLoggingSignal(Food2, SensorChange);
+  //       }
+  //     #endif
+  //   #endif
+  // #endif
+  // #if ENABLE_WATER_DISPENSE
+  //   BeamBreakState prevSensor3State = sensor3State;
+  //   BeamBreakState prevSensor4State = sensor4State;
+  //   // Read the water sensors
+  //   sensor3State = BeamBreakState(digitalRead(SENSOR3PIN));
+  //   sensor4State = BeamBreakState(digitalRead(SENSOR4PIN));
 
-	bool didSensor3StateChange = (prevSensor3State != sensor3State);
-	bool didSensor4StateChange = (prevSensor4State != sensor4State);
+	// bool didSensor3StateChange = (prevSensor3State != sensor3State);
+	// bool didSensor4StateChange = (prevSensor4State != sensor4State);
 
-    // Check for changes:
-    if (didSensor3StateChange) {
-      lastSensorChangeEvent3 = currentLoopMillis;
-    }
-    if (didSensor4StateChange) {
-      lastSensorChangeEvent4 = currentLoopMillis;
-    }
+  //   // Check for changes:
+  //   if (didSensor3StateChange) {
+  //     lastSensorChangeEvent3 = currentLoopMillis;
+  //   }
+  //   if (didSensor4StateChange) {
+  //     lastSensorChangeEvent4 = currentLoopMillis;
+  //   }
       
-    #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
-      // Check for changes:
-      if (didSensor3StateChange) {
-        sendLoggingSignal(Water1, SensorChange);
-      }
-      if (didSensor4StateChange) {
-        sendLoggingSignal(Water2, SensorChange);
-      }
-    #endif
-  #endif
+  //   #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
+  //     // Check for changes:
+  //     if (didSensor3StateChange) {
+  //       sendLoggingSignal(Water1, SensorChange);
+  //     }
+  //     if (didSensor4StateChange) {
+  //       sendLoggingSignal(Water2, SensorChange);
+  //     }
+  //   #endif
+  // #endif
 
-	loopDispense(currentLoopMillis);
+	// loopDispense(currentLoopMillis);
 
 
 } // end loop

@@ -146,7 +146,7 @@ void dispenseFood(int feederNumber) {
   }
   else {
     // Should never happen. Would be nice to assert.
-    Serial.println("----- FeederNumber Error A! -----");
+    // Serial.println("----- FeederNumber Error A! -----");
   }
 
   // The "%" operation is "modulus". The statement checks whether the moveOperationCounter is evenly divisible by ConsecutiveSameDirectionMovements. If it is, it performs the first case, otherwise the second.
@@ -169,7 +169,7 @@ void dispenseFood(int feederNumber) {
   }
   else {
     // Should never happen. Would be nice to assert.
-    Serial.println("----- FeederNumber Error B! -----");
+    // Serial.println("----- FeederNumber Error B! -----");
   }
 }
 
@@ -180,7 +180,7 @@ void dispenseFood(int feederNumber) {
 void clockwiseDispense(Adafruit_StepperMotor *activeMotor) {
   // Otherwise we move in the traditional (clockwise) direction
   if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
-    Serial.println("Moving: Clockwise " + String(moveOperationCounter1));
+    // Serial.println("Moving: Clockwise " + String(moveOperationCounter1));
   }
   activeMotor->step(25, FORWARD, NumberOfStepperCoilsActivated);
   #if SHOULD_RELEASE_MOTORS_FOR_POWER_SAVING
@@ -191,7 +191,7 @@ void clockwiseDispense(Adafruit_StepperMotor *activeMotor) {
 // Attempts to unjam by just moving backwards for this iteration.
 void unjamDispenseBySimpleReverse(Adafruit_StepperMotor *activeMotor) {
   if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
-    Serial.println("Moving: Counter-Clockwise " + String(moveOperationCounter1));
+    // Serial.println("Moving: Counter-Clockwise " + String(moveOperationCounter1));
   }
   activeMotor->step(25, BACKWARD, NumberOfStepperCoilsActivated); // Changed from SINGLE to DOUBLE for extra torque
   #if SHOULD_RELEASE_MOTORS_FOR_POWER_SAVING
@@ -202,7 +202,7 @@ void unjamDispenseBySimpleReverse(Adafruit_StepperMotor *activeMotor) {
 // Attempts to unjam by quickly moving backwards, and then forward again for this iteration. This runs the risk of double-dispensing
 void unjamDispenseByTickTock(Adafruit_StepperMotor *activeMotor) {
   if (IS_DIAGNOSTIC_MODE && ENABLE_DIAGNOSTIC_SERIAL) {
-      Serial.println("Moving: UNJAM " + String(moveOperationCounter1));    
+      // Serial.println("Moving: UNJAM " + String(moveOperationCounter1));    
   }
   activeMotor->step(25, BACKWARD, NumberOfStepperCoilsActivated); // Changed from SINGLE to DOUBLE for extra torque
   activeMotor->step(25, FORWARD, NumberOfStepperCoilsActivated); // Changed from SINGLE to DOUBLE for extra torque
