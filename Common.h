@@ -75,17 +75,17 @@
 /*
  * 
  */
-unsigned long currentLoopMillis = 0; // currentLoopMillis: the millis() recorded at the start of each iteration of the main loop.
+volatile unsigned long currentLoopMillis = 0; // currentLoopMillis: the millis() recorded at the start of each iteration of the main loop.
 
-unsigned long performanceLoopCurrentLoopIterationCount = 0; // performanceLoopCurrentLoopIterationCount: used to keep track of the current iteration number of the main run loop
-unsigned long performanceTimer0; // performanceTimer0: a timer used to track the performance of the arduino by measuring the difference from the start of the last loop.
+volatile unsigned long performanceLoopCurrentLoopIterationCount = 0; // performanceLoopCurrentLoopIterationCount: used to keep track of the current iteration number of the main run loop
+volatile unsigned long performanceTimer0; // performanceTimer0: a timer used to track the performance of the arduino by measuring the difference from the start of the last loop.
 
-unsigned long performanceTestingGeneralPurposeCounter0 = 0; // performanceTestingGeneralPurposeCounter0: a counter that can be used for debugging
+volatile unsigned long performanceTestingGeneralPurposeCounter0 = 0; // performanceTestingGeneralPurposeCounter0: a counter that can be used for debugging
 
-unsigned long lastSensorChangeEvent1 = 0; // The last loop time the sensor was detected to have changed value
-unsigned long lastSensorChangeEvent2 = 0; 
-unsigned long lastSensorChangeEvent3 = 0;
-unsigned long lastSensorChangeEvent4 = 0;
+volatile unsigned long lastSensorChangeEvent1 = 0; // The last loop time the sensor was detected to have changed value
+volatile unsigned long lastSensorChangeEvent2 = 0; 
+volatile unsigned long lastSensorChangeEvent3 = 0;
+volatile unsigned long lastSensorChangeEvent4 = 0;
 
 
 //unsigned long[4] lastSensorChangeEventTime = {0, 0, 0, 0};
