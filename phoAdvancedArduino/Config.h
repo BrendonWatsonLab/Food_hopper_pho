@@ -1,0 +1,105 @@
+// Config.h: contains resources/definitions/functions shared by multiple components
+/* Main loop runs at around 4ms
+ * 25ms when having to write out debug log to serial
+ * 
+ */
+// ensures this file description is only included once
+#ifndef Config_h
+#define Config_h
+
+
+// General Feature Enables:
+/*
+ * Setting one of the following preprocessor variables to false disables that subsystem.
+ */
+#define ENABLE_FOOD_DISPENSE true
+#define ENABLE_WATER_DISPENSE true
+
+#define ENABLE_LOGGING_SIGNAL_ON_CHANGE true
+#define ENABLE_ARDUINOMEGA_LABJACK_INTERFACE true
+
+
+
+// FOOD:
+/*
+   There are two types of "move" operations: move-clockwise, move-counterclockwise
+   The "move" operation performed depends on the moveOperationCounter. Every "ConsecutiveSameDirectionMovements + 1" steps we move counter-clockwise. Otherwise, we move clockwise.
+   Integer overflow is not an issue, as we only care to keep track of the proper rotation direction so that we may alternate between to the two directions.
+*/
+#define PostDispenseTimeout 3000 //The number of milliseconds (1/1000 of a second) after dispensing that the system will wait before allowing another dispense event to occur.
+// Was 5000
+#define IS_DUAL_MOTOR_MODE true // IS_DUAL_MOTOR_MODE: if true, we use both motors. Otherwise we only use the motor connected to M3 & M4
+#define DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_FOOD false //DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_FOOD: if this value is true the system will operate continuously, ignoring the beam break sensor. This serves to allow testing. This value should be false outside of testing.
+#define SHOULD_RELEASE_MOTORS_FOR_POWER_SAVING true //SHOULD_RELEASE_MOTORS_FOR_POWER_SAVING: releases the stepper motors once their movement is complete to allow power savings. Otherwise they consume power maximally when they aren't moving to hold their position. 
+#define ConsecutiveSameDirectionMovements 5 //Defines the number of times it moves in a single direction before alternating the direction of moment.
+#define NumberOfStepperCoilsActivated DOUBLE // The number of coils in the stepper motor to activate. DOUBLE provides higher torque.
+// StepperSpeed is a value used by the setSpeed() function controls the power level delivered to the motor. The speed parameter is a value between 0 and 255.
+#define StepperSpeed 127 // The speed of the stepper in rpm (default 25, previous 127).
+#define REQUIRE_STATE_CHANGE_BEFORE_SECOND_FOOD_DISPENSE true //REQUIRE_STATE_CHANGE_BEFORE_SECOND_FOOD_DISPENSE: if false, permits dispensing food pellets if the beambreak remains broken after the timeout period. If true, it requires the the beambreak state to open before it closes again. 
+
+#define SENSOR1PIN 5 // SENSOR1PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
+#define SENSOR2PIN 7 // SENSOR2PIN: This pin is connected by a green wire to the second beam-break sensor's "SIG" pin.
+
+
+// WATER:
+ /*
+   After a beam-break, the solenoid opens for SolenoidOpenDuration to allow water to be dispensed.
+   Following SolenoidOpenDuration, the solenoid is closed (stopping the flow of water) for at least SolenoidPostDoseClosedDuration before re-opening
+*/
+// UNCOMMENT THIS BLOCK FOR REGULAR OPERATION OR DYNAMIC DIAGNOSTIC MODE:
+#define SolenoidDoseOpenDuration 300 //SolenoidDoseOpenDuration: The time for which the solenoid is open and the water is allowed to flow freely. 
+#define SolenoidPostDoseClosedDuration 1500 //SolenoidPostDoseClosedDuration: The time after a water dispense event before another water dispense event can be re-triggered
+/* Water 1 */
+#define SENSOR3PIN 3 // SENSOR3PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
+/* Water 2 */
+#define SENSOR4PIN 6 // SENSOR4PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
+
+
+
+// Labjack Signalling Outputs:
+/*
+ * 
+ */
+#define SignalOnDuration 200 //SignalOnDuration: The timein msec for which a given output pin his in the signalling state to the labjack.
+#define SignalPostSignalBreakDuration 0 //SignalPostSignalBreakDuration: The time after the completion of a signal event on a given pin before another event can be re-triggered
+
+
+
+
+
+
+// reflects the open/closed state of the beambreak sensor
+// 	LOW: Sensor Beam is BROKEN
+// 	HIGH: Sensor Beam has continuity (CLEAR)
+
+enum BeamBreakState { 
+	BBS_BROKEN = 0b000,
+	BBS_CLEAR = 0b001
+};
+
+// #define BeamBreakState int
+// #define BBS_BROKEN 0
+// #define BBS_CLEAR 1
+
+
+// Values
+enum SystemAddress { Water1 = 0b000, Water2 = 0b001, Food1 = 0b010, Food2 = 0b011, RunningWheel = 0b100, Sync = 0b101};
+/* SystemAddress
+ * This type specifies which system/port is being referred to.
+ * Water 1: 0
+ * Water 2: 1
+ * Food 1: 2
+ * Food 2: 3
+ * RunningWheel: 4
+ * Sync: 5
+ */
+enum EventType { SensorChange = 0b0, ActionDispense = 0b1};
+/* EventType
+ * This type species which type of event has occured
+ * Sensor Change: 0 // Occurs when a beam-break sensor changes state
+ * Action Dispense: 1 // Occurs when a dispense action has occured
+ */
+ 
+
+
+#endif // end of the "#ifndef" at the start of the file that ensures this file is only included once. THIS MUST BE AT THE END OF THE FILE.
