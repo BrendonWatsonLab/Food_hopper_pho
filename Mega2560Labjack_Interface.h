@@ -26,7 +26,7 @@ const int megaOutputPins[9] = {22, 24, 26, 28, 23, 25, 27, 29, 30};
 
 
 #define DebuggingTestLoggingSignalPauseDuration 2000
-unsigned long lastDebuggingTestLoggingSignalTimer = 0;
+volatile unsigned long lastDebuggingTestLoggingSignalTimer = 0;
 
 // Variables
 
@@ -36,9 +36,9 @@ enum LabjackSignalPinState {
   LabjackSignalPinState_Rest = 0b1
 };
 
-LabjackSignalPinState labjackSignalPinState[8] = {LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest};         // reflects the HIGH/LOW state of the labjack signal pins
-unsigned long lastSignalSignallingTimer[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-unsigned long lastSignalSignalCompleteTimer[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+volatile LabjackSignalPinState labjackSignalPinState[8] = {LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest, LabjackSignalPinState_Rest};         // reflects the HIGH/LOW state of the labjack signal pins
+volatile unsigned long lastSignalSignallingTimer[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+volatile unsigned long lastSignalSignalCompleteTimer[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
 
 
