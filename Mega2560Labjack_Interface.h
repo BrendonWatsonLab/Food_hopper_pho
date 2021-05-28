@@ -201,6 +201,16 @@ void debugTestOutputPorts() {
 		sendMegaOutputSignal(Food2, SensorChange);
 		sendMegaOutputSignal(Food2, ActionDispense);
 
+    delay(96);
+
+		sendMegaOutputSignal(Water1, SensorChange);
+    delay(50);
+		sendMegaOutputSignal(Water1, ActionDispense);
+
+		sendMegaOutputSignal(Water2, SensorChange);
+   delay(50);
+		sendMegaOutputSignal(Water2, ActionDispense);
+
 		// sendMegaOutputSignal(Water2, ActionDispense);
         lastDebuggingTestLoggingSignalTimer = currentLoopMillis;
 		performanceTestingGeneralPurposeCounter0++;

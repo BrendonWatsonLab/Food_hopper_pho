@@ -65,7 +65,7 @@
 /*
  * 
  */
-#define SignalOnDuration 50 //SignalOnDuration: The timein msec for which a given output pin his in the signalling state to the labjack.
+#define SignalOnDuration 100 //SignalOnDuration: The timein msec for which a given output pin his in the signalling state to the labjack.
 #define SignalPostSignalBreakDuration 0 //SignalPostSignalBreakDuration: The time after the completion of a signal event on a given pin before another event can be re-triggered
 
 
