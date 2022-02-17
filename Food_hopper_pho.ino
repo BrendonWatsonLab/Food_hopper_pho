@@ -61,20 +61,37 @@ void setup() {
   #if IS_DIAGNOSTIC_MODE 
     performanceTimer0 = millis();
   #endif
+
+  //David's Switch edits
+  pinMode(12,INPUT_PULLUP); // controlling water
+  pinMode(13,INPUT_PULLUP); // controlling motor
+  pinMode(52,OUTPUT); // controlling debug LED
 }
+
+//David's Switch vars
+bool yuldool = 0;
+bool yulset = 0;
 
 void loop() {
   // Tick the timer
   timer.tick();
+  yuldool = (LOW == digitalRead(12));
+  yulset = (LOW == digitalRead(13));
+  IS_DIAGNOSTIC_MODE = (yuldool || yulset);
+  DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER = yuldool;
+  DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_FOOD = yulset;
+  
+  digitalWrite(52, LOW);
+
   
   // Get the current time in milliseconds
   currentLoopMillis = millis();
-  #if IS_DIAGNOSTIC_MODE 
+  if (IS_DIAGNOSTIC_MODE) {
     //If the system is in diagnostic mode, output a line to the serial terminal indicating this to prevent diagnostic builds being deployed to production hardware.
     unsigned long lastLoopDifference = currentLoopMillis - performanceTimer0;
     Serial.println(lastLoopDifference);
     performanceTimer0 = currentLoopMillis;
-  #endif
+}
 
   
   // read the state of the IR break beam sensors:
@@ -135,6 +152,9 @@ void loop() {
 
   // Performs the interfacing with the processing software (running on the computer) while in interactive diagnostic mode
   if (IS_DIAGNOSTIC_MODE && SHOULD_USE_INTERACTIVE_DIAGNOSTIC) {
+    //David debug
+    digitalWrite(52,HIGH);
+   
     loopDiagnostics(currentLoopMillis);
     // Perform normal dispense events unless diagnostic_disable_dispensing is true
     if (diagnostic_disable_dispensing == false) {

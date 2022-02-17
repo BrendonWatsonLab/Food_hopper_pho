@@ -36,7 +36,7 @@ auto timer = timer_create_default();
 #define PostDispenseTimeout 3000 //The number of milliseconds (1/1000 of a second) after dispensing that the system will wait before allowing another dispense event to occur.
 // Was 5000
 #define IS_DUAL_MOTOR_MODE true // IS_DUAL_MOTOR_MODE: if true, we use both motors. Otherwise we only use the motor connected to M3 & M4
-#define DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_FOOD false //DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_FOOD: if this value is true the system will operate continuously, ignoring the beam break sensor. This serves to allow testing. This value should be false outside of testing.
+bool DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_FOOD = false; //DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_FOOD: if this value is true the system will operate continuously, ignoring the beam break sensor. This serves to allow testing. This value should be false outside of testing.
 #define SHOULD_RELEASE_MOTORS_FOR_POWER_SAVING true //SHOULD_RELEASE_MOTORS_FOR_POWER_SAVING: releases the stepper motors once their movement is complete to allow power savings. Otherwise they consume power maximally when they aren't moving to hold their position. 
 #define ConsecutiveSameDirectionMovements 5 //Defines the number of times it moves in a single direction before alternating the direction of moment.
 #define NumberOfStepperCoilsActivated DOUBLE // The number of coils in the stepper motor to activate. DOUBLE provides higher torque.
@@ -49,7 +49,7 @@ auto timer = timer_create_default();
    After a beam-break, the solenoid opens for SolenoidOpenDuration to allow water to be dispensed.
    Following SolenoidOpenDuration, the solenoid is closed (stopping the flow of water) for at least SolenoidPostDoseClosedDuration before re-opening
 */
-#define DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER false //DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER: if this value is true the system will operate continuously, ignoring the beam break sensor. This serves to allow testing. This value should be false outside of testing.
+bool DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER = false; //DIAGNOSTIC_SHOULD_CONTINUOUSLY_DISPENSE_WATER: if this value is true the system will operate continuously, ignoring the beam break sensor. This serves to allow testing. This value should be false outside of testing.
 #define SolenoidDoseOpenDuration 300 //SolenoidDoseOpenDuration: The time for which the solenoid is open and the water is allowed to flow freely. 
 #define SolenoidPostDoseClosedDuration 1500 //SolenoidPostDoseClosedDuration: The time after a water dispense event before another water dispense event can be re-triggered
 #define REQUIRE_STATE_CHANGE_BEFORE_SECOND_WATER_DISPENSE true //REQUIRE_STATE_CHANGE_BEFORE_SECOND_WATER_DISPENSE: if false, permits dispensing water if the beambroke remains broken after the timeout period. If true, it requires the the beambreak state to open before it closes again. 
@@ -57,7 +57,7 @@ auto timer = timer_create_default();
 /*
  * 
  */
-#define IS_DIAGNOSTIC_MODE false //IS_DIAGNOSTIC_MODE: if this value is false, all diagnostic settings will be ignored. This value should be false outside of testing.
+bool IS_DIAGNOSTIC_MODE = false; //IS_DIAGNOSTIC_MODE: if this value is false, all diagnostic settings will be ignored. This value should be false outside of testing.
 #define ENABLE_DIAGNOSTIC_SERIAL true 
 #define SHOULD_USE_INTERACTIVE_DIAGNOSTIC true //SHOULD_USE_INTERACTIVE_DIAGNOSTIC: enables extended diagnostics and testing via the helper Processing software.
 #define INTERACTIVE_DIAGNOSTIC_SERIAL_READ_TIMEOUT 10 //INTERACTIVE_DIAGNOSTIC_SERIAL_READ_TIMEOUT: the minimum time between serial reads for interactive diagnostics
