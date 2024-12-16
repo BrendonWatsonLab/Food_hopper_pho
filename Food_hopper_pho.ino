@@ -9,15 +9,15 @@
 
 #include <Wire.h>
 
-#include "Common.h";
+#include "Common.h"
 #if ENABLE_RHD2000_INTERFACE
-  #include "RHD2000_Interface.h";
+  #include "RHD2000_Interface.h"
 #endif
 #if ENABLE_MULTIPLEXER_INTERFACE
-  #include "Multiplexer_Interface.h";
+  #include "Multiplexer_Interface.h"
 #endif
 #if ENABLE_ARDUINOMEGA_LABJACK_INTERFACE
-  #include "Mega2560Labjack_Interface.h";
+  #include "Mega2560Labjack_Interface.h"
 #endif
 
 // Function Prototypes:
@@ -25,13 +25,13 @@ void sendLoggingSignal(SystemAddress addr, EventType event);
 void loopDispense(unsigned long currentLoopMillis);
 
 #if ENABLE_FOOD_DISPENSE
-  #include "Food_Dispenser.h"; //Depends on Common.h
+  #include "Food_Dispenser.h" //Depends on Common.h
 #endif
 #if ENABLE_WATER_DISPENSE
-  #include "Water_Dispenser.h";
+  #include "Water_Dispenser.h"
 #endif
 
-#include "Diagnostics.h";
+#include "Diagnostics.h"
 
 
 
@@ -105,9 +105,13 @@ void loop() {
   #if ENABLE_WATER_DISPENSE
     int prevSensor3State = sensor3State;
     int prevSensor4State = sensor4State;
+    int prevSensor5State = sensor5State;
+    int prevSensor6State = sensor6State;
     // Read the water sensors
     sensor3State = digitalRead(SENSOR3PIN);
     sensor4State = digitalRead(SENSOR4PIN);
+    sensor5State = digitalRead(SENSOR5PIN);
+    sensor6State = digitalRead(SENSOR6PIN);
 
     // Check for changes:
     if (prevSensor3State != sensor3State) {
@@ -115,6 +119,12 @@ void loop() {
     }
     if (prevSensor4State != sensor4State) {
       lastSensorChangeEvent4 = currentLoopMillis;
+    }
+    if (prevSensor5State != sensor5State) {
+      lastSensorChangeEvent5 = currentLoopMillis;
+    }
+    if (prevSensor6State != sensor6State) {
+      lastSensorChangeEvent6 = currentLoopMillis;
     }
       
     #if ENABLE_LOGGING_SIGNAL_ON_CHANGE

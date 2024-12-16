@@ -1,3 +1,10 @@
+
+#include <Servo.h>
+
+Servo Servo1;
+Servo Servo2;
+
+
 // reflects the open/closed state of the solenoid
 enum SolenoidState {
   OPEN,
@@ -29,6 +36,11 @@ int moveOperationCounter4 = 0; // This variable keeps track of the total number 
 
 SolenoidState solenoid2State = CLOSED;         // reflects the open/closed state of the solenoid
 
+/* Set Sensors for buttons */
+
+#define SENSOR5PIN 12
+#define SENSOR6PIN 13
+
 /*
    After a beam-break, the solenoid opens for SolenoidOpenDuration to allow water to be dispensed.
    Following SolenoidOpenDuration, the solenoid is closed (stopping the flow of water) for at least SolenoidPostDoseClosedDuration before re-opening.
@@ -54,13 +66,15 @@ void setupWaterDispensers() {
   digitalWrite(SENSOR3PIN, HIGH); // turn on the pullup
   pinMode(SENSOR4PIN, INPUT);
   digitalWrite(SENSOR4PIN, HIGH); // turn on the pullup
+  pinMode(SENSOR5PIN, INPUT);
+  digitalWrite(SENSOR5PIN, HIGH);
+  pinMode(SENSOR6PIN, INPUT);
+  digitalWrite(SENSOR6PIN, HIGH);
 
-  // Setup Solenoids
-  pinMode(SOLENOID1PIN, OUTPUT);
-  //digitalWrite(SOLENOID1PIN, LOW);
+  // Setup Servos
+  Servo1.attach(SOLENOID1PIN);
 
-  pinMode(SOLENOID2PIN, OUTPUT);
-  //digitalWrite(SOLENOID2PIN, LOW);
+  Servo2.attach(SOLENOID2PIN);
 }
 
 
@@ -130,23 +144,31 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
       #endif
     }
   }
+
+  if (sensor5State == LOW){
+    fillUp1();
+  }
+  if (sensor6State == LOw){
+    fillUp2();
+  }
+  
 }
 
 void closeSolenoid(int waterPortNumber) {
   int activeSolenoidPin = 0;
-  
+  Servo *activeServo;
   if (waterPortNumber == 1) {
-    activeSolenoidPin = SOLENOID1PIN;
+    activeServo = &Servo1;
   }
   else if (waterPortNumber == 2) {
-    activeSolenoidPin = SOLENOID2PIN;
+    activeServo = &Servo2;
   }
   else {
     // Should never happen. Would be nice to assert.
     Serial.println("----- waterPortNumber Error A! -----");
   }
   // Actually close the solenoid and save the time it was closed
-  digitalWrite(activeSolenoidPin, LOW);
+  activeServo->write(90);
   
   if (waterPortNumber == 1) {
     lastSolenoidCloseTimer1 = millis();
@@ -170,12 +192,13 @@ void closeSolenoid(int waterPortNumber) {
 
 void openSolenoid(int waterPortNumber) {
   int activeSolenoidPin = 0;
+  Servo *activeServo;
   if (waterPortNumber == 1) {
-    activeSolenoidPin = SOLENOID1PIN;
+    activeServo = &Servo1;
     solenoid1State = OPEN; // update the state to closed before actually closing it (just to avoid another if/elseif/else block)
   }
   else if (waterPortNumber == 2) {
-    activeSolenoidPin = SOLENOID2PIN;
+    activeServo = &Servo2;
     solenoid2State = OPEN; // update the state to closed before actually closing it (just to avoid another if/elseif/else block)
   }
   else {
@@ -183,7 +206,7 @@ void openSolenoid(int waterPortNumber) {
     Serial.println("----- waterPortNumber Error A! -----");
   }
   // Actually close the solenoid and save the time it was closed
-  digitalWrite(activeSolenoidPin, HIGH);
+  activeServo->write(105);
   if (waterPortNumber == 1) {
     lastSolenoidOpenTimer1 = millis();
   }
@@ -195,3 +218,17 @@ void openSolenoid(int waterPortNumber) {
     Serial.println("----- waterPortNumber Error B! -----");
   }
 }
+
+void fillUp1() {
+  int activeSolenoidPin = 0;
+  Servo *activeServo = &Servo1;
+  // pull back on syringe to refill water
+  activeServo->write(0);
+}
+
+void fillUp2() {
+  int activeSolenoidPin = 0;
+  Servo *activeServo = &Servo2;
+  activeServo->write(0);
+}  
+   
