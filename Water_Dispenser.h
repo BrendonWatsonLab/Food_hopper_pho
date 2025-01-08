@@ -38,6 +38,8 @@ SolenoidState solenoid2State = CLOSED;         // reflects the open/closed state
 
 /* Set Sensors for buttons */
 
+int sensor5State = HIGH;
+int sensor6State = HIGH;
 #define SENSOR5PIN 12
 #define SENSOR6PIN 13
 
@@ -57,6 +59,10 @@ void setupWaterDispensers();
 void loopWaterDispensers(unsigned long currentLoopMillis);
 void closeSolenoid(int waterPortNumber);
 void openSolenoid(int waterPortNumber);
+bool fillUp1();
+bool fillUp2();
+bool hasbeenfilled1 = false;
+bool hasbeenfilled2 = false;
 
 
 // Called from setup()
@@ -145,11 +151,20 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
     }
   }
 
+  
   if (sensor5State == LOW){
-    fillUp1();
+    hasbeenfilled1 = fillUp1();
+  } else if (hasbeenfilled1) {
+      closeSolenoid(1);
+      hasbeenfilled1 = false;
+      Serial.write("wtf");
   }
-  if (sensor6State == LOw){
-    fillUp2();
+  if (sensor6State == LOW){
+    hasbeenfilled2 = fillUp2();
+  } else if (hasbeenfilled2){
+      closeSolenoid(2);
+      hasbeenfilled2 = false;
+      Serial.write("wtf");
   }
   
 }
@@ -219,16 +234,20 @@ void openSolenoid(int waterPortNumber) {
   }
 }
 
-void fillUp1() {
+bool fillUp1() {
   int activeSolenoidPin = 0;
   Servo *activeServo = &Servo1;
   // pull back on syringe to refill water
   activeServo->write(0);
+  Serial.write("fillUp1");
+  return true;
 }
 
-void fillUp2() {
+bool fillUp2() {
   int activeSolenoidPin = 0;
   Servo *activeServo = &Servo2;
   activeServo->write(0);
+  Serial.write("fillUp2");
+  return true;
 }  
    

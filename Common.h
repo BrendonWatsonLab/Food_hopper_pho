@@ -80,6 +80,8 @@ unsigned long lastSensorChangeEvent1 = 0; // The last loop time the sensor was d
 unsigned long lastSensorChangeEvent2 = 0; 
 unsigned long lastSensorChangeEvent3 = 0;
 unsigned long lastSensorChangeEvent4 = 0;
+unsigned long lastSensorChangeEvent5 = 0;
+unsigned long lastSensorChangeEvent6 = 0;
 
 
 // reflects the open/closed state of the beambreak sensor
