@@ -112,6 +112,8 @@ void loop() {
     sensor4State = digitalRead(SENSOR4PIN);
     sensor5State = digitalRead(SENSOR5PIN);
     sensor6State = digitalRead(SENSOR6PIN);
+    expel1state = digitalRead(EXPELPIN1);
+    expel2state = digitalRead(EXPELPIN2);
 
     // Check for changes:
     if (prevSensor3State != sensor3State) {

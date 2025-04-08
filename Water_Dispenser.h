@@ -40,8 +40,12 @@ SolenoidState solenoid2State = CLOSED;         // reflects the open/closed state
 
 int sensor5State = HIGH;
 int sensor6State = HIGH;
+int expel1state = HIGH;
+int expel2state = HIGH;
 #define SENSOR5PIN 12
 #define SENSOR6PIN 13
+#define EXPELPIN1 18
+#define EXPELPIN2 19
 
 /*
    After a beam-break, the solenoid opens for SolenoidOpenDuration to allow water to be dispensed.
@@ -61,8 +65,12 @@ void closeSolenoid(int waterPortNumber);
 void openSolenoid(int waterPortNumber);
 bool fillUp1();
 bool fillUp2();
+bool expel1();
+bool expel2();
 bool hasbeenfilled1 = false;
 bool hasbeenfilled2 = false;
+bool expelling1 = false;
+bool expelling2 = false;
 
 
 // Called from setup()
@@ -76,6 +84,11 @@ void setupWaterDispensers() {
   digitalWrite(SENSOR5PIN, HIGH);
   pinMode(SENSOR6PIN, INPUT);
   digitalWrite(SENSOR6PIN, HIGH);
+  pinMode(EXPELPIN1, INPUT);
+  digitalWrite(EXPELPIN1,HIGH);
+  pinMode(EXPELPIN2, INPUT);
+  digitalWrite(EXPELPIN2,HIGH);
+
 
   // Setup Servos
   Servo1.attach(SOLENOID1PIN);
@@ -167,6 +180,19 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
       Serial.write("wtf");
   }
   
+// This is the code for expelling the servo pumps
+if (expel1state == LOW){
+    expelling1 = expel1();
+  } else if (expelling1) {
+      closeSolenoid(1);
+      expelling1 = false;
+  }
+  if (expel2state == LOW){
+    expelling2 = expel2();
+  } else if (expelling2){
+      closeSolenoid(2);
+      expelling2 = false;
+  }
 }
 
 void closeSolenoid(int waterPortNumber) {
@@ -248,6 +274,23 @@ bool fillUp2() {
   Servo *activeServo = &Servo2;
   activeServo->write(0);
   Serial.write("fillUp2");
+  return true;
+}  
+
+bool expel1() {
+  int activeSolenoidPin = 0;
+  Servo *activeServo = &Servo1;
+  // pull back on syringe to refill water
+  activeServo->write(180);
+  Serial.write("Expel1");
+  return true;
+}
+
+bool expel2() {
+  int activeSolenoidPin = 0;
+  Servo *activeServo = &Servo2;
+  activeServo->write(180);
+  Serial.write("Expel2");
   return true;
 }  
    
