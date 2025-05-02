@@ -62,6 +62,7 @@ auto timer = timer_create_default();
 #define SHOULD_USE_INTERACTIVE_DIAGNOSTIC true //SHOULD_USE_INTERACTIVE_DIAGNOSTIC: enables extended diagnostics and testing via the helper Processing software.
 #define INTERACTIVE_DIAGNOSTIC_SERIAL_READ_TIMEOUT 10 //INTERACTIVE_DIAGNOSTIC_SERIAL_READ_TIMEOUT: the minimum time between serial reads for interactive diagnostics
 
+#define TOP_UP_TIME 1800000
 // MULTIPLEXER:
 /*
  * 
@@ -83,6 +84,8 @@ unsigned long lastSensorChangeEvent4 = 0;
 unsigned long lastSensorChangeEvent5 = 0;
 unsigned long lastSensorChangeEvent6 = 0;
 
+unsigned long topup = 0; // Variable that is responsible for tracking time of regular water dispense
+bool topupGate = false; 
 
 // reflects the open/closed state of the beambreak sensor
 enum BeamBreakState {

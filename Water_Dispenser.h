@@ -180,8 +180,8 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
       Serial.write("wtf");
   }
   
-// This is the code for expelling the servo pumps
-if (expel1state == LOW){
+  // This is the code for expelling the servo pumps
+  if (expel1state == LOW){
     expelling1 = expel1();
   } else if (expelling1) {
       closeSolenoid(1);
@@ -193,7 +193,27 @@ if (expel1state == LOW){
       closeSolenoid(2);
       expelling2 = false;
   }
+
+
+// Below is functionality that would dispense water once every TOP_UP_TIME
+  if (currentLoopMillis > topup + TOP_UP_TIME) {
+    openSolenoid(1);
+    openSolenoid(2);
+    Serial.write("TOP UP");
+    topupGate = true;
+  } else if (topupGate && (currentLoopMillis > 1500 + TOP_UP_TIME + topup)) {
+    topup = currentLoopMillis;
+    topupGate = false;
+    closeSolenoid(1);
+    closeSolenoid(2);
+  }
+
 }
+
+
+
+
+
 
 void closeSolenoid(int waterPortNumber) {
   int activeSolenoidPin = 0;
@@ -231,6 +251,10 @@ void closeSolenoid(int waterPortNumber) {
   }
 }
 
+
+
+
+
 void openSolenoid(int waterPortNumber) {
   int activeSolenoidPin = 0;
   Servo *activeServo;
@@ -259,6 +283,10 @@ void openSolenoid(int waterPortNumber) {
     Serial.println("----- waterPortNumber Error B! -----");
   }
 }
+
+
+
+
 
 bool fillUp1() {
   int activeSolenoidPin = 0;
