@@ -201,6 +201,11 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
     openSolenoid(2);
     Serial.write("TOP UP");
     topupGate = true;
+    //Sending Output signals to LJ
+    digitalWrite(23, LOW);
+    timer.in(SIGNAL_ON_TIME, turnOffSignal, 23); 
+    digitalWrite(25, LOW);
+    timer.in(SIGNAL_ON_TIME, turnOffSignal, 25); 
   } else if (topupGate && (currentLoopMillis > 1500 + TOP_UP_TIME + topup)) {
     topup = currentLoopMillis;
     topupGate = false;
