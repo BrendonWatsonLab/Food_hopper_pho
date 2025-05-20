@@ -201,29 +201,10 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
         expelling2 = false;
     }
 
-
-    // Below is functionality that would dispense water once every TOP_UP_TIME
-    //  if (!topupGate && (currentLoopMillis < topup + 1500)) {
-    //    openSolenoid(1);
-    //    openSolenoid(2);
-    //    Serial.write("TOP UP");
-    //    topupGate = true;
-    //    //Sending Output signals to LJ
-    ////    digitalWrite(23, LOW);
-    ////    digitalWrite(25, LOW); 
-    //  } else if (topupGate && (currentLoopMillis > TOP_UP_TIME + topup)) {
-    //    topup = currentLoopMillis;
-    //    topupGate = false;
-    //    closeSolenoid(1);
-    //    closeSolenoid(2);
-    ////    digitalWrite(23, HIGH);
-    ////    digitalWrite(25, HIGH); 
-    //  }
-
     if (currentLoopMillis > topup + TOP_UP_TIME) {
         topup = currentLoopMillis;
-        Servo1.write(105);
-        Servo2.write(105);
+        Servo1.write(180);
+        Servo2.write(180);
         digitalWrite(23, LOW);
         digitalWrite(25, LOW);
         Serial.write("Topped up");
@@ -297,7 +278,7 @@ void openSolenoid(int waterPortNumber) {
         Serial.println("----- waterPortNumber Error A! -----");
     }
     // Actually open the solenoid and save the time it was closed
-    activeServo->write(105);
+    activeServo->write(180);
     if (waterPortNumber == 1) {
         lastSolenoidOpenTimer1 = millis();
     }
