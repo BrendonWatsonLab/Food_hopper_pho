@@ -33,7 +33,7 @@ void loopDispense(unsigned long currentLoopMillis);
 
 #include "Diagnostics.h"
 
-
+char input;
 
 void setup() {
   Serial.begin(9600); // set up Serial library at 9600 bps (for debugging)
@@ -114,6 +114,17 @@ void loop() {
     sensor6State = digitalRead(SENSOR6PIN);
     expel1state = digitalRead(EXPELPIN1);
     expel2state = digitalRead(EXPELPIN2);
+
+    if (Serial.available()) {
+      input = Serial.read();
+      if (input == 'a') {
+        sensor4State = LOW;
+      } else if (input == 's') {
+        sensor3State = LOW;
+      }
+      input = ' ';
+    } 
+
 
     // Check for changes:
     if (prevSensor3State != sensor3State) {
