@@ -120,7 +120,15 @@ void loop() {
       if (input == 'a') {
         sensor4State = LOW;
       } else if (input == 's') {
-        sensor3State = LOW;
+        sensor3State = LOW; 
+      } else if (input == 'd') {
+        expel1state = LOW;
+      } else if (input == 'f') {
+        expel2state = LOW;
+      } else if (input == 'e') {
+        expel1state = HIGH; 
+      } else if (input == 'r') {
+        expel2state = HIGH; 
       }
       input = ' ';
     } 

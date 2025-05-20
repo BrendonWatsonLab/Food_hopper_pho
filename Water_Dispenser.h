@@ -136,7 +136,6 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
 #endif
         }
     }
-
     // Check Water Port 2:
     if (solenoid2State == OPEN) {
         if (currentLoopMillis - lastSolenoidOpenTimer2 >= SolenoidDoseOpenDuration) {
