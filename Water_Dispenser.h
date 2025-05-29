@@ -208,8 +208,8 @@ void loopWaterDispensers(unsigned long currentLoopMillis) {
         digitalWrite(25, LOW);
         Serial.write("Topped up");
 
-        timer.in(1750, ServoForceClose, 1);
-        timer.in(1750, ServoForceClose, 2);
+        timer.in(82, ServoForceClose, 1);
+        timer.in(82, ServoForceClose, 2);
         timer.in(SIGNAL_ON_TIME, turnOffSig, 23);
         timer.in(SIGNAL_ON_TIME, turnOffSig, 25);
     }
