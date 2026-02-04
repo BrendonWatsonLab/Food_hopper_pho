@@ -42,8 +42,8 @@ int sensor5State = HIGH;
 int sensor6State = HIGH;
 int expel1state = HIGH;
 int expel2state = HIGH;
-#define SENSOR5PIN 12
-#define SENSOR6PIN 13
+#define SENSOR5PIN 19
+#define SENSOR6PIN 20
 #define EXPELPIN1 18
 #define EXPELPIN2 19
 
