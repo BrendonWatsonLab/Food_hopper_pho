@@ -35,6 +35,11 @@ int moveOperationCounter2 = 0; // This variable keeps track of the total number 
 
 unsigned long lastDispenseTimer = 0; // This variable keeps track of the last time dispense was performed
 
+// Beam break in shaft 
+#define SENSOR14PIN 8
+#define SENSOR15PIN 11
+int sensor14State = HIGH;
+int sensor15State = HIGH;
 
 
 // Function Prototypes:
@@ -115,16 +120,19 @@ void loopFoodDispensers(unsigned long currentLoopMillis) {
 
 
 void dispenseFeeder1() {
-  #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
+  /*#if ENABLE_LOGGING_SIGNAL_ON_CHANGE
     sendLoggingSignal(Food1, ActionDispense);
   #endif
+  */
   dispenseFood(1);
 }
 
 void dispenseFeeder2() {
+  /*
   #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
     sendLoggingSignal(Food2, ActionDispense);
   #endif
+  */
   dispenseFood(2);
 }
 
@@ -175,8 +183,6 @@ void dispenseFood(int feederNumber) {
     Serial.println("----- FeederNumber Error B! -----");
   }
 }
-
-
 
 
 // The traditional (clockwise) movement that dispenses a pellet

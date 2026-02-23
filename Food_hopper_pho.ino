@@ -107,6 +107,11 @@ void loop() {
     int prevSensor4State = sensor4State;
     int prevSensor5State = sensor5State;
     int prevSensor6State = sensor6State;
+    
+    //Beambreak in shaft
+    int prevSensor14State = sensor14State;
+    int prevSensor15State = sensor15State;
+
     // Read the water sensors
     sensor3State = digitalRead(SENSOR3PIN);
     sensor4State = digitalRead(SENSOR4PIN);
@@ -114,6 +119,10 @@ void loop() {
     sensor6State = digitalRead(SENSOR6PIN);
     expel1state = digitalRead(EXPELPIN1);
     expel2state = digitalRead(EXPELPIN2);
+
+    // Read Beambreak in shaft
+    sensor14State = digitalRead(SENSOR14PIN);
+    sensor15State = digitalRead(SENSOR15PIN);
 
     if (Serial.available()) {
       input = Serial.read();
@@ -147,6 +156,8 @@ void loop() {
     if (prevSensor6State != sensor6State) {
       lastSensorChangeEvent6 = currentLoopMillis;
     }
+  
+
       
     #if ENABLE_LOGGING_SIGNAL_ON_CHANGE
       // Check for changes:
@@ -155,6 +166,13 @@ void loop() {
       }
       if (prevSensor4State != sensor4State) {
         sendLoggingSignal(Water2, SensorChange);
+      }
+      if (prevSensor14State != sensor14State){
+        sendLoggingSignal(Food1, ActionDispense);
+      }
+      if (prevSensor15State != sensor15State){
+        sendLoggingSignal(Food2, ActionDispense);
+        Serial.write("Beam Broke! \n");
       }
     #endif
   #endif
