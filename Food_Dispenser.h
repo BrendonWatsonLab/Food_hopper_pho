@@ -20,7 +20,7 @@ Adafruit_MotorShield AFMS = Adafruit_MotorShield();
  * 
  */
 Adafruit_StepperMotor *motor1 = AFMS.getStepper(200, 1); // The motor connected to M1 & M2
-#define SENSOR1PIN 5 // SENSOR1PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
+#define SENSOR1PIN 26 // SENSOR1PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
 int sensor1State = HIGH;         // variable for reading the beam-break sensor1 status
 int moveOperationCounter1 = 0; // This variable keeps track of the total number of "move" operations performed.
 
@@ -28,7 +28,7 @@ int moveOperationCounter1 = 0; // This variable keeps track of the total number 
 
 */
 Adafruit_StepperMotor *motor2 = AFMS.getStepper(200, 2); // The motor connected to M3 & M4
-#define SENSOR2PIN 7 // SENSOR2PIN: This pin is connected by a green wire to the second beam-break sensor's "SIG" pin.
+#define SENSOR2PIN 28 // SENSOR2PIN: This pin is connected by a green wire to the second beam-break sensor's "SIG" pin.
 int sensor2State = HIGH;         // variable for reading the beam-break sensor2 status
 int moveOperationCounter2 = 0; // This variable keeps track of the total number of "move" operations performed.
 

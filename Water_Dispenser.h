@@ -16,7 +16,7 @@ enum SolenoidState {
 */
 
 // Arduino is Arduino UNO:
-#define SENSOR3PIN 3 // SENSOR1PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
+#define SENSOR3PIN 22 // SENSOR1PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
 #define SOLENOID1PIN 10 //Servo 1 on motor shield 
 
 int sensor3State = HIGH;         // variable for reading the beam-break sensor3 status
@@ -28,7 +28,7 @@ SolenoidState solenoid1State = CLOSED;         // reflects the open/closed state
 
 */
 
-#define SENSOR4PIN 6 // SENSOR1PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
+#define SENSOR4PIN 24 // SENSOR1PIN: This pin is connected by a green wire to the beam-break sensor's "SIG" pin.
 #define SOLENOID2PIN 9 //Servo 2 on motor shield 
 
 int sensor4State = HIGH;         // variable for reading the beam-break sensor4 status
